@@ -1,22 +1,25 @@
 #include "Graphics/Graphics.h"
 #include "SceneGame.h"
 
-// 初期化
 void SceneGame::Initialize()
 {
+	stage = new Stage();
 }
 
-// 終了化
 void SceneGame::Finalize()
 {
+	if (stage != nullptr)
+	{
+		delete stage;
+		stage = nullptr;
+	}
 }
 
-// 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+	stage->Update(elapsedTime);
 }
 
-// 描画処理
 void SceneGame::Render()
 {
 	Graphics& graphics = Graphics::Instance();
@@ -58,7 +61,11 @@ void SceneGame::Render()
 
 	// 3Dモデル描画
 	{
+		Shader* shader = graphics.GetShader();
+		shader->Begin(dc, rc);
 
+		stage->Render(dc, shader);
+		shader->End(dc);
 	}
 
 	// 3Dデバッグ描画
