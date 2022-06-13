@@ -48,7 +48,7 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 	sceneGame.Render();
 
 	// IMGUIデモウインドウ描画（IMGUI機能テスト用）
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 
 	// IMGUI描画
 	graphics.GetImGuiRenderer()->Render(dc);

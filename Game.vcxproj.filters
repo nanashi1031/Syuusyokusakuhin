@@ -129,6 +129,9 @@
     <ClInclude Include="Source\Actor\Character.h">
       <Filter>Source\Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\Object.h">
+      <Filter>Source\Actor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -204,6 +207,9 @@
       <Filter>Source\Stage</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\Character.cpp">
+      <Filter>Source\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Object.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
   </ItemGroup>

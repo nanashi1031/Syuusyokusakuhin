@@ -1,6 +1,6 @@
 #pragma once
-#include"Graphics\Graphics.h"
-#include "Stage\Stage.h"
+#include"Graphics.h"
+#include "Stage.h"
 
 // ƒQ[ƒ€ƒV[ƒ“
 class SceneGame
