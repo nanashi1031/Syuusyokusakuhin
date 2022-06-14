@@ -8,6 +8,5 @@ public:
     Character() {}
     ~Character() override {};
 
-protected:
-
+    void Update(float elapsedTime);
 };

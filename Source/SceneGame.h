@@ -1,6 +1,6 @@
 #pragma once
 #include"Graphics.h"
-#include "Stage.h"
+#include "StageManager.h"
 
 // ƒQ[ƒ€ƒV[ƒ“
 class SceneGame
@@ -22,5 +22,4 @@ public:
 	void Render();
 
 private:
-	Stage* stage = nullptr;
 };

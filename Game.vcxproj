@@ -138,6 +138,8 @@
     <ClInclude Include="Source\Misc.h" />
     <ClInclude Include="Source\SceneGame.h" />
     <ClInclude Include="Source\Stage\Stage.h" />
+    <ClInclude Include="Source\Stage\StageMain.h" />
+    <ClInclude Include="Source\Stage\StageManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\DirectXTex\WICTextureLoader.cpp" />
@@ -165,7 +167,8 @@
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\SceneGame.cpp" />
-    <ClCompile Include="Source\Stage\Stage.cpp" />
+    <ClCompile Include="Source\Stage\StageMain.cpp" />
+    <ClCompile Include="Source\Stage\StageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />

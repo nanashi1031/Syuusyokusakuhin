@@ -2,18 +2,16 @@
 
 #include "Graphics\Shader.h"
 #include "Graphics\Model.h"
+#include "Object.h"
 
 // ステージ
-class Stage
+class Stage : public Object
 {
 public:
-    Stage();
-    ~Stage();
+    Stage() {};
+    virtual ~Stage() {};
 
-    void Update(float elapsedTime);
+    virtual void Update(float elapsedTime) = 0;
 
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
-
-private:
-    Model* model = nullptr;
+    virtual void Render(ID3D11DeviceContext* dc, Shader* shader) = 0;
 };

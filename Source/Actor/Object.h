@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 
+// オブジェクト
 class Object
 {
 public:

@@ -1,23 +1,24 @@
 #include "Graphics/Graphics.h"
 #include "SceneGame.h"
+#include "StageMain.h"
 
 void SceneGame::Initialize()
 {
-	stage = new Stage();
+	// ステージ初期化
+	// スマートポインタのほうがいいかも？
+	StageManager& stageManager = StageManager::Instance();
+	StageMain* stageMain = new StageMain();
+	stageManager.Register(stageMain);
 }
 
 void SceneGame::Finalize()
 {
-	if (stage != nullptr)
-	{
-		delete stage;
-		stage = nullptr;
-	}
+	StageManager::Instance().Clear();
 }
 
 void SceneGame::Update(float elapsedTime)
 {
-	stage->Update(elapsedTime);
+	StageManager::Instance().Update(elapsedTime);
 }
 
 void SceneGame::Render()
@@ -64,7 +65,7 @@ void SceneGame::Render()
 		Shader* shader = graphics.GetShader();
 		shader->Begin(dc, rc);
 
-		stage->Render(dc, shader);
+		StageManager::Instance().Render(dc, shader);
 		shader->End(dc);
 	}
 

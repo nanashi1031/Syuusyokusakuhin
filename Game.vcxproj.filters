@@ -31,11 +31,11 @@
     <Filter Include="Source\Actor">
       <UniqueIdentifier>{d2188a43-6ca1-46c0-a3b6-e879e834a0be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Stage">
-      <UniqueIdentifier>{8c9ee0e1-8567-442f-bfa3-5753d46a048e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Scene">
       <UniqueIdentifier>{2e88eaf2-f45b-4d92-bc4d-941ff9c65090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stage">
+      <UniqueIdentifier>{8c9ee0e1-8567-442f-bfa3-5753d46a048e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +132,12 @@
     <ClInclude Include="Source\Actor\Object.h">
       <Filter>Source\Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Stage\StageMain.h">
+      <Filter>Source\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Stage\StageManager.h">
+      <Filter>Source\Stage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -203,14 +209,17 @@
     <ClCompile Include="Source\SceneGame.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Stage\Stage.cpp">
-      <Filter>Source\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\Character.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\Object.cpp">
       <Filter>Source\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stage\StageMain.cpp">
+      <Filter>Source\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stage\StageManager.cpp">
+      <Filter>Source\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
