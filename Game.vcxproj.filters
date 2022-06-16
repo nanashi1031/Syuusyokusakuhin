@@ -37,6 +37,9 @@
     <Filter Include="Source\Stage">
       <UniqueIdentifier>{8c9ee0e1-8567-442f-bfa3-5753d46a048e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Camera">
+      <UniqueIdentifier>{8185822f-351d-416e-8d21-94c2de930659}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -138,6 +141,15 @@
     <ClInclude Include="Source\Stage\StageManager.h">
       <Filter>Source\Stage</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\Player.h">
+      <Filter>Source\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera\Camera.h">
+      <Filter>Source\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera\CameraController.h">
+      <Filter>Source\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -220,6 +232,15 @@
     </ClCompile>
     <ClCompile Include="Source\Stage\StageManager.cpp">
       <Filter>Source\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Player.cpp">
+      <Filter>Source\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera\Camera.cpp">
+      <Filter>Source\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera\CameraController.cpp">
+      <Filter>Source\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

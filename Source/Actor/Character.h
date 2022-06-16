@@ -7,6 +7,4 @@ class Character : public Object
 public:
     Character() {}
     ~Character() override {};
-
-    void Update(float elapsedTime);
 };
