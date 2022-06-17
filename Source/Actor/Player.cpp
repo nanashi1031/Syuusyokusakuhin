@@ -31,11 +31,14 @@ void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
 //デバッグ用GUI描画
 void Player::DrawDebugGUI()
 {
-    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
+    ImVec2 windowPosition = { 10, 10 };
+    ImGui::SetNextWindowPos(windowPosition, ImGuiCond_FirstUseEver);
+    ImVec2 windowSize = { 300, 300 };
+    ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
     // ウィンドウの透明度
     float alpha = 0.35f;
     ImGui::SetNextWindowBgAlpha(alpha);
+    //ImGui::SetNextTreeNodeOpen();
 
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
     {

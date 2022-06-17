@@ -1,6 +1,7 @@
 #include "CameraController.h"
 #include "Camera.h"
 #include "Input\Input.h"
+#include <imgui.h>
 
 void CameraController::Update(float elapsedTime)
 {
@@ -35,5 +36,36 @@ void CameraController::Update(float elapsedTime)
 
 void CameraController::DrawDebugGUI()
 {
+   ImVec2 windowPosition = { 10, 10 };
+   ImGui::SetNextWindowPos(windowPosition, ImGuiCond_FirstUseEver);
+   ImVec2 windowSize = { 300, 300 };
+   ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+   // ウィンドウの透明度
+    float alpha = 0.35f;
+    ImGui::SetNextWindowBgAlpha(alpha);
 
+    if (ImGui::Begin("CameraController", nullptr, ImGuiWindowFlags_None))
+    {
+        ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 120), ImGuiWindowFlags_NoTitleBar);
+        //トランスフォーム
+        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::LabelText(" ", "target (%.1f , %.1f , %.1f)", target.x, target.y, target.z);
+            //回転
+            DirectX::XMFLOAT3 a;
+            a.x = DirectX::XMConvertToDegrees(angle.x);
+            a.y = DirectX::XMConvertToDegrees(angle.y);
+            a.z = DirectX::XMConvertToDegrees(angle.z);
+            ImGui::DragFloat3("Angle", &a.x, 0.1f, 0, 360);
+            angle.x = DirectX::XMConvertToRadians(a.x);
+            angle.y = DirectX::XMConvertToRadians(a.y);
+            angle.z = DirectX::XMConvertToRadians(a.z);
+            // 回転速度
+            ImGui::SliderFloat("rollSpeed", &rollSpeed, 0.0f, 5.0f);
+            // レンジ
+            ImGui::SliderFloat("range", &range, 0.001f, 50.0f);
+        }
+        ImGui::EndChild();
+    }
+    ImGui::End();
 }
