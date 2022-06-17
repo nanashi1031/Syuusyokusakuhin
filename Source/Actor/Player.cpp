@@ -33,6 +33,9 @@ void Player::DrawDebugGUI()
 {
     ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
+    // ウィンドウの透明度
+    float alpha = 0.35f;
+    ImGui::SetNextWindowBgAlpha(alpha);
 
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
     {

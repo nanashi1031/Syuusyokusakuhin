@@ -48,7 +48,7 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 	sceneGame.Render();
 
 	// IMGUIデモウインドウ描画（IMGUI機能テスト用）
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 	// IMGUI描画
 	graphics.GetImGuiRenderer()->Render(dc);
@@ -60,8 +60,8 @@ void Framework::Render(float elapsedTime/*Elapsed seconds from last frame*/)
 // フレームレート計算
 void Framework::CalculateFrameStats()
 {
-	// Code computes the average frames per second, and also the 
-	// average time it takes to render one frame.  These stats 
+	// Code computes the average frames per second, and also the
+	// average time it takes to render one frame.  These stats
 	// are appended to the window caption bar.
 	static int frames = 0;
 	static float time_tlapsed = 0.0f;

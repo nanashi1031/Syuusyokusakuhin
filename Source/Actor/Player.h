@@ -22,16 +22,6 @@ public:
     //デバッグ用GUI描画
     void DrawDebugGUI();
 
-    // ゲッターセッター
-    const DirectX::XMFLOAT3& GetPosition() const { return this->position; }
-    void SetPosition(DirectX::XMFLOAT3& position) { this->position = position; }
-
-    const DirectX::XMFLOAT3& GetAngle() const { return this->angle; }
-    void SetAngle(DirectX::XMFLOAT3& angle) { this->angle = angle; }
-
-    const DirectX::XMFLOAT3& GetScale() const { return this->scale; }
-    void SetScale(DirectX::XMFLOAT3& scale) { this->scale; }
-
 private:
     // スティック入力値から移動ベクトルを取得
     //DirectX::XMFLOAT3 GetMoveVec();
