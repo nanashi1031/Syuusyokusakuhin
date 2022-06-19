@@ -6,14 +6,34 @@
 void CameraController::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    float ax = gamePad.GetAxisRX();
-    float ay = gamePad.GetAxisRY();
+    float padRX = gamePad.GetAxisRX();
+    float padRY = gamePad.GetAxisRY();
 
     float speed = rollSpeed * elapsedTime;
 
     // スティックの入力値に合わせてX軸とY軸を回転
-    angle.x += ay * speed;
-    angle.y += ax * speed;
+    angle.x += padRY * speed;
+    angle.y += padRX * speed;
+
+    // X軸のカメラ回転を制限
+    if (angle.x < minAngleX)
+    {
+        angle.x = minAngleX;
+    }
+    if (angle.x > maxAngleX)
+    {
+        angle.x = maxAngleX;
+    }
+
+    // X軸のカメラ回転を制限
+    if (angle.y < -DirectX::XM_PI)
+    {
+        angle.y += DirectX::XM_2PI;
+    }
+    if (angle.y > DirectX::XM_PI)
+    {
+        angle.y -= DirectX::XM_2PI;
+    }
 
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
@@ -32,6 +52,18 @@ void CameraController::Update(float elapsedTime)
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
     Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(up));
+
+    ////デュアルモニター対応
+    //    //マルチディスプレイの各種情報取得では・・・
+    //GetSystemMetrics(SM_CMONITORS);  //で、ディスプレイ台数取得
+    //GetSystemMetrics(SM_XVIRTUALSCREEN);
+    //GetSystemMetrics(SM_YVIRTUALSCREEN);
+    //GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    //GetSystemMetrics(SM_CYVIRTUALSCREEN); //で、仮想画面全体のサイズ取得
+    //MonitorFromPoint(p, MONITOR_DEFAULTTONEARESET); //で、領域に対する
+    //    //ディスプレイのハンドル取得・・・
+    //GetMonitorInfo(hMon, &mInfo);  //で、ディスプレイハンドルからサイズ
+    //    //情報を取得。
 }
 
 void CameraController::DrawDebugGUI()

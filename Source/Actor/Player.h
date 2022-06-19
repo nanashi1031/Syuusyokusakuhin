@@ -23,13 +23,23 @@ public:
     void DrawDebugGUI();
 
 private:
-    // スティック入力値から移動ベクトルを取得
-    //DirectX::XMFLOAT3 GetMoveVec();
-    void Move();
+    // 旋回処理
+    void Turn(float elapsedTime, float vx, float vz, float speed);
+
+    // 移動処理
+    void Move(float elapsedTime, float vx, float vz, float speed);
+
+    // 移動入力処理
+    void InputMove(float elapsedTime);
+
+    // ゲッター　セッター
+    DirectX::XMFLOAT3 GetMoveVec() const;
 
 private:
     Model* model = nullptr;
 
     const float k_size = 0.015f;
-    const float moveSpeed = 0.1f;
+    const float moveSpeed = 5.0f;
+
+    float turnSpeed = DirectX::XMConvertToRadians(720);
 };

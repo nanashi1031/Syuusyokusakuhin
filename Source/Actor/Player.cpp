@@ -1,6 +1,7 @@
 #include <imgui.h>
 #include "Input\Input.h"
 #include "Player.h"
+#include "Camera.h"
 
 Player::Player()
 {
@@ -16,7 +17,14 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
-    Move();
+    // 進行ベクトル取得
+    DirectX::XMFLOAT3 moveVec = GetMoveVec();
+    // 移動処理
+    float moveSpeed = this->moveSpeed * elapsedTime;
+    position.x += moveVec.x * moveSpeed;
+    position.z += moveVec.z * moveSpeed;
+
+    InputMove(elapsedTime);
 
     UpdateTransform();
 
@@ -58,23 +66,106 @@ void Player::DrawDebugGUI()
             angle.y = DirectX::XMConvertToRadians(a.y);
             angle.z = DirectX::XMConvertToRadians(a.z);
             //スケール
-            ImGui::DragFloat3("Scale", &scale.x, 0.0005, 0, 1000);
+            ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
         }
         ImGui::EndChild();
     }
     ImGui::End();
 }
 
-void Player::Move()
+// 移動入力処理
+void Player::Move(float elapsedTime, float vx, float vz, float speed)
 {
+    speed *= elapsedTime;
+    position.x += vx * speed;
+    position.z += vz * speed;
+}
+
+// 移動入力処理
+void Player::InputMove(float elapsedTime)
+{
+    // 進行ベクトル取得
+    DirectX::XMFLOAT3 moveVec = GetMoveVec();
+
+    // 移動処理
+    Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
+
+    // 旋回処理
+    Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+}
+
+// スティック入力値から移動ベクトルを取得
+DirectX::XMFLOAT3 Player::GetMoveVec() const
+{
+    // 入力情報を取得
     GamePad& gamePad = Input::Instance().GetGamePad();
-    // スティックの移動値を取得
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
+    // カメラ方向とスティックの入力値によって進行方向を計算する
+    Camera& camera = Camera::Instance();
+    const DirectX::XMFLOAT3& cameraRight = camera.GetRight();
+    const DirectX::XMFLOAT3& cameraFront = camera.GetFront();
+    // 移動ベクトルはXZ平面に水平なベクトルになるようにする
+    // カメラ右方向ベクトルをXZ単位ベクトルに変換
+    float cameraRightX = cameraRight.x;
+    float cameraRightZ = cameraRight.z;
+    float cameraRightLength = sqrtf(cameraRightX * cameraRightX + cameraRightZ * cameraRightZ);
+    if (cameraRightLength > 0.0f)
+    {
+        // 単位ベクトル化
+        cameraRightX /= cameraRightLength;
+        cameraRightZ /= cameraRightLength;
+    }
+    // カメラ前方向ベクトルをXZ単位ベクトルに変換
+    float cameraFrontX = cameraFront.x;
+    float cameraFrontZ = cameraFront.z;
+    float cameraFrontLength = sqrtf(cameraFrontX * cameraFrontX + cameraFrontZ * cameraFrontZ);
+    if (cameraFrontLength > 0.0f)
+    {
+        // 単位ベクトル化
+        cameraFrontX /= cameraFrontLength;
+        cameraFrontZ /= cameraFrontLength;
+    }
+    // スティックの水平入力値をカメラ右方向に反映し、
+    // スティックの垂直入力値をカメラ前方向に反映し、
+    // 進行ベクトルを計算する
+    DirectX::XMFLOAT3 vec;
+    vec.x = (cameraRightX * ax) + (cameraFrontX * ay);
+    vec.z = (cameraRightZ * ax) + (cameraFrontZ * ay);
+    // Y軸方向には移動しない
+    vec.y = 0.0f;
+    return vec;
+}
 
-    // 左スティックの入力情報をもとにXZ平面への移動処理
-    position.x += ax * moveSpeed;
-    position.z += ay * moveSpeed;
-
-
+// 旋回処理
+void Player::Turn(float elapsedTime, float vx, float vz, float speed)
+{
+    speed *= elapsedTime;
+    // 進行ベクトルがゼロベクトルの場合は処理する必要なし
+    float length = sqrtf(vx * vx + vz * vz);
+    if (length < 0.001f) return;
+    // 進行ベクトルを単位ベクトル化
+    vx /= length;
+    vz /= length;
+    // 自身の回転値から前方向を求める
+    float frontX = sinf(angle.y);
+    float frontZ = cosf(angle.y);
+    // 回転角を求めるため、２つの単位ベクトルの内積を計算する
+    float dot = (frontX * vx) + (frontZ * vz);
+    // 内積値は-1.0～1.0で表現されており、２つの単位ベクトルの角度が
+    // 小さいほど1.0に近づくという性質を利用して回転速度を調整する
+    float rot = 1.0f - dot;
+    if (rot > speed) rot = speed;
+    // 左右判定を行うために２つの単位ベクトルの外積を計算する
+    float cross = (frontX * vz) - (frontZ * vx);
+    // 2Dの外積値が正の場合か負の場合によって左右判定が行える
+    // 左右判定を行うことによって左右回転を選択する
+    if (cross < 0.0f)
+    {
+        angle.y += speed;
+    }
+    else
+    {
+        angle.y -= speed;
+    }
 }
