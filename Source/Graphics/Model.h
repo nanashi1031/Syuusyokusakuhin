@@ -28,6 +28,12 @@ public:
 	// 行列計算
 	void UpdateTransform(const DirectX::XMFLOAT4X4& transform);
 
+	void UpdateAnimation(float elapsedTime);
+
+	void PlayAnimation(int index, bool loop, float blendSeconds = 0.2f);
+
+	bool IsPlayAnimation() const;
+
 	// ノードリスト取得
 	const std::vector<Node>& GetNodes() const { return nodes; }
 	std::vector<Node>& GetNodes() { return nodes; }
@@ -38,4 +44,13 @@ public:
 private:
 	std::shared_ptr<ModelResource>	resource;
 	std::vector<Node>				nodes;
+
+	int currentAnimationIndex = -1;
+	float currentAnimationSeconds = 0.0f;
+
+	// アニメーション関連
+	bool animationLoopFlag = false;
+	bool animationEndFlag = false;
+	float animationBlendTime = 0.0f;
+	float animationBlendSeconds = 0.0f;
 };
