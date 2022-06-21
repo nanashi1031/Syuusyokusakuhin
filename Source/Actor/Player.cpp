@@ -7,7 +7,7 @@ Player::Player()
 {
     model = new Model("Data/Model/Player/Player.mdl");
     model->PlayAnimation(1, false);
-    scale.x = scale.y = scale.z = k_size;
+    scale.x = scale.y = scale.z = size;
 }
 
 Player::~Player()
