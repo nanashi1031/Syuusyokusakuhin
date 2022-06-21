@@ -6,7 +6,7 @@
 Player::Player()
 {
     model = new Model("Data/Model/Player/Player.mdl");
-    model->PlayAnimation(1, false);
+    model->PlayAnimation(11, true);
     scale.x = scale.y = scale.z = size;
 }
 

@@ -166,6 +166,7 @@ void Model::UpdateAnimation(float elapsedTime)
 	if (animationEndFlag)
 	{
 		animationEndFlag = false;
+		// アニメーションデータをの削除
 		currentAnimationIndex = -1;
 		return;
 	}
@@ -176,8 +177,12 @@ void Model::UpdateAnimation(float elapsedTime)
 	// 再生時間が終端時間を超えたら
 	if (currentAnimationSeconds >= animation.secondsLength && animationLoopFlag)
 	{
-		// 再生時間を巻き戻す
+		// ループがtrueなら再生時間を巻き戻す
 		currentAnimationSeconds -= animation.secondsLength;
+	}
+	else if (currentAnimationSeconds >= animation.secondsLength)
+	{
+		animationEndFlag = true;
 	}
 }
 
