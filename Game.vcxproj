@@ -115,6 +115,9 @@
     <ClInclude Include="External\imgui\imstb_textedit.h" />
     <ClInclude Include="External\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\Actor\Character.h" />
+    <ClInclude Include="Source\Actor\Enemy.h" />
+    <ClInclude Include="Source\Actor\EnemyBoss.h" />
+    <ClInclude Include="Source\Actor\EnemyManager.h" />
     <ClInclude Include="Source\Actor\Object.h" />
     <ClInclude Include="Source\Actor\Player.h" />
     <ClInclude Include="Source\Audio\Audio.h" />
@@ -151,6 +154,9 @@
     <ClCompile Include="External\imgui\imgui_draw.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Actor\Character.cpp" />
+    <ClCompile Include="Source\Actor\Enemy.cpp" />
+    <ClCompile Include="Source\Actor\EnemyBoss.cpp" />
+    <ClCompile Include="Source\Actor\EnemyManager.cpp" />
     <ClCompile Include="Source\Actor\Object.cpp" />
     <ClCompile Include="Source\Actor\Player.cpp" />
     <ClCompile Include="Source\Audio\Audio.cpp" />

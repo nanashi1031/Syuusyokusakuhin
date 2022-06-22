@@ -149,7 +149,7 @@ void Player::Turn(float elapsedTime, float vx, float vz, float speed)
         return;
 
     //進行ベクトルを単位ベクトル化
-    float v = sqrt(pow(vx, 2.0) + pow(vz, 2.0));
+    float v = sqrt(pow(vx, 2.0f) + pow(vz, 2.0f));
     vx /= v;
     vz /= v;
 
@@ -165,7 +165,7 @@ void Player::Turn(float elapsedTime, float vx, float vz, float speed)
 
     //内積値は-1.0~1.0で表現されており、2つの単位ベクトルの角度が
     //小さいほどに1.0に近づくという性質を利用して回転速度を調整する
-    float rot = 1.0 - dot;
+    float rot = 1.0f - dot;
 
     //2Dの外積値が正の場合か負の場合によって左右判定が行える
     //左右判定を行うことによって左右回転を選択する

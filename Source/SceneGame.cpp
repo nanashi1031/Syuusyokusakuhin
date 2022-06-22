@@ -1,5 +1,7 @@
 #include "Graphics/Graphics.h"
 #include "Camera.h"
+#include "EnemyManager.h"
+#include "EnemyBoss.h"
 #include "SceneGame.h"
 #include "StageMain.h"
 
@@ -28,6 +30,15 @@ void SceneGame::Initialize()
 
 	// プレイヤー
 	player = new Player();
+
+	//エネミー
+	for (int i = 0; i < 2; i++)
+	{
+		EnemyManager& enemyManager = EnemyManager::Instance();
+		EnemyBoss* boss = new EnemyBoss();
+		boss->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10.0f));
+		enemyManager.Register(boss);
+	}
 }
 
 void SceneGame::Finalize()
@@ -49,6 +60,9 @@ void SceneGame::Finalize()
 		delete player;
 		player = nullptr;
 	}
+
+	//エネミー
+	EnemyManager::Instance().Clear();
 }
 
 void SceneGame::Update(float elapsedTime)
@@ -61,7 +75,10 @@ void SceneGame::Update(float elapsedTime)
 	target.y += 0.5f;
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
+
 	player->Update(elapsedTime);
+
+	EnemyManager::Instance().Update(elapsedTime);
 }
 
 void SceneGame::Render()
@@ -95,6 +112,8 @@ void SceneGame::Render()
 		StageManager::Instance().Render(dc, shader);
 
 		player->Render(dc, shader);
+
+		EnemyManager::Instance().Render(dc, shader);
 
 		shader->End(dc);
 	}
