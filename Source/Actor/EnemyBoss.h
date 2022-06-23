@@ -10,8 +10,9 @@ public:
     ~EnemyBoss() override;
 
     void Update(float elapsedTime) override;
-
     void Render(ID3D11DeviceContext* dc, Shader* shader) override;
+
+    void DrawDebugPrimitive() override;
 
 private:
     Model* model = nullptr;

@@ -19,16 +19,13 @@ public:
 
     void Update(float elapsedTime);
     void Render(ID3D11DeviceContext* dc, Shader* shader);
+    void DrawDebugPrimitive();
+
     //デバッグ用GUI描画
     void DrawDebugGUI();
 
+
 private:
-    // 旋回処理
-    void Turn(float elapsedTime, float vx, float vz, float speed);
-
-    // 移動処理
-    void Move(float elapsedTime, float vx, float vz, float speed);
-
     // 移動入力処理
     void InputMove(float elapsedTime);
 
@@ -37,6 +34,8 @@ private:
 
 private:
     Model* model = nullptr;
+
+
 
     const float size = 0.015f;
     const float moveSpeed = 5.0f;

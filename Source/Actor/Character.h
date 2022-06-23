@@ -6,7 +6,7 @@ class Character : public Object
 {
 public:
     Character() {}
-    virtual ~Character() override {};
+    virtual ~Character() override {}
 
     // ゲッター、セッター
     const float GetRadius() const { return this->radius; }
@@ -15,6 +15,10 @@ public:
 
     const float GetHealth() const { return this->health; }
     void SetHealth(float f) { this->health = f; }
+
+protected:
+    void Move(float elapsedTime, float vx, float vz, float speed);
+    void Turn(float elapsedTime, float vx, float vz, float speed);
 
 protected:
     float radius = 0.0f;

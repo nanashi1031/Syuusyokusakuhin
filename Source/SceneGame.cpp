@@ -125,6 +125,10 @@ void SceneGame::Render()
 
 		// デバッグレンダラ描画実行
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
+
+		player->DrawDebugPrimitive();
+
+		EnemyManager::Instance().DrawDebugPrimitive();
 	}
 
 	// 2Dスプライト描画
@@ -134,7 +138,27 @@ void SceneGame::Render()
 
 	// 2DデバッグGUI描画
 	{
-		player->DrawDebugGUI();
-		cameraController->DrawDebugGUI();
+#if !DEBUG
+		float alpha = 0.35f;
+		ImGui::SetNextWindowBgAlpha(alpha);
+
+		ImGui::Begin("ImGuiManager");
+		{
+			//bool imguiPlayer = false;
+			//if (ImGui::Button("Player"))
+			//{
+			//	imguiPlayer = true;
+			//}
+			//if (imguiPlayer)
+			//{
+
+			//}
+			player->DrawDebugGUI();
+			cameraController->DrawDebugGUI();
+		}
+
+
+		ImGui::End();
+#endif
 	}
 }
