@@ -120,6 +120,9 @@
     <ClInclude Include="Source\Actor\EnemyManager.h" />
     <ClInclude Include="Source\Actor\Object.h" />
     <ClInclude Include="Source\Actor\Player.h" />
+    <ClInclude Include="Source\Actor\StateBase.h" />
+    <ClInclude Include="Source\Actor\StateDerived.h" />
+    <ClInclude Include="Source\Actor\StateMachine.h" />
     <ClInclude Include="Source\Audio\Audio.h" />
     <ClInclude Include="Source\Audio\AudioResource.h" />
     <ClInclude Include="Source\Audio\AudioSource.h" />
@@ -159,6 +162,8 @@
     <ClCompile Include="Source\Actor\EnemyManager.cpp" />
     <ClCompile Include="Source\Actor\Object.cpp" />
     <ClCompile Include="Source\Actor\Player.cpp" />
+    <ClCompile Include="Source\Actor\StateDerived.cpp" />
+    <ClCompile Include="Source\Actor\StateMachine.cpp" />
     <ClCompile Include="Source\Audio\Audio.cpp" />
     <ClCompile Include="Source\Audio\AudioResource.cpp" />
     <ClCompile Include="Source\Audio\AudioSource.cpp" />
