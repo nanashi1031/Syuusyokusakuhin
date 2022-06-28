@@ -1,12 +1,14 @@
 #pragma once
 #include <vector>
-#include "Character.h"
+class EnemySlime;
 
 class State
 {
 public:
-	template<typename T>
-	State(T* character) :owner(character) {}
+
+	template<class T>
+	//EnemySlimeにしか対応してないのでテンプレート化する
+	State(T* enemy) :owner(enemy) {}
 	virtual ~State() {}
 
 	// ステートに入った時のメソッド
@@ -15,7 +17,34 @@ public:
 	virtual void Execute(float elapsedTime) = 0;
 	// ステートから出ていくときのメソッド
 	virtual void Exit() = 0;
+protected:
+	EnemySlime* owner;
+};
+
+class HierarchicalState : public State
+{
+public :
+	HierarchicalState(EnemySlime* enemy) : State((enemy)) {}
+	virtual ~HierarchicalState() {}
+
+	//ステートに入った時のメソッド
+	virtual void Enter() = 0;
+	//ステートで実行するメソッド
+	virtual void Execute(float elapsedTime) = 0;
+	//ステートから出ていくときのメソッド
+	virtual void Exit() = 0;
+	//サブステート登録
+	virtual void SetSubState(int newState);
+	//サブステート変更
+	virtual void ChangeSubState(int newState);
+
+	virtual void RegisterSubState(State* state);
+
+	virtual State* GetSubState() { return subState; }
+
+	virtual int GetSubStateIndex();
 
 protected:
-	Character* owner;
+	std::vector<State*> subStatePool;
+	State* subState = nullptr;
 };

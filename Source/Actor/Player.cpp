@@ -25,7 +25,6 @@ void Player::Update(float elapsedTime)
 {
     // 進行ベクトル取得
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
-    // 移動処理
     float moveSpeed = this->moveSpeed * elapsedTime;
     position.x += moveVec.x * moveSpeed;
     position.z += moveVec.z * moveSpeed;
@@ -51,7 +50,6 @@ void Player::DrawDebugPrimitive()
     debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
 }
 
-//デバッグ用GUI描画
 void Player::DrawDebugGUI()
 {
     ImVec2 windowPosition = { 10, 10 };
@@ -69,9 +67,8 @@ void Player::DrawDebugGUI()
         //トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            //位置
             ImGui::DragFloat3("Postion", &position.x, 0.1f);
-            //回転
+
             DirectX::XMFLOAT3 a;
             a.x = DirectX::XMConvertToDegrees(angle.x);
             a.y = DirectX::XMConvertToDegrees(angle.y);
@@ -80,7 +77,7 @@ void Player::DrawDebugGUI()
             angle.x = DirectX::XMConvertToRadians(a.x);
             angle.y = DirectX::XMConvertToRadians(a.y);
             angle.z = DirectX::XMConvertToRadians(a.z);
-            //スケール
+
             ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
         }
         ImGui::EndChild();
@@ -91,20 +88,16 @@ void Player::DrawDebugGUI()
 // 移動入力処理
 void Player::InputMove(float elapsedTime)
 {
-    // 進行ベクトル取得
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    // 移動処理
     Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
 
-    // 旋回処理
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 }
 
 // スティック入力値から移動ベクトルを取得
 DirectX::XMFLOAT3 Player::GetMoveVec() const
 {
-    // 入力情報を取得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
@@ -139,7 +132,7 @@ DirectX::XMFLOAT3 Player::GetMoveVec() const
     DirectX::XMFLOAT3 vec;
     vec.x = (cameraRightX * ax) + (cameraFrontX * ay);
     vec.z = (cameraRightZ * ax) + (cameraFrontZ * ay);
-    // Y軸方向には移動しない
+
     vec.y = 0.0f;
     return vec;
 }

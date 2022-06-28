@@ -35,8 +35,6 @@ private:
 private:
     Model* model = nullptr;
 
-
-
     const float size = 0.015f;
     const float moveSpeed = 5.0f;
 

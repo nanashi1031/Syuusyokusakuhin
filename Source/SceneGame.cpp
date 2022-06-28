@@ -1,14 +1,16 @@
 #include "Graphics/Graphics.h"
 #include "Camera.h"
 #include "EnemyManager.h"
+#include "EnemySlime.h"
 #include "EnemyBoss.h"
+#include "PlayerManager.h"
 #include "SceneGame.h"
 #include "StageMain.h"
 
 void SceneGame::Initialize()
 {
 	// ステージ初期化
-	// スマートポインタのほうがいいかも？
+	// スマートポインタのほうがいい
 	StageManager& stageManager = StageManager::Instance();
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
@@ -29,7 +31,9 @@ void SceneGame::Initialize()
 	cameraController = new CameraController();
 
 	// プレイヤー
-	player = new Player();
+	PlayerManager& playerManager = PlayerManager::Instance();
+	Player* player = new Player;
+	playerManager.Register(player);
 
 	//エネミー
 	for (int i = 0; i < 2; i++)
@@ -39,6 +43,11 @@ void SceneGame::Initialize()
 		boss->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10.0f));
 		enemyManager.Register(boss);
 	}
+
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	EnemySlime* slime = new EnemySlime;
+	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+	enemyManager.Register(slime);
 }
 
 void SceneGame::Finalize()
@@ -55,11 +64,7 @@ void SceneGame::Finalize()
 	}
 
 	//プレイヤー
-	if (player != nullptr)
-	{
-		delete player;
-		player = nullptr;
-	}
+	PlayerManager::Instance().Clear();
 
 	//エネミー
 	EnemyManager::Instance().Clear();
@@ -70,13 +75,13 @@ void SceneGame::Update(float elapsedTime)
 	StageManager::Instance().Update(elapsedTime);
 
 	cameraController->Update(elapsedTime);
-	DirectX::XMFLOAT3 target = player->GetPosition();
+	DirectX::XMFLOAT3 target = PlayerManager::Instance().GetPlayer(PlayerManager::Instance().GetplayerOneIndex())->GetPosition();
 	// 腰当たりに設定
 	target.y += 0.5f;
 	cameraController->SetTarget(target);
 	cameraController->Update(elapsedTime);
 
-	player->Update(elapsedTime);
+	PlayerManager::Instance().Update(elapsedTime);
 
 	EnemyManager::Instance().Update(elapsedTime);
 }
@@ -111,7 +116,7 @@ void SceneGame::Render()
 
 		StageManager::Instance().Render(dc, shader);
 
-		player->Render(dc, shader);
+		PlayerManager::Instance().Render(dc, shader);
 
 		EnemyManager::Instance().Render(dc, shader);
 
@@ -126,7 +131,7 @@ void SceneGame::Render()
 		// デバッグレンダラ描画実行
 		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
 
-		player->DrawDebugPrimitive();
+		PlayerManager::Instance().DrawDebugPrimitive();
 
 		EnemyManager::Instance().DrawDebugPrimitive();
 	}
@@ -153,10 +158,10 @@ void SceneGame::Render()
 			//{
 
 			//}
-			player->DrawDebugGUI();
-			cameraController->DrawDebugGUI();
 		}
-
+		PlayerManager::Instance().DrawDebugGUI();
+		cameraController->DrawDebugGUI();
+		EnemyManager::Instance().DrawDebugGUI();
 
 		ImGui::End();
 #endif

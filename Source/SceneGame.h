@@ -1,7 +1,6 @@
 #pragma once
 #include"Graphics.h"
 #include "StageManager.h"
-#include "Player.h"
 #include "CameraController.h"
 
 // ƒQ[ƒ€ƒV[ƒ“
@@ -24,6 +23,5 @@ public:
 	void Render();
 
 private:
-	Player* player = nullptr;
 	CameraController* cameraController = nullptr;
 };
