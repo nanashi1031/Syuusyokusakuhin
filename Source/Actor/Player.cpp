@@ -64,7 +64,7 @@ void Player::DrawDebugGUI()
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
     {
         ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 120), ImGuiWindowFlags_NoTitleBar);
-        //トランスフォーム
+
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::DragFloat3("Postion", &position.x, 0.1f);

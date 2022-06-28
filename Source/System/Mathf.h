@@ -1,9 +1,23 @@
 #pragma once
+#include <DirectXMath.h>
 
-// •‚“®¬”Zp
+// Float‚ÌŒvZ
 class Mathf
 {
 public:
 	// w’è”ÍˆÍ‚Ìƒ‰ƒ“ƒ_ƒ€’l‚ğŒvZ‚·‚é
 	static float RandomRange(float min, float max);
+
+	// DirectX::XMFLOAT3‚Ì˜a
+	static DirectX::XMFLOAT3 AddFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
+
+	// DirectX::XMFLOAT3‚Ì·
+	static DirectX::XMFLOAT3 SubtractFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
+
+	// DirectX::XMFLOAT3‚Ìæ
+	static DirectX::XMFLOAT3 MultiplyFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
+
+	// DirectX::XMFLOAT3‚Ì¤
+	static DirectX::XMFLOAT3 DivideFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
+
 };

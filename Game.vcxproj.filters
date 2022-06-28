@@ -180,6 +180,9 @@
     <ClInclude Include="Source\Actor\PlayerManager.h">
       <Filter>Source\Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\Collision.h">
+      <Filter>Source\Actor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -297,6 +300,9 @@
       <Filter>Source\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\PlayerManager.cpp">
+      <Filter>Source\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Collision.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
   </ItemGroup>

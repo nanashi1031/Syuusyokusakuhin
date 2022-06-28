@@ -4,8 +4,47 @@
 float Mathf::RandomRange(float min, float max)
 {
 	// 0.0～1.0の間までのランダム値
-	float value = static_cast<float>(rand()) / RAND_MAX;
+	float num = static_cast<float>(rand()) / RAND_MAX;
 
-	// min～maxまでのランダム値に変換
-	return min + (max - min) * value;
+	return min + (max - min) * num;
+}
+
+DirectX::XMFLOAT3 Mathf::AddFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x + float3B.x;
+	outFloat3.y = float3A.y + float3B.y;
+	outFloat3.z = float3A.z + float3B.z;
+
+	return outFloat3;
+}
+
+DirectX::XMFLOAT3 Mathf::SubtractFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x - float3B.x;
+	outFloat3.y = float3A.y - float3B.y;
+	outFloat3.z = float3A.z - float3B.z;
+
+	return outFloat3;
+}
+
+DirectX::XMFLOAT3 Mathf::MultiplyFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x * float3B.x;
+	outFloat3.y = float3A.y * float3B.y;
+	outFloat3.z = float3A.z * float3B.z;
+
+	return outFloat3;
+}
+
+DirectX::XMFLOAT3 Mathf::DivideFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x / float3B.x;
+	outFloat3.y = float3A.y / float3B.y;
+	outFloat3.z = float3A.z / float3B.z;
+
+	return outFloat3;
 }

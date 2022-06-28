@@ -20,14 +20,12 @@ public:
     void Update(float elapsedTime);
     void Render(ID3D11DeviceContext* dc, Shader* shader);
     void DrawDebugPrimitive();
-
-    //デバッグ用GUI描画
     void DrawDebugGUI();
 
-
 private:
-    // 移動入力処理
     void InputMove(float elapsedTime);
+
+    bool InputAttack();
 
     // ゲッター　セッター
     DirectX::XMFLOAT3 GetMoveVec() const;

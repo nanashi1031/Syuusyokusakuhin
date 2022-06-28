@@ -34,11 +34,12 @@ public:
 
 	bool IsPlayAnimation() const;
 
+	Node* FindNode(const char* name);
+
+	// ゲッター　セッター
 	// ノードリスト取得
 	const std::vector<Node>& GetNodes() const { return nodes; }
-	std::vector<Node>& GetNodes() { return nodes; }
 
-	// リソース取得
 	const ModelResource* GetResource() const { return resource.get(); }
 
 private:

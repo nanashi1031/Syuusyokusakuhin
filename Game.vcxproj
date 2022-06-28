@@ -115,6 +115,7 @@
     <ClInclude Include="External\imgui\imstb_textedit.h" />
     <ClInclude Include="External\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\Actor\Character.h" />
+    <ClInclude Include="Source\Actor\Collision.h" />
     <ClInclude Include="Source\Actor\Enemy.h" />
     <ClInclude Include="Source\Actor\EnemyBoss.h" />
     <ClInclude Include="Source\Actor\EnemyManager.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="External\imgui\imgui_draw.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Actor\Character.cpp" />
+    <ClCompile Include="Source\Actor\Collision.cpp" />
     <ClCompile Include="Source\Actor\Enemy.cpp" />
     <ClCompile Include="Source\Actor\EnemyBoss.cpp" />
     <ClCompile Include="Source\Actor\EnemyManager.cpp" />

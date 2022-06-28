@@ -1,7 +1,6 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/Model.h"
 
-// コンストラクタ
 Model::Model(const char* filename)
 {
 	// リソース読み込み
@@ -65,10 +64,8 @@ void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform)
 	}
 }
 
-// アニメーション更新処理
 void Model::UpdateAnimation(float elapsedTime)
 {
-	// 再生中でないなら処理しない
 	if (!IsPlayAnimation()) return;
 
 	// ブレンド率の計算
@@ -84,16 +81,13 @@ void Model::UpdateAnimation(float elapsedTime)
 		blendRate *= blendRate;
 	}
 
-	// 指定のアニメーションデータを取得
 	const std::vector<ModelResource::Animation>& animations = resource->GetAnimations();
 	const ModelResource::Animation& animation = animations.at(currentAnimationIndex);
 
-	// アニメーションデータからキーフレームデータリストを取得
 	const std::vector<ModelResource::Keyframe>& keyframes = animation.keyframes;
 	int keyCount = static_cast<int>(keyframes.size());
 	for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex)
 	{
-		// 現在の時間がどのキーフレームの間にいるか判定する
 		const ModelResource::Keyframe& keyframe0 = keyframes.at(keyIndex);
 		const ModelResource::Keyframe& keyframe1 = keyframes.at(keyIndex + 1);
 		if (currentAnimationSeconds >= keyframe0.seconds &&
@@ -124,7 +118,6 @@ void Model::UpdateAnimation(float elapsedTime)
 				// ブレンド補完処理
 				if (blendRate < 1.0f)
 				{
-					// 現在の姿勢と次のキーフレームとの姿勢の補完
 					DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&node.scale);
 					DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scale);
 					DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&node.rotate);
@@ -186,7 +179,6 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 }
 
-// アニメーション再生
 void Model::PlayAnimation(int index, bool loop, float blendSeconds)
 {
 	currentAnimationIndex = index;
@@ -197,10 +189,23 @@ void Model::PlayAnimation(int index, bool loop, float blendSeconds)
 	animationBlendSeconds = blendSeconds;
 }
 
-// アニメーション再生中か
 bool Model::IsPlayAnimation() const
 {
 	if (currentAnimationIndex < 0) return false;
 	if (currentAnimationIndex >= resource->GetAnimations().size()) return false;
 	return true;
+}
+
+Model::Node* Model::FindNode(const char* name)
+{
+	for (Node& node : nodes)
+	{
+		// 比べた名前が同じなら
+		if (::strcmp(node.name, name) == 0)
+		{
+			return &node;
+		}
+	}
+
+	return nullptr;
 }
