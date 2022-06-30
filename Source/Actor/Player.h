@@ -25,7 +25,11 @@ public:
 private:
     void InputMove(float elapsedTime);
 
-    bool InputAttack();
+    void InputAttack(float elapedTime);
+
+    void CollisionPlayerVsEnemies();
+
+    void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
     // ゲッター　セッター
     DirectX::XMFLOAT3 GetMoveVec() const;

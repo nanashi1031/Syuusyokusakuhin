@@ -1,13 +1,15 @@
 #include <imgui.h>
 #include "Input\Input.h"
 #include "Graphics/Graphics.h"
-#include "Player.h"
 #include "Camera.h"
+#include "Collision.h"
+#include "Player.h"
+#include "EnemyManager.h"
 
 Player::Player()
 {
     model = new Model("Data/Model/Player/Player.mdl");
-    model->PlayAnimation(1, true);
+    model->PlayAnimation(40, true);
     scale.x = scale.y = scale.z = size;
 
     radius = 0.5f;
@@ -31,58 +33,17 @@ void Player::Update(float elapsedTime)
 
     InputMove(elapsedTime);
 
+    InputAttack(elapsedTime);
+
+    CollisionPlayerVsEnemies();
+
+    CollisionNodeVsEnemies("mixamorig:Sword_joint", 0.5f);
+
     UpdateTransform();
 
     model->UpdateAnimation(elapsedTime);
 
     model->UpdateTransform(transform);
-}
-
-void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
-{
-    shader->Draw(dc, model);
-}
-
-void Player::DrawDebugPrimitive()
-{
-    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
-
-    debugRenderer->DrawCylinder(position, radius, height, DirectX::XMFLOAT4(0, 0, 0, 1));
-}
-
-void Player::DrawDebugGUI()
-{
-    ImVec2 windowPosition = { 10, 10 };
-    ImGui::SetNextWindowPos(windowPosition, ImGuiCond_FirstUseEver);
-    ImVec2 windowSize = { 300, 300 };
-    ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
-    // ウィンドウの透明度
-    float alpha = 0.35f;
-    ImGui::SetNextWindowBgAlpha(alpha);
-    //ImGui::SetNextTreeNodeOpen();
-
-    if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
-    {
-        ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 120), ImGuiWindowFlags_NoTitleBar);
-
-        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            ImGui::DragFloat3("Postion", &position.x, 0.1f);
-
-            DirectX::XMFLOAT3 a;
-            a.x = DirectX::XMConvertToDegrees(angle.x);
-            a.y = DirectX::XMConvertToDegrees(angle.y);
-            a.z = DirectX::XMConvertToDegrees(angle.z);
-            ImGui::DragFloat3("Angle", &a.x, 0.1f, 0, 360);
-            angle.x = DirectX::XMConvertToRadians(a.x);
-            angle.y = DirectX::XMConvertToRadians(a.y);
-            angle.z = DirectX::XMConvertToRadians(a.z);
-
-            ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
-        }
-        ImGui::EndChild();
-    }
-    ImGui::End();
 }
 
 // 移動入力処理
@@ -135,4 +96,115 @@ DirectX::XMFLOAT3 Player::GetMoveVec() const
 
     vec.y = 0.0f;
     return vec;
+}
+
+void Player::InputAttack(float elapsedTime)
+{
+    float SwordRadius = 0.5f;
+}
+
+void Player::CollisionPlayerVsEnemies()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; i++)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        DirectX::XMFLOAT3 outPosition;
+        if (Collision::IntersectSphereVsSpherer(
+            position, radius, enemy->GetPosition(),
+            enemy->GetRadius(),
+            outPosition))
+        {
+            enemy->SetPosition(outPosition);
+        }
+    }
+}
+
+void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
+{
+    Model::Node* node = model->FindNode(nodeName);
+
+    DirectX::XMFLOAT3 nodePosition;
+    nodePosition.x = node->worldTransform._41;
+    nodePosition.y = node->worldTransform._42;
+    nodePosition.z = node->worldTransform._43;
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; i++)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        DirectX::XMFLOAT3 outPosition;
+        if (Collision::IntersectSphereVsSpherer(
+            nodePosition, nodeRadius, enemy->GetPosition(),
+            enemy->GetRadius(),
+            outPosition))
+        {
+            enemy->SetPosition({ outPosition.x, 0, outPosition.z });
+        }
+    }
+}
+
+void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
+{
+    shader->Draw(dc, model);
+}
+
+void Player::DrawDebugPrimitive()
+{
+    DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
+
+    debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 0, 1));
+
+    Model::Node* node = model->FindNode("mixamorig:Sword_joint");
+
+    DirectX::XMFLOAT3 nodePosition;
+    nodePosition.x = node->worldTransform._41;
+    nodePosition.y = node->worldTransform._42;
+    nodePosition.z = node->worldTransform._43;
+
+    debugRenderer->DrawSphere(nodePosition, 0.5f, DirectX::XMFLOAT4(1, 0, 0, 1));
+}
+
+void Player::DrawDebugGUI()
+{
+    ImVec2 windowPosition = { 10, 10 };
+    ImGui::SetNextWindowPos(windowPosition, ImGuiCond_FirstUseEver);
+    ImVec2 windowSize = { 300, 300 };
+    ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+    // ウィンドウの透明度
+    float alpha = 0.35f;
+    ImGui::SetNextWindowBgAlpha(alpha);
+    //ImGui::SetNextTreeNodeOpen();
+
+    if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
+    {
+       // ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 120), ImGuiWindowFlags_NoTitleBar);
+
+        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::DragFloat3("Postion", &position.x, 0.1f);
+
+            DirectX::XMFLOAT3 a;
+            a.x = DirectX::XMConvertToDegrees(angle.x);
+            a.y = DirectX::XMConvertToDegrees(angle.y);
+            a.z = DirectX::XMConvertToDegrees(angle.z);
+            ImGui::DragFloat3("Angle", &a.x, 0.1f, 0, 360);
+            angle.x = DirectX::XMConvertToRadians(a.x);
+            angle.y = DirectX::XMConvertToRadians(a.y);
+            angle.z = DirectX::XMConvertToRadians(a.z);
+
+            ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
+        }
+        if (ImGui::CollapsingHeader(u8"名前決まってない", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::DragFloat("Radius", &radius, 0.0005f, 0, 5);
+            ImGui::DragFloat("Height", &height, 0.0005f, 0, 5);
+        }
+        //ImGui::EndChild();
+    }
+    ImGui::End();
 }

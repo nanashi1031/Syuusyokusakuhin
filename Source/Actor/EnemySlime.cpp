@@ -37,9 +37,6 @@ EnemySlime::~EnemySlime()
 
 void EnemySlime::Update(float elapsedTime)
 {
-	// TODO 04
-	// 状態に応じた行動関数を実行するようにswitch文で制御しなさい。
-
 	// TODO 02_05 switch文によるFSMをStateMachineクラスを使用したものに書き換える
 	stateMachine->Update(elapsedTime);
 

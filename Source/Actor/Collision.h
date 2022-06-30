@@ -2,12 +2,15 @@
 
 #include "Graphics.h"
 
+// ƒRƒŠƒWƒ‡ƒ“
 class Collision
 {
-    bool IntersectSphereVsSpherer(
-        DirectX::XMFLOAT3 positionA,
-        float rangeA,
-        DirectX::XMFLOAT3 positionB,
-        float rangeB,
+public:
+    // ‹…‚Æ‹…‚Ì“–‚½‚è”»’è
+    static bool IntersectSphereVsSpherer(
+        const DirectX::XMFLOAT3 positionA,
+        const float radiusA,
+        const DirectX::XMFLOAT3 positionB,
+        const float radiusB,
         DirectX::XMFLOAT3& outPosition);
 };

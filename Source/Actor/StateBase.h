@@ -8,7 +8,7 @@ public:
 
 	template<class T>
 	//EnemySlimeにしか対応してないのでテンプレート化する
-	State(T* enemy) :owner(enemy) {}
+	State(T* t) :owner(t) {}
 	virtual ~State() {}
 
 	// ステートに入った時のメソッド
@@ -24,7 +24,8 @@ protected:
 class HierarchicalState : public State
 {
 public :
-	HierarchicalState(EnemySlime* enemy) : State((enemy)) {}
+	template<class T>
+	HierarchicalState(T* t) : State((t)) {}
 	virtual ~HierarchicalState() {}
 
 	//ステートに入った時のメソッド

@@ -48,3 +48,13 @@ DirectX::XMFLOAT3 Mathf::DivideFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOA
 
 	return outFloat3;
 }
+
+DirectX::XMFLOAT3 Mathf::SqFloat3(DirectX::XMFLOAT3 float3A)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x * float3A.x;
+	outFloat3.y = float3A.y * float3A.y;
+	outFloat3.z = float3A.z * float3A.z;
+
+	return outFloat3;
+}
