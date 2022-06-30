@@ -157,7 +157,7 @@ void Player::DrawDebugPrimitive()
 {
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
-    debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 0, 1));
+    debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 1, 1));
 
     Model::Node* node = model->FindNode("mixamorig:Sword_joint");
 
@@ -199,7 +199,7 @@ void Player::DrawDebugGUI()
 
             ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
         }
-        if (ImGui::CollapsingHeader(u8"–¼‘OŒˆ‚Ü‚Á‚Ä‚È‚¢", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::CollapsingHeader("Collision", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::DragFloat("Radius", &radius, 0.0005f, 0, 5);
             ImGui::DragFloat("Height", &height, 0.0005f, 0, 5);

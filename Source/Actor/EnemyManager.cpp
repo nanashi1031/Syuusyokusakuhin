@@ -1,4 +1,5 @@
 #include "EnemyManager.h"
+#include "Collision.h"
 
 //エネミー全削除
 void EnemyManager::Clear()
@@ -16,6 +17,8 @@ void EnemyManager::Update(float elapsedTime)
     {
         enemy->Update(elapsedTime);
     }
+
+    CollisionEnemyVsEnemies();
 
     //破棄処理
     //※projectilesの範囲for文の中でeraser()すると不具合が発生してしまうため、
@@ -36,6 +39,34 @@ void EnemyManager::Update(float elapsedTime)
     }
     //破棄リストをクリア
     removes.clear();
+}
+
+void EnemyManager::CollisionEnemyVsEnemies()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    //すべての敵と総当たりで衝突処理
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemyA = enemyManager.GetEnemy(i);
+
+        for (int j = 0; j < enemyCount; ++j)
+        {
+            Enemy* enemyB = enemyManager.GetEnemy(j);
+
+            //衝突処理
+            DirectX::XMFLOAT3 outPosition;
+            if (Collision::IntersectSphereVsSpherer(
+                enemyA->GetPosition(), enemyA->GetRadius(),
+                enemyB->GetPosition(), enemyB->GetRadius(),
+                outPosition))
+            {
+                //押し出し後の位置設定
+                enemyB->SetPosition(outPosition);
+            }
+        }
+    }
 }
 
 //描画処理

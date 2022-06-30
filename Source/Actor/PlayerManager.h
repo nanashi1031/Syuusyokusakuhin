@@ -10,8 +10,6 @@ private:
     PlayerManager() {}
     ~PlayerManager() {}
 
-    void CollisionPlayerVsEnemies();
-
 public:
     static PlayerManager& Instance()
     {
@@ -42,5 +40,5 @@ private:
     std::vector<Player*> players;
     std::vector<Player*> removes;
 
-    int playerOneIndex = 0;
+    const int playerOneIndex = 0;
 };
