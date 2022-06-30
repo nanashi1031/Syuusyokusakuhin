@@ -2,6 +2,9 @@
 #include "Camera.h"
 #include "Input\Input.h"
 #include <imgui.h>
+#include "PlayerManager.h"
+#include "EnemyManager.h"
+#include "Mathf.h"
 
 void CameraController::Update(float elapsedTime)
 {
@@ -44,10 +47,10 @@ void CameraController::Update(float elapsedTime)
     DirectX::XMStoreFloat3(&front, Front);
 
     // 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
-    DirectX::XMFLOAT3 eye;
-    eye.x = target.x - front.x * range;
-    eye.y = target.y - front.y * range;
-    eye.z = target.z - front.z * range;
+    DirectX::XMFLOAT3 eye  = LockOn();
+    //eye.x = target.x - front.x * range;
+    //eye.y = target.y - front.y * range;
+    //eye.z = target.z - front.z * range;
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
@@ -64,6 +67,39 @@ void CameraController::Update(float elapsedTime)
     //    //ディスプレイのハンドル取得・・・
     //GetMonitorInfo(hMon, &mInfo);  //で、ディスプレイハンドルからサイズ
     //    //情報を取得。
+}
+
+DirectX::XMFLOAT3 CameraController::LockOn()
+{
+    // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
+
+    PlayerManager& playerManager = PlayerManager::Instance();
+    Player* playerOne = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    int enemyCount = enemyManager.GetEnemyCount();
+
+    DirectX::XMFLOAT3 pos = {0, 0, 0};
+    for (int i = 0; i < enemyCount; i++)
+    {
+        DirectX::XMFLOAT3 length =
+            Mathf::SubtractFloat3(enemyManager.GetEnemy(i)->GetPosition(), playerOne->GetPosition());
+        float sq = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+        DirectX::XMFLOAT3 unitvec_player_to_target = DirectX::XMFLOAT3(length.x / sq, length.y / sq, length.z / sq);
+
+        //注視点取得
+        DirectX::XMFLOAT3 target1 = DirectX::XMFLOAT3(
+            enemyManager.GetEnemy(i)->GetPosition().x + unitvec_player_to_target.x,
+            enemyManager.GetEnemy(i)->GetPosition().y + unitvec_player_to_target.y,
+            enemyManager.GetEnemy(i)->GetPosition().z + unitvec_player_to_target.z);
+
+        //カメラ位置取得
+        pos = DirectX::XMFLOAT3(
+            playerOne->GetPosition().x - unitvec_player_to_target.x * range, 1.0f,
+            playerOne->GetPosition().z - unitvec_player_to_target.z * range);
+    }
+
+    return pos;
 }
 
 void CameraController::DrawDebugGUI()

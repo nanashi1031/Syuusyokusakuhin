@@ -10,8 +10,9 @@ public:
     ~CameraController() {}
 
     void Update(float elapsedTime);
-
     void DrawDebugGUI();
+
+    DirectX::XMFLOAT3 LockOn();
 
     void SetTarget(const DirectX::XMFLOAT3& target) { this->target = target; }
 
