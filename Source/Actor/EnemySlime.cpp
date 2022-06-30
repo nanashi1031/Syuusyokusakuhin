@@ -77,6 +77,9 @@ void EnemySlime::DrawDebugPrimitive()
 
 	// 索敵範囲をデバッグ円柱描画
 	debugRenderer->DrawCylinder(position, searchRange, 1.0f, DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+
+	//衝突判定用のデバッグ円柱を描画
+	debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 1, 1));
 }
 
 // 縄張り設定

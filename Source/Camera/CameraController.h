@@ -24,4 +24,6 @@ private:
 
     float maxAngleX = DirectX::XMConvertToRadians(45);
     float minAngleX = DirectX::XMConvertToRadians(-45);
+
+    bool lockOnFlag = false;
 };
