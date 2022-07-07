@@ -48,6 +48,8 @@ void SceneGame::Initialize()
 	EnemySlime* slime = new EnemySlime;
 	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
 	enemyManager.Register(slime);
+
+	targetRing = std::make_unique<Sprite>("Data/Sprite/Ring.png");
 }
 
 void SceneGame::Finalize()
@@ -138,7 +140,8 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-
+		if (cameraController->GetTagetIndex() >= 0)
+			RenderLockOn(dc, rc.view, rc.projection);
 	}
 
 	// 2DデバッグGUI描画
@@ -166,4 +169,53 @@ void SceneGame::Render()
 		ImGui::End();
 #endif
 	}
+}
+
+void SceneGame::RenderLockOn(
+	ID3D11DeviceContext* dc,
+	const DirectX::XMFLOAT4X4& view,
+	const DirectX::XMFLOAT4X4& projection)
+{
+	Enemy* enemy = EnemyManager::Instance().GetEnemy(cameraController->GetTagetIndex());
+
+	//ビューポート
+	D3D11_VIEWPORT viewport;
+	UINT numVieports = 1;
+	dc->RSGetViewports(&numVieports, &viewport);
+	//変換行列
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&view);
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&projection);
+	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
+	// エネミーの頭上のワールド座標
+	DirectX::XMFLOAT3 worldPosition = enemy->GetPosition();
+	worldPosition.y += enemy->GetHeight();
+	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+	// ワールド座標からスクリーン座標へ変換
+	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+		WorldPosition,			//ワールド座標
+		viewport.TopLeftX,		//ビューポート左上X位置
+		viewport.TopLeftY,		//ビューポート左上Y位置
+		viewport.Width,			//ビューポート幅
+		viewport.Height,		//ビューポート高さ
+		viewport.MinDepth,		//深度幅の範囲を表す最小値
+		viewport.MaxDepth,		//深度幅の範囲を表す最大値
+		Projection,				//プロジェクション行列
+		View,					//ビュー行列
+		World					//ワールド行列
+	);
+
+	// スクリーン座標
+	DirectX::XMFLOAT2 screenPosition;
+	DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+	float textureWidth = static_cast<float>(targetRing->GetTextureWidth());
+	float textureHeight = static_cast<float>(targetRing->GetTextureHeight());
+	targetRing->Render(
+		dc,
+		screenPosition.x - (textureWidth / 3 / 2), screenPosition.y - (textureHeight / 3 / 2),
+		textureWidth / 3, textureHeight / 3,
+		0, 0, textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1);
 }
