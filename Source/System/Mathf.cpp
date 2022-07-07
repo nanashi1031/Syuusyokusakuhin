@@ -1,7 +1,13 @@
 #include <stdlib.h>
 #include "Mathf.h"
 
-float Mathf::RandomRange(float min, float max)
+// üŒ`•âŠ®
+float Mathf::Lerp(float a, float b, float t)
+{
+	return a * (1.0f - t) + (b * t);
+}
+
+float Mathf::RandomRangeFloat(float min, float max)
 {
 	// 0.0`1.0‚ÌŠÔ‚Ü‚Å‚Ìƒ‰ƒ“ƒ_ƒ€’l
 	float num = static_cast<float>(rand()) / RAND_MAX;
