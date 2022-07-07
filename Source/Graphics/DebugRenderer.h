@@ -21,6 +21,9 @@ public:
 	// 円柱描画
 	void DrawCylinder(const DirectX::XMFLOAT3& position, float radius, float height, const DirectX::XMFLOAT4& color);
 
+	// フラスタム描画
+	void DrawFrustum(const DirectX::XMFLOAT4& color);
+
 private:
 	// 球メッシュ作成
 	void CreateSphereMesh(ID3D11Device* device, float radius, int slices, int stacks);
@@ -48,6 +51,12 @@ private:
 		DirectX::XMFLOAT3	position;
 		float				radius;
 		float				height;
+	};
+
+	struct Frustum
+	{
+		DirectX::XMFLOAT4	color;
+		float				point[8];
 	};
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer>			sphereVertexBuffer;
