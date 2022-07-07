@@ -42,8 +42,9 @@ void CameraController::Update(float elapsedTime)
 
     DirectX::XMFLOAT3 perspective;
     // ロックオンのオンオフ
-    if ((mouse.GetButtonDown() & Mouse::BTN_MIDDLE ) && lockOnTimer > 0.2f /*||
-         (gamePad.GetButton() & GamePad::BTN_RIGHT_THUMB)*/)
+    if ((mouse.GetButtonDown() & Mouse::BTN_MIDDLE ||
+        gamePad.GetButtonDown() & GamePad::BTN_RIGHT_THUMB) &&
+        lockOnTimer > 0.5f)
     {
         lockOnFlag = !lockOnFlag;
         lockOnTimer = 0.0f;
