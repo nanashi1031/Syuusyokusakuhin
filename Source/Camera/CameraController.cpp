@@ -38,33 +38,30 @@ void CameraController::Update(float elapsedTime)
         angle.y -= DirectX::XM_2PI;
     }
 
-    // カメラ回転値を回転行列に変換
-    DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-
-    // 回転行列から前方向ベクトルを取り出す
-    DirectX::XMVECTOR Front = Transform.r[2];
-    DirectX::XMFLOAT3 front;
-    DirectX::XMStoreFloat3(&front, Front);
-
     Mouse& mouse = Input::Instance().GetMouse();
 
-    if (mouse.GetButton() & Mouse::BTN_MIDDLE)
+    DirectX::XMFLOAT3 perspective;
+    // ロックオンのオンオフ
+    if ((mouse.GetButtonDown() & Mouse::BTN_MIDDLE ) && lockOnTimer > 0.2f /*||
+         (gamePad.GetButton() & GamePad::BTN_RIGHT_THUMB)*/)
+    {
         lockOnFlag = !lockOnFlag;
+        lockOnTimer = 0.0f;
+    }
+    lockOnTimer += elapsedTime;
 
-    // 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
-    DirectX::XMFLOAT3 eye;
     if (lockOnFlag)
-        eye = LockOn();
+        perspective = LockOn(elapsedTime);
     else
     {
-        eye.x = target.x - front.x * range;
-        eye.y = target.y - front.y * range;
-        eye.z = target.z - front.z * range;
+        // 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
+        perspective = GetPerspective();
+        targetIndex = -1;
     }
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
-    Camera::Instance().SetLookAt(eye, target, DirectX::XMFLOAT3(up));
+    Camera::Instance().SetLookAt(perspective, target, DirectX::XMFLOAT3(up));
 
     ////デュアルモニター対応
     //    //マルチディスプレイの各種情報取得では・・・
@@ -79,37 +76,65 @@ void CameraController::Update(float elapsedTime)
     //    //情報を取得。
 }
 
-DirectX::XMFLOAT3 CameraController::LockOn()
+DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
 {
     // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
 
     PlayerManager& playerManager = PlayerManager::Instance();
-    Player* playerOne = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
 
     EnemyManager& enemyManager = EnemyManager::Instance();
-    int enemyCount = enemyManager.GetEnemyCount();
+    const int enemyCount = enemyManager.GetEnemyCount();
 
-    DirectX::XMFLOAT3 pos = {0, 0, 0};
+    const DirectX::XMFLOAT3 playerFront = player->GetFront();
+    float min = 0;
+
+    DirectX::XMFLOAT3 cameraPos = GetPerspective();
     for (int i = 0; i < enemyCount; i++)
     {
         DirectX::XMFLOAT3 length =
-            Mathf::SubtractFloat3(enemyManager.GetEnemy(i)->GetPosition(), playerOne->GetPosition());
-        float sq = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
-        DirectX::XMFLOAT3 unitvec_player_to_target = DirectX::XMFLOAT3(length.x / sq, length.y / sq, length.z / sq);
+            Mathf::SubtractFloat3(enemyManager.GetEnemy(i)->GetPosition(), player->GetPosition());
+        float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+        DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+        float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
 
-        //注視点取得
-        DirectX::XMFLOAT3 target1 = DirectX::XMFLOAT3(
-            enemyManager.GetEnemy(i)->GetPosition().x + unitvec_player_to_target.x,
-            enemyManager.GetEnemy(i)->GetPosition().y + unitvec_player_to_target.y,
-            enemyManager.GetEnemy(i)->GetPosition().z + unitvec_player_to_target.z);
-
-        //カメラ位置取得
-        pos = DirectX::XMFLOAT3(
-            playerOne->GetPosition().x - unitvec_player_to_target.x * range, 1.0f,
-            playerOne->GetPosition().z - unitvec_player_to_target.z * range);
+        if (min == 0 || min > playerEnemyLengthTotal)
+        {
+            min = playerEnemyLengthTotal;
+            cameraPos = DirectX::XMFLOAT3(
+                player->GetPosition().x - playerEnemyLength.x * playerRange,
+                1.0f,
+                player->GetPosition().z - playerEnemyLength.z * playerRange);
+            targetIndex = i;
+            lockOnFlag = true;
+        }
     }
 
-    return pos;
+    if (min == 0)
+    {
+        // カメラをプレイヤーの正面へ向ける
+        ResetCamera(elapsedTime);
+        lockOnFlag = false;
+    }
+    return cameraPos;
+}
+
+DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
+{
+    // カメラ回転値を回転行列に変換
+    DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
+
+    // 回転行列から前方向ベクトルを取り出す
+    DirectX::XMVECTOR frontVec = Transform.r[2];
+    DirectX::XMFLOAT3 front;
+    DirectX::XMStoreFloat3(&front, frontVec);
+
+    DirectX::XMFLOAT3 perspective;
+    perspective.x = target.x - front.x * playerRange;
+    perspective.y = target.y - front.y * playerRange;
+    perspective.z = target.z - front.z * playerRange;
+
+    return perspective;
 }
 
 void CameraController::DrawDebugGUI()
@@ -124,9 +149,8 @@ void CameraController::DrawDebugGUI()
 
     if (ImGui::Begin("CameraController", nullptr, ImGuiWindowFlags_None))
     {
-        ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 120), ImGuiWindowFlags_NoTitleBar);
         //トランスフォーム
-        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::CollapsingHeader("Transform"))
         {
             ImGui::LabelText(" ", "target (%.1f , %.1f , %.1f)", target.x, target.y, target.z);
             //回転
@@ -134,16 +158,40 @@ void CameraController::DrawDebugGUI()
             a.x = DirectX::XMConvertToDegrees(angle.x);
             a.y = DirectX::XMConvertToDegrees(angle.y);
             a.z = DirectX::XMConvertToDegrees(angle.z);
-            ImGui::DragFloat3("Angle", &a.x, 0.1f, 0, 360);
+            ImGui::DragFloat3("Angle", &a.x, 0.1f, -181, 181);
             angle.x = DirectX::XMConvertToRadians(a.x);
             angle.y = DirectX::XMConvertToRadians(a.y);
             angle.z = DirectX::XMConvertToRadians(a.z);
             // 回転速度
             ImGui::SliderFloat("rollSpeed", &rollSpeed, 0.0f, 5.0f);
             // レンジ
-            ImGui::SliderFloat("range", &range, 0.001f, 50.0f);
+            ImGui::SliderFloat("playerRange", &playerRange, 0.001f, 50.0f);
         }
-        ImGui::EndChild();
+        if (ImGui::CollapsingHeader("Target", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::Text("targetIndex  %d", targetIndex);
+            Mouse& mouse = Input::Instance().GetMouse();
+            ImGui::Text("holdDown %d", mouse.GetHoldDown());
+            ImGui::SliderFloat("lockOnTimer", &lockOnTimer, 0, 1000);
+        }
     }
     ImGui::End();
+}
+
+DirectX::XMFLOAT3 CameraController::GetPerspective()
+{
+    // カメラ回転値を回転行列に変換
+    DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
+
+    // 回転行列から前方向ベクトルを取り出す
+    DirectX::XMVECTOR frontVec = Transform.r[2];
+    DirectX::XMFLOAT3 front;
+    DirectX::XMStoreFloat3(&front, frontVec);
+
+    DirectX::XMFLOAT3 perspective;
+    perspective.x = target.x - front.x * playerRange;
+    perspective.y = target.y - front.y * playerRange;
+    perspective.z = target.z - front.z * playerRange;
+
+    return perspective;
 }
