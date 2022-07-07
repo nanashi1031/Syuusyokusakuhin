@@ -98,6 +98,18 @@ DirectX::XMFLOAT3 Player::GetMoveVec() const
     return vec;
 }
 
+//‘O•ûŒü‚ðŽæ“¾
+DirectX::XMFLOAT3 Player::GetFront() const
+{
+    DirectX::XMFLOAT3 front;
+    front.x = sinf(angle.y);
+    front.y = 0.0f;
+    front.z = cosf(angle.y);
+
+
+    return front;
+}
+
 void Player::InputAttack(float elapsedTime)
 {
     float SwordRadius = 0.5f;

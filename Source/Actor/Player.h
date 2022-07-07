@@ -22,6 +22,11 @@ public:
     void DrawDebugPrimitive();
     void DrawDebugGUI();
 
+
+    // ゲッター　セッター
+    // 前方向を取得
+    DirectX::XMFLOAT3 GetFront() const;
+
 private:
     void InputMove(float elapsedTime);
 
@@ -31,7 +36,6 @@ private:
 
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
-    // ゲッター　セッター
     DirectX::XMFLOAT3 GetMoveVec() const;
 
 private:
