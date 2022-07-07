@@ -8,7 +8,7 @@ public:
 	float Lerp(float a, float b, float t);
 
 	// 指定範囲のランダム値を計算する
-	static float RandomRangeFloat(float min, float max);
+	static float RandomRange(float min, float max);
 
 	// FLOAT3の和
 	static DirectX::XMFLOAT3 AddFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
