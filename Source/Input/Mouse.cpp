@@ -28,6 +28,7 @@ void Mouse::Update()
 		if (::GetAsyncKeyState(KeyMap[i]) & 0x8000)
 		{
 			newButtonState |= (1 << i);
+			holdTime++;
 		}
 	}
 

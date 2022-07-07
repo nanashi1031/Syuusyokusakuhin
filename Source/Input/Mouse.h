@@ -58,6 +58,9 @@ public:
 	// ƒXƒNƒŠ[ƒ“‚‚³æ“¾
 	int GetScreenHeight() const { return screenHeight; }
 
+	// ’·‰Ÿ‚µŠÔ
+	int GetHoldDown() const { return holdTime; }
+
 private:
 	MouseButton		buttonState[2] = { 0 };
 	MouseButton		buttonDown = 0;
@@ -68,4 +71,7 @@ private:
 	int				screenWidth = 0;
 	int				screenHeight = 0;
 	HWND			hWnd = nullptr;
+
+	// ’·‰Ÿ‚µŠÔ
+	int				holdTime = 0;
 };
