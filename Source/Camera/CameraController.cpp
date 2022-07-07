@@ -52,7 +52,9 @@ void CameraController::Update(float elapsedTime)
     lockOnTimer += elapsedTime;
 
     if (lockOnFlag)
+    {
         perspective = LockOn(elapsedTime);
+    }
     else
     {
         // 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
@@ -104,7 +106,7 @@ DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
             min = playerEnemyLengthTotal;
             cameraPos = DirectX::XMFLOAT3(
                 player->GetPosition().x - playerEnemyLength.x * playerRange,
-                1.0f,
+                player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
                 player->GetPosition().z - playerEnemyLength.z * playerRange);
             targetIndex = i;
             lockOnFlag = true;
@@ -171,6 +173,7 @@ void CameraController::DrawDebugGUI()
         if (ImGui::CollapsingHeader("Target", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::Text("targetIndex  %d", targetIndex);
+            ImGui::SliderFloat("lockOnPossitionY", &lockOnPossitionY, -10.0f, 10.0f);
             Mouse& mouse = Input::Instance().GetMouse();
             ImGui::Text("holdDown %d", mouse.GetHoldDown());
             ImGui::SliderFloat("lockOnTimer", &lockOnTimer, 0, 1000);

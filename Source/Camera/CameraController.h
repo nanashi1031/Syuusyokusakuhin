@@ -32,5 +32,6 @@ private:
 
     int targetIndex = 0;
     bool lockOnFlag = false;
+    float lockOnPossitionY = 0.0f;
     float lockOnTimer = 0;
 };
