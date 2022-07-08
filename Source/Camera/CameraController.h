@@ -27,6 +27,12 @@ public:
     int GetTagetIndex() const { return this->targetIndex; }
 
 private:
+    void UpdateMouse(float elapsedTime);
+    void UpdatePad(float elapsedTime);
+    void UpdateKeyboard(float elapsedTime);
+
+    void CameraRotationAxisLimit();
+
     DirectX::XMFLOAT3 LockOn(float elapsedTime);
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
     bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
@@ -37,6 +43,7 @@ private:
     DirectX::XMFLOAT3 target = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };
     float rollSpeed = DirectX::XMConvertToRadians(90);
+    float mouseRollSpeed = 0.11f;
     float playerRange = 10.0f;
 
     float maxAngleX = DirectX::XMConvertToRadians(45);
@@ -46,6 +53,7 @@ private:
     bool lockOnFlag = false;
     float lockOnPossitionY = 5.0f;
     float lockOnTimer = 0;
+    bool cameraMouseOperationFlag = false;
 
     int	collisionState = 0;
     Plane				frustum[6] = {};

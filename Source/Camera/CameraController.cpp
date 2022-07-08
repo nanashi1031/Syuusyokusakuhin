@@ -8,42 +8,33 @@
 
 void CameraController::Update(float elapsedTime)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    float padRX = gamePad.GetAxisRX();
-    float padRY = gamePad.GetAxisRY();
-
-    float speed = rollSpeed * elapsedTime;
-
-    // スティックの入力値に合わせてX軸とY軸を回転
-    angle.x += padRY * speed;
-    angle.y += padRX * speed;
-
-    // X軸のカメラ回転を制限
-    if (angle.x < minAngleX)
-    {
-        angle.x = minAngleX;
-    }
-    if (angle.x > maxAngleX)
-    {
-        angle.x = maxAngleX;
-    }
-
-    // X軸のカメラ回転を制限
-    if (angle.y < -DirectX::XM_PI)
-    {
-        angle.y += DirectX::XM_2PI;
-    }
-    if (angle.y > DirectX::XM_PI)
-    {
-        angle.y -= DirectX::XM_2PI;
-    }
-
     Mouse& mouse = Input::Instance().GetMouse();
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    // カメラのマウス操作
+    if (cameraMouseOperationFlag)
+    {
+        UpdateMouse(elapsedTime);
+    }
+    // カメラのキーボードIJKL操作
+    else if (cameraMouseOperationFlag)
+    {
+        UpdateKeyboard(elapsedTime);
+    }
+    // カメラの右スティック操作
+    UpdatePad(elapsedTime);
+
+    if (gamePad.GetButtonDown() & gamePad.KEY_C && lockOnTimer > 0.5f)
+    {
+        cameraMouseOperationFlag = !cameraMouseOperationFlag;
+        lockOnTimer = 0.0f;
+    }
+
+    CameraRotationAxisLimit();
 
     DirectX::XMFLOAT3 perspective;
     // ロックオンのオンオフ
-    if ((mouse.GetButtonDown() & Mouse::BTN_MIDDLE ||
-        gamePad.GetButtonDown() & GamePad::BTN_RIGHT_THUMB) &&
+    if ((mouse.GetButtonDown() & mouse.BTN_MIDDLE ||
+        gamePad.GetButtonDown() & gamePad.BTN_RIGHT_THUMB) &&
         lockOnTimer > 0.5f)
     {
         lockOnFlag = !lockOnFlag;
@@ -65,18 +56,6 @@ void CameraController::Update(float elapsedTime)
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
     Camera::Instance().SetLookAt(perspective, target, DirectX::XMFLOAT3(up));
-
-    ////デュアルモニター対応
-    //    //マルチディスプレイの各種情報取得では・・・
-    //GetSystemMetrics(SM_CMONITORS);  //で、ディスプレイ台数取得
-    //GetSystemMetrics(SM_XVIRTUALSCREEN);
-    //GetSystemMetrics(SM_YVIRTUALSCREEN);
-    //GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    //GetSystemMetrics(SM_CYVIRTUALSCREEN); //で、仮想画面全体のサイズ取得
-    //MonitorFromPoint(p, MONITOR_DEFAULTTONEARESET); //で、領域に対する
-    //    //ディスプレイのハンドル取得・・・
-    //GetMonitorInfo(hMon, &mInfo);  //で、ディスプレイハンドルからサイズ
-    //    //情報を取得。
 }
 
 void CameraController::DrawDebugPrimitive()
@@ -109,8 +88,10 @@ void CameraController::DrawDebugGUI()
             angle.x = DirectX::XMConvertToRadians(a.x);
             angle.y = DirectX::XMConvertToRadians(a.y);
             angle.z = DirectX::XMConvertToRadians(a.z);
-            // 回転速度
+            // スティック、キーボード操作時の回転速度
             ImGui::SliderFloat("rollSpeed", &rollSpeed, 0.0f, 5.0f);
+            // マウス操作時の回転速度
+            ImGui::SliderFloat("mouseRollSpeed", &mouseRollSpeed, 0.0f, 5.0f);
             // レンジ
             ImGui::SliderFloat("playerRange", &playerRange, 0.001f, 50.0f);
         }
@@ -124,8 +105,88 @@ void CameraController::DrawDebugGUI()
         }
         ImGui::SliderFloat("near", &nearCamera, 0.0f, 10.0f);
         ImGui::SliderFloat("far", &farCamera, 0.0f, 10.0f);
+        if (cameraMouseOperationFlag)
+        {
+            if (ImGui::Button("KeyboardOperation"))
+                cameraMouseOperationFlag = false;
+        }
+        else
+        {
+            if (ImGui::Button("MouseOperation"))
+                cameraMouseOperationFlag = true;
+        }
     }
     ImGui::End();
+}
+
+void CameraController::UpdateMouse(float elapsedTime)
+{
+    Mouse& mouse = Input::Instance().GetMouse();
+
+    // マウスカーソル非表示
+    ShowCursor(false);
+
+    float speed = mouseRollSpeed * elapsedTime;
+    angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() * 0.5f) * speed;
+    angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() * 0.5f) * speed;
+    if (!(mouse.GetButtonDown() & mouse.BTN_RIGHT))
+    {
+        mouse.SetMiddlePosition();
+    }
+}
+
+void CameraController::UpdatePad(float elapsedTime)
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    float speed = rollSpeed * elapsedTime;
+    if(gamePad.GetButton() & gamePad.KEY_I)
+        angle.y += 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_I)
+        angle.y += 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_I)
+        angle.y += 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_I)
+        angle.y += 1.0f * speed;
+
+}
+
+void CameraController::UpdateKeyboard(float elapsedTime)
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    // マウスカーソル表示
+    ShowCursor(true);
+
+    float speed = rollSpeed * elapsedTime;
+    float padRX = gamePad.GetAxisRX();
+    float padRY = gamePad.GetAxisRY();
+    // スティックの入力値に合わせてX軸とY軸を回転
+    angle.x -= padRY * speed;
+    angle.y += padRX * speed;
+}
+
+void CameraController::CameraRotationAxisLimit()
+{
+    // X軸のカメラ回転を制限
+    if (angle.x < minAngleX)
+    {
+        angle.x = minAngleX;
+    }
+    if (angle.x > maxAngleX)
+    {
+        angle.x = maxAngleX;
+    }
+
+    // X軸のカメラ回転を制限
+    if (angle.y < -DirectX::XM_PI)
+    {
+        angle.y += DirectX::XM_2PI;
+    }
+    if (angle.y > DirectX::XM_PI)
+    {
+        angle.y -= DirectX::XM_2PI;
+    }
 }
 
 DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
