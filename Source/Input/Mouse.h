@@ -61,6 +61,10 @@ public:
 	// 長押し時間
 	int GetHoldDown() const { return holdTime; }
 
+	// マウスの位置を真ん中に固定
+	void SetMiddlePosition();
+
+
 private:
 	MouseButton		buttonState[2] = { 0 };
 	MouseButton		buttonDown = 0;

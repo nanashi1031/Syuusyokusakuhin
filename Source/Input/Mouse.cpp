@@ -62,3 +62,12 @@ void Mouse::Update()
 	positionX[0] = (LONG)(cursor.x / static_cast<float>(viewportW) * static_cast<float>(screenW));
 	positionY[0] = (LONG)(cursor.y / static_cast<float>(viewportH) * static_cast<float>(screenH));
 }
+
+void Mouse::SetMiddlePosition()
+{
+	POINT center;
+	center.x = GetScreenWidth() * 0.5f;
+	center.y = GetScreenHeight() * 0.5f;
+	::ClientToScreen(hWnd, &center);
+	SetCursorPos(center.x, center.y);
+}
