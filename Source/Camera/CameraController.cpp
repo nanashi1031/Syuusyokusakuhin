@@ -141,12 +141,12 @@ void CameraController::UpdatePad(float elapsedTime)
 
     float speed = rollSpeed * elapsedTime;
     if(gamePad.GetButton() & gamePad.KEY_I)
-        angle.y += 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_I)
-        angle.y += 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_I)
-        angle.y += 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_I)
+        angle.x -= 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_K)
+        angle.x += 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_J)
+        angle.y -= 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_L)
         angle.y += 1.0f * speed;
 
 }
