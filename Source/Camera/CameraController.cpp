@@ -16,7 +16,7 @@ void CameraController::Update(float elapsedTime)
         UpdateMouse(elapsedTime);
     }
     // カメラのキーボードIJKL操作
-    else if (cameraMouseOperationFlag)
+    else if (!cameraMouseOperationFlag)
     {
         UpdateKeyboard(elapsedTime);
     }
@@ -139,22 +139,6 @@ void CameraController::UpdatePad(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    float speed = rollSpeed * elapsedTime;
-    if(gamePad.GetButton() & gamePad.KEY_I)
-        angle.x -= 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_K)
-        angle.x += 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_J)
-        angle.y -= 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_L)
-        angle.y += 1.0f * speed;
-
-}
-
-void CameraController::UpdateKeyboard(float elapsedTime)
-{
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
     // マウスカーソル表示
     ShowCursor(true);
 
@@ -164,6 +148,21 @@ void CameraController::UpdateKeyboard(float elapsedTime)
     // スティックの入力値に合わせてX軸とY軸を回転
     angle.x -= padRY * speed;
     angle.y += padRX * speed;
+}
+
+void CameraController::UpdateKeyboard(float elapsedTime)
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
+    float speed = rollSpeed * elapsedTime;
+    if (gamePad.GetButton() & gamePad.KEY_I)
+        angle.x -= 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_K)
+        angle.x += 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_J)
+        angle.y -= 1.0f * speed;
+    if (gamePad.GetButton() & gamePad.KEY_L)
+        angle.y += 1.0f * speed;
 }
 
 void CameraController::CameraRotationAxisLimit()
