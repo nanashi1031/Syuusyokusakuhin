@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "Mathf.h"
 
-// ê¸å`ï‚äÆ
 float Mathf::Lerp(float a, float b, float t)
 {
 	return a * (1.0f - t) + (b * t);
@@ -63,4 +62,10 @@ DirectX::XMFLOAT3 Mathf::SqFloat3(DirectX::XMFLOAT3 float3A)
 	outFloat3.z = float3A.z * float3A.z;
 
 	return outFloat3;
+}
+
+template <typename T>
+static T Mathf::BubbleSort(T& all, int size)
+{
+
 }

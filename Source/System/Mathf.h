@@ -5,6 +5,7 @@
 class Mathf
 {
 public:
+	// 線形補間
 	float Lerp(float a, float b, float t);
 
 	// 指定範囲のランダム値を計算する
@@ -24,4 +25,8 @@ public:
 
 	// FLOAT3の二乗
 	static DirectX::XMFLOAT3 SqFloat3(DirectX::XMFLOAT3 float3A);
+
+	// バブルソート
+	template <typename T>
+	static T BubbleSort(T& all, int size);
 };
