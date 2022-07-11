@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <list>
 
 // カメラコントローラー
 class CameraController
@@ -24,7 +25,7 @@ public:
 
     void SetTarget(const DirectX::XMFLOAT3& target) { this->target = target; }
 
-    int GetTagetIndex() const { return this->targetIndex; }
+    int GetTagetIndex() const { return this->nowTargetIndex; }
 
 private:
     void UpdateMouse(float elapsedTime);
@@ -49,11 +50,13 @@ private:
     float maxAngleX = DirectX::XMConvertToRadians(45);
     float minAngleX = DirectX::XMConvertToRadians(-45);
 
-    int targetIndex = 0;
+    float loclOnRange = 0;
+    int nowTargetIndex = 0;
     bool lockOnFlag = false;
     float lockOnPossitionY = 5.0f;
     float lockOnTimer = 0;
     bool cameraMouseOperationFlag = false;
+    std::list<float> targetIndex = {};
 
     int	collisionState = 0;
     Plane				frustum[6] = {};

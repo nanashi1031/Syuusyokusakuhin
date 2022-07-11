@@ -39,18 +39,19 @@ void CameraController::Update(float elapsedTime)
     {
         lockOnFlag = !lockOnFlag;
         lockOnTimer = 0.0f;
+        if (lockOnFlag)
+            perspective = LockOn(elapsedTime);
     }
     lockOnTimer += elapsedTime;
 
     if (lockOnFlag)
     {
-        perspective = LockOn(elapsedTime);
+
     }
     else
     {
-        // 注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
         perspective = GetPerspective();
-        targetIndex = -1;
+        nowTargetIndex = -1;
     }
 
     // カメラの視点と注視点を設定
@@ -97,7 +98,9 @@ void CameraController::DrawDebugGUI()
         }
         if (ImGui::CollapsingHeader("Target", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            ImGui::Text("targetIndex  %d", targetIndex);
+            std::string lockFlag = lockOnFlag ? "true" : "false";
+            ImGui::Text("lockOnFlag %s", lockFlag.c_str());
+            ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
             ImGui::SliderFloat("lockOnPossitionY", &lockOnPossitionY, -10.0f, 10.0f);
             Mouse& mouse = Input::Instance().GetMouse();
             ImGui::Text("holdDown %d", mouse.GetHoldDown());
@@ -115,6 +118,7 @@ void CameraController::DrawDebugGUI()
             if (ImGui::Button("MouseOperation"))
                 cameraMouseOperationFlag = true;
         }
+        ImGui::SliderFloat("loclOnRange", &loclOnRange, 0.0f, 10.0f);
     }
     ImGui::End();
 }
@@ -191,6 +195,7 @@ void CameraController::CameraRotationAxisLimit()
 DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
 {
     // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
+    targetIndex.clear();
 
     PlayerManager& playerManager = PlayerManager::Instance();
     Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
@@ -199,7 +204,6 @@ DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
     const int enemyCount = enemyManager.GetEnemyCount();
 
     const DirectX::XMFLOAT3 playerFront = player->GetFront();
-    float min = 0;
 
     DirectX::XMFLOAT3 cameraPos = GetPerspective();
     for (int i = 0; i < enemyCount; i++)
@@ -210,19 +214,18 @@ DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
         DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
         float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
 
-        if (min == 0 || min > playerEnemyLengthTotal)
-        {
-            min = playerEnemyLengthTotal;
-            cameraPos = DirectX::XMFLOAT3(
-                player->GetPosition().x - playerEnemyLength.x * playerRange,
-                player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
-                player->GetPosition().z - playerEnemyLength.z * playerRange);
-            targetIndex = i;
-            lockOnFlag = true;
-        }
+        if (playerEnemyLengthTotal > loclOnRange) continue;
+
+        targetIndex.push_back(playerEnemyLengthTotal);
+        cameraPos = DirectX::XMFLOAT3(
+            player->GetPosition().x - playerEnemyLength.x * playerRange,
+            player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
+            player->GetPosition().z - playerEnemyLength.z * playerRange);
+        nowTargetIndex = i;
+        lockOnFlag = true;
     }
 
-    if (min == 0)
+    if (!targetIndex.size())
     {
         // カメラをプレイヤーの正面へ向ける
         ResetCamera(elapsedTime);
