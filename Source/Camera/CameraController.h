@@ -34,10 +34,11 @@ private:
 
     void CameraRotationAxisLimit();
 
-    DirectX::XMFLOAT3 LockOn(float elapsedTime);
+    void LockOn(float elapsedTime);
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
     bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
 
+    DirectX::XMFLOAT3 GetTargetPerspective();
     DirectX::XMFLOAT3 GetPerspective();
 
 private:

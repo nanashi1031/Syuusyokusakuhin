@@ -40,13 +40,13 @@ void CameraController::Update(float elapsedTime)
         lockOnFlag = !lockOnFlag;
         lockOnTimer = 0.0f;
         if (lockOnFlag)
-            perspective = LockOn(elapsedTime);
+            LockOn(elapsedTime);
     }
     lockOnTimer += elapsedTime;
 
     if (lockOnFlag)
     {
-
+        perspective = GetTargetPerspective();
     }
     else
     {
@@ -98,8 +98,10 @@ void CameraController::DrawDebugGUI()
         }
         if (ImGui::CollapsingHeader("Target", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            std::string lockFlag = lockOnFlag ? "true" : "false";
-            ImGui::Text("lockOnFlag %s", lockFlag.c_str());
+            {
+                std::string str = lockOnFlag ? "true" : "false";
+                ImGui::Text("lockOnFlag %s", str.c_str());
+            }
             ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
             ImGui::SliderFloat("lockOnPossitionY", &lockOnPossitionY, -10.0f, 10.0f);
             Mouse& mouse = Input::Instance().GetMouse();
@@ -192,9 +194,9 @@ void CameraController::CameraRotationAxisLimit()
     }
 }
 
-DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
+void CameraController::LockOn(float elapsedTime)
 {
-    // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
+    // エネミーとの距離を求める
     targetIndex.clear();
 
     PlayerManager& playerManager = PlayerManager::Instance();
@@ -217,12 +219,7 @@ DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
         if (playerEnemyLengthTotal > loclOnRange) continue;
 
         targetIndex.push_back(playerEnemyLengthTotal);
-        cameraPos = DirectX::XMFLOAT3(
-            player->GetPosition().x - playerEnemyLength.x * playerRange,
-            player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
-            player->GetPosition().z - playerEnemyLength.z * playerRange);
-        nowTargetIndex = i;
-        lockOnFlag = true;
+
     }
 
     if (!targetIndex.size())
@@ -231,7 +228,6 @@ DirectX::XMFLOAT3 CameraController::LockOn(float elapsedTime)
         ResetCamera(elapsedTime);
         lockOnFlag = false;
     }
-    return cameraPos;
 }
 
 void CameraController::CalculateFrustum(Plane* frustum)
@@ -427,6 +423,30 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
     perspective.x = target.x - front.x * playerRange;
     perspective.y = target.y - front.y * playerRange;
     perspective.z = target.z - front.z * playerRange;
+
+    return perspective;
+}
+
+DirectX::XMFLOAT3 CameraController::GetTargetPerspective()
+{
+    // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
+    PlayerManager& playerManager = PlayerManager::Instance();
+    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    decltype(targetIndex)::iterator i = targetIndex.begin();
+    DirectX::XMFLOAT3 length =
+            Mathf::SubtractFloat3(enemyManager.GetEnemy(*i)->GetPosition(), player->GetPosition());
+        float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+        DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+
+    DirectX::XMFLOAT3 perspective;
+
+    perspective = DirectX::XMFLOAT3(
+        player->GetPosition().x - playerEnemyLength.x * playerRange,
+        player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
+        player->GetPosition().z - playerEnemyLength.z * playerRange);
 
     return perspective;
 }
