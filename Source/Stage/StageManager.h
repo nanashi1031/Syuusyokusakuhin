@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Stage.h"
+#include "Collision.h"
 
 // ステージマネージャー
 class StageManager
@@ -24,6 +25,8 @@ public:
     void Register(Stage* stage);
 
     void Clear();
+
+    bool RayaCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
 private:
     std::vector<Stage*> stages;
