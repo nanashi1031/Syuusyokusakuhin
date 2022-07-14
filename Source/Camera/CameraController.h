@@ -6,11 +6,18 @@
 // カメラコントローラー
 class CameraController
 {
-public:
+private:
     struct Plane
     {
         DirectX::XMFLOAT3 normal;
         float distance;   // 法線からの最短距離
+    };
+
+    enum class CameraContorollerState
+    {
+        NormalTargetState,   //
+        LockOnTargetState,
+        TransitionState,
     };
 
 public:
@@ -35,6 +42,7 @@ private:
     void CameraRotationAxisLimit();
 
     void LockOn(float elapsedTime);
+    auto LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
     bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
 
@@ -42,6 +50,8 @@ private:
     DirectX::XMFLOAT3 GetPerspective();
 
 private:
+    CameraContorollerState cameraContorollerState = CameraContorollerState::NormalTargetState;
+
     DirectX::XMFLOAT3 target = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };
     float rollSpeed = DirectX::XMConvertToRadians(90);
@@ -57,7 +67,7 @@ private:
     float lockOnPossitionY = 5.0f;
     float lockOnTimer = 0;
     bool cameraMouseOperationFlag = false;
-    std::list<float> targetIndex = {};
+    std::list<int> targetIndex = {};
 
     int	collisionState = 0;
     Plane				frustum[6] = {};
@@ -65,4 +75,6 @@ private:
     DirectX::XMFLOAT3	farPoint[4] = {};	// Farの四角形の４頂点の座標
     float nearCamera = 0.0f;
     float farCamera = 0.0f;
+
+
 };

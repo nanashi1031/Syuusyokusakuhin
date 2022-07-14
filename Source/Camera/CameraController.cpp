@@ -44,6 +44,19 @@ void CameraController::Update(float elapsedTime)
     }
     lockOnTimer += elapsedTime;
 
+    switch (cameraContorollerState)
+    {
+        // カメラノーマル状態
+    case CameraContorollerState::NormalTargetState:
+        perspective = GetTargetPerspective();
+        break;
+        // カメラロックオン状態
+    case CameraContorollerState::LockOnTargetState:
+        break;
+        // カメラ遷移状態
+    case CameraContorollerState::TransitionState:
+        break;
+    }
     if (lockOnFlag)
     {
         perspective = GetTargetPerspective();
@@ -130,23 +143,20 @@ void CameraController::UpdateMouse(float elapsedTime)
     Mouse& mouse = Input::Instance().GetMouse();
 
     // マウスカーソル非表示
-    ShowCursor(false);
+    // 今は動きをみるため実行しない
+    //ShowCursor(false);
 
     float speed = mouseRollSpeed * elapsedTime;
     angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() * 0.5f) * speed;
     angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() * 0.5f) * speed;
-    if (!(mouse.GetButtonDown() & mouse.BTN_RIGHT))
-    {
-        mouse.SetMiddlePosition();
-    }
+
+    mouse.SetMiddlePosition();
+
 }
 
 void CameraController::UpdatePad(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-
-    // マウスカーソル表示
-    ShowCursor(true);
 
     float speed = rollSpeed * elapsedTime;
     float padRX = gamePad.GetAxisRX();
@@ -160,6 +170,8 @@ void CameraController::UpdateKeyboard(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
+    // マウスカーソル表示
+    ShowCursor(true);
     float speed = rollSpeed * elapsedTime;
     if (gamePad.GetButton() & gamePad.KEY_I)
         angle.x -= 1.0f * speed;
@@ -197,6 +209,7 @@ void CameraController::CameraRotationAxisLimit()
 void CameraController::LockOn(float elapsedTime)
 {
     // エネミーとの距離を求める
+    std::list<float> enemyLengthTotal;
     targetIndex.clear();
 
     PlayerManager& playerManager = PlayerManager::Instance();
@@ -218,16 +231,67 @@ void CameraController::LockOn(float elapsedTime)
 
         if (playerEnemyLengthTotal > loclOnRange) continue;
 
-        targetIndex.push_back(playerEnemyLengthTotal);
+        enemyLengthTotal.push_back(playerEnemyLengthTotal);
 
     }
 
-    if (!targetIndex.size())
+    if (!enemyLengthTotal.size())
     {
         // カメラをプレイヤーの正面へ向ける
         ResetCamera(elapsedTime);
         lockOnFlag = false;
+        return;
     }
+
+    targetIndex.sort();
+    auto lis = enemyLengthTotal.begin();
+    for (int i = 1; i <= enemyLengthTotal.size(); lis++)
+    {
+        if (lis == enemyLengthTotal.end()) break;
+
+        for (int j = 0; j < enemyCount; j++)
+        {
+            DirectX::XMFLOAT3 length =
+                Mathf::SubtractFloat3(enemyManager.GetEnemy(j)->GetPosition(), player->GetPosition());
+            float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+            DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+            float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
+
+            if (*lis == playerEnemyLengthTotal)
+            {
+                // 近い順のエネミーの番号
+                targetIndex.push_back(j);
+                break;
+            }
+        }
+    }
+}
+
+auto CameraController::LockOnSwitching()
+{
+    Mouse& mouse = Input::Instance().GetMouse();
+    auto itr = targetIndex.begin();
+
+    if (cameraMouseOperationFlag)
+    {
+        float mousePos = mouse.GetPositionX() - mouse.GetOldPositionX();
+        // 右向きにスクリーンの横幅からを100割った数だけ移動したら
+        if (mousePos > mouse.GetScreenWidth() / 100)
+        {
+            // listの最大値じゃなければ対象を変更
+            if (itr != targetIndex.end())
+                itr++;
+                return itr++;
+        }
+        // 左向きにスクリーンの横幅からを100割った数だけ移動したら
+        else if (mousePos < -mouse.GetScreenWidth() / 100)
+        {
+            // listの最小値じゃなければ対象を変更
+            if (itr != targetIndex.begin())
+                return itr--;
+        }
+    }
+    return itr;
 }
 
 void CameraController::CalculateFrustum(Plane* frustum)
@@ -435,9 +499,9 @@ DirectX::XMFLOAT3 CameraController::GetTargetPerspective()
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    decltype(targetIndex)::iterator i = targetIndex.begin();
+    auto enemyNumber = LockOnSwitching();
     DirectX::XMFLOAT3 length =
-            Mathf::SubtractFloat3(enemyManager.GetEnemy(*i)->GetPosition(), player->GetPosition());
+            Mathf::SubtractFloat3(enemyManager.GetEnemy(*enemyNumber)->GetPosition(), player->GetPosition());
         float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
         DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
 
