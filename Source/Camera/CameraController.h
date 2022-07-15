@@ -41,16 +41,18 @@ private:
 
     void CameraRotationAxisLimit();
 
+    void UpdateTransitionState(float elapsedTime);
+
     void LockOn(float elapsedTime);
     auto LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
     bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
 
-    DirectX::XMFLOAT3 GetTargetPerspective();
-    DirectX::XMFLOAT3 GetPerspective();
+    void GetTargetPerspective();
+    void GetPerspective();
 
 private:
-    CameraContorollerState cameraContorollerState = CameraContorollerState::NormalTargetState;
+    CameraContorollerState state = CameraContorollerState::NormalTargetState;
 
     DirectX::XMFLOAT3 target = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };
@@ -61,6 +63,7 @@ private:
     float maxAngleX = DirectX::XMConvertToRadians(45);
     float minAngleX = DirectX::XMConvertToRadians(-45);
 
+    DirectX::XMFLOAT3 perspective;
     float loclOnRange = 0;
     int nowTargetIndex = 0;
     bool lockOnFlag = false;
@@ -68,6 +71,7 @@ private:
     float lockOnTimer = 0;
     bool cameraMouseOperationFlag = false;
     std::list<int> targetIndex = {};
+    float interpolationPosition;
 
     int	collisionState = 0;
     Plane				frustum[6] = {};
@@ -75,6 +79,4 @@ private:
     DirectX::XMFLOAT3	farPoint[4] = {};	// FarÇÃéläpå`ÇÃÇSí∏ì_ÇÃç¿ïW
     float nearCamera = 0.0f;
     float farCamera = 0.0f;
-
-
 };

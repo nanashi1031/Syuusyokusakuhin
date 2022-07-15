@@ -23,6 +23,7 @@ void CameraController::Update(float elapsedTime)
     // カメラの右スティック操作
     UpdatePad(elapsedTime);
 
+    // Cでカメラの操作をマウスとキーボードか入れ替え
     if (gamePad.GetButtonDown() & gamePad.KEY_C && lockOnTimer > 0.5f)
     {
         cameraMouseOperationFlag = !cameraMouseOperationFlag;
@@ -31,7 +32,23 @@ void CameraController::Update(float elapsedTime)
 
     CameraRotationAxisLimit();
 
-    DirectX::XMFLOAT3 perspective;
+    switch (state)
+    {
+        // カメラノーマル状態
+    case CameraContorollerState::NormalTargetState:
+        GetPerspective();
+        nowTargetIndex = -1;
+        break;
+        // カメラロックオン状態
+    case CameraContorollerState::LockOnTargetState:
+        GetTargetPerspective();
+        break;
+        // カメラ遷移状態
+    case CameraContorollerState::TransitionState:
+        UpdateTransitionState(elapsedTime);
+        break;
+    }
+
     // ロックオンのオンオフ
     if ((mouse.GetButtonDown() & mouse.BTN_MIDDLE ||
         gamePad.GetButtonDown() & gamePad.BTN_RIGHT_THUMB) &&
@@ -39,33 +56,9 @@ void CameraController::Update(float elapsedTime)
     {
         lockOnFlag = !lockOnFlag;
         lockOnTimer = 0.0f;
-        if (lockOnFlag)
-            LockOn(elapsedTime);
+        if (lockOnFlag) LockOn(elapsedTime);
     }
     lockOnTimer += elapsedTime;
-
-    switch (cameraContorollerState)
-    {
-        // カメラノーマル状態
-    case CameraContorollerState::NormalTargetState:
-        perspective = GetTargetPerspective();
-        break;
-        // カメラロックオン状態
-    case CameraContorollerState::LockOnTargetState:
-        break;
-        // カメラ遷移状態
-    case CameraContorollerState::TransitionState:
-        break;
-    }
-    if (lockOnFlag)
-    {
-        perspective = GetTargetPerspective();
-    }
-    else
-    {
-        perspective = GetPerspective();
-        nowTargetIndex = -1;
-    }
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
@@ -112,8 +105,8 @@ void CameraController::DrawDebugGUI()
         if (ImGui::CollapsingHeader("Target", ImGuiTreeNodeFlags_DefaultOpen))
         {
             {
-                std::string str = lockOnFlag ? "true" : "false";
-                ImGui::Text("lockOnFlag %s", str.c_str());
+                char* str = lockOnFlag ? "true" : "false";
+                ImGui::Text("lockOnFlag %s", str);
             }
             ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
             ImGui::SliderFloat("lockOnPossitionY", &lockOnPossitionY, -10.0f, 10.0f);
@@ -143,7 +136,7 @@ void CameraController::UpdateMouse(float elapsedTime)
     Mouse& mouse = Input::Instance().GetMouse();
 
     // マウスカーソル非表示
-    // 今は動きをみるため実行しない
+    // 今はカーソルの動きを見るため実行しない
     //ShowCursor(false);
 
     float speed = mouseRollSpeed * elapsedTime;
@@ -151,7 +144,6 @@ void CameraController::UpdateMouse(float elapsedTime)
     angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() * 0.5f) * speed;
 
     mouse.SetMiddlePosition();
-
 }
 
 void CameraController::UpdatePad(float elapsedTime)
@@ -172,7 +164,9 @@ void CameraController::UpdateKeyboard(float elapsedTime)
 
     // マウスカーソル表示
     ShowCursor(true);
+
     float speed = rollSpeed * elapsedTime;
+
     if (gamePad.GetButton() & gamePad.KEY_I)
         angle.x -= 1.0f * speed;
     if (gamePad.GetButton() & gamePad.KEY_K)
@@ -208,6 +202,9 @@ void CameraController::CameraRotationAxisLimit()
 
 void CameraController::LockOn(float elapsedTime)
 {
+    // 遷移ステートへ移動
+    state = CameraContorollerState::TransitionState;
+
     // エネミーとの距離を求める
     std::list<float> enemyLengthTotal;
     targetIndex.clear();
@@ -220,7 +217,7 @@ void CameraController::LockOn(float elapsedTime)
 
     const DirectX::XMFLOAT3 playerFront = player->GetFront();
 
-    DirectX::XMFLOAT3 cameraPos = GetPerspective();
+    DirectX::XMFLOAT3 cameraPos = perspective;
     for (int i = 0; i < enemyCount; i++)
     {
         DirectX::XMFLOAT3 length =
@@ -243,6 +240,7 @@ void CameraController::LockOn(float elapsedTime)
         return;
     }
 
+    // エネミーの番号取得
     targetIndex.sort();
     auto lis = enemyLengthTotal.begin();
     for (int i = 1; i <= enemyLengthTotal.size(); lis++)
@@ -259,7 +257,7 @@ void CameraController::LockOn(float elapsedTime)
 
             if (*lis == playerEnemyLengthTotal)
             {
-                // 近い順のエネミーの番号
+                // プレイヤーから近い順のエネミーの番号
                 targetIndex.push_back(j);
                 break;
             }
@@ -280,7 +278,8 @@ auto CameraController::LockOnSwitching()
         {
             // listの最大値じゃなければ対象を変更
             if (itr != targetIndex.end())
-                itr++;
+                // 遷移ステートへ移動
+                state = CameraContorollerState::TransitionState;
                 return itr++;
         }
         // 左向きにスクリーンの横幅からを100割った数だけ移動したら
@@ -288,7 +287,11 @@ auto CameraController::LockOnSwitching()
         {
             // listの最小値じゃなければ対象を変更
             if (itr != targetIndex.begin())
+            {
+                // 遷移ステートへ移動
+                state = CameraContorollerState::TransitionState;
                 return itr--;
+            }
         }
     }
     return itr;
@@ -491,7 +494,7 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
     return perspective;
 }
 
-DirectX::XMFLOAT3 CameraController::GetTargetPerspective()
+void CameraController::GetTargetPerspective()
 {
     // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
     PlayerManager& playerManager = PlayerManager::Instance();
@@ -505,17 +508,20 @@ DirectX::XMFLOAT3 CameraController::GetTargetPerspective()
         float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
         DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
 
-    DirectX::XMFLOAT3 perspective;
+        perspective;
 
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
         player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
         player->GetPosition().z - playerEnemyLength.z * playerRange);
-
-    return perspective;
 }
 
-DirectX::XMFLOAT3 CameraController::GetPerspective()
+void CameraController::UpdateTransitionState(float elapsedTime)
+{
+
+}
+
+void CameraController::GetPerspective()
 {
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
@@ -525,10 +531,7 @@ DirectX::XMFLOAT3 CameraController::GetPerspective()
     DirectX::XMFLOAT3 front;
     DirectX::XMStoreFloat3(&front, frontVec);
 
-    DirectX::XMFLOAT3 perspective;
     perspective.x = target.x - front.x * playerRange;
     perspective.y = target.y - front.y * playerRange;
     perspective.z = target.z - front.z * playerRange;
-
-    return perspective;
 }
