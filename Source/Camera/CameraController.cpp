@@ -15,11 +15,14 @@ void CameraController::Update(float elapsedTime)
     {
         UpdateMouse(elapsedTime);
     }
+#if _DEBUG
     // カメラのキーボードIJKL操作
     else if (!cameraMouseOperationFlag)
     {
         UpdateKeyboard(elapsedTime);
     }
+#endif // DEBUG
+
     // カメラの右スティック操作
     UpdatePad(elapsedTime);
 
@@ -36,7 +39,7 @@ void CameraController::Update(float elapsedTime)
     {
         // カメラノーマル状態
     case CameraContorollerState::NormalTargetState:
-        GetPerspective();
+        perspective = GetPerspective();
         nowTargetIndex = -1;
         break;
         // カメラロックオン状態
@@ -45,7 +48,7 @@ void CameraController::Update(float elapsedTime)
         break;
         // カメラ遷移状態
     case CameraContorollerState::TransitionState:
-        UpdateTransitionState(elapsedTime);
+        perspective = UpdateTransitionState(elapsedTime);
         break;
     }
 
@@ -59,6 +62,8 @@ void CameraController::Update(float elapsedTime)
         if (lockOnFlag) LockOn(elapsedTime);
     }
     lockOnTimer += elapsedTime;
+
+    ShakeCamera(shakePower);
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
@@ -126,7 +131,11 @@ void CameraController::DrawDebugGUI()
             if (ImGui::Button("MouseOperation"))
                 cameraMouseOperationFlag = true;
         }
-        ImGui::SliderFloat("loclOnRange", &loclOnRange, 0.0f, 10.0f);
+        if (ImGui::CollapsingHeader("CameraShake"), ImGuiTreeNodeFlags_DefaultOpen)
+        {
+            ImGui::SliderFloat3("shakePower", &shakePower.x, 1.0f, 10.0f);
+            ImGui::SliderFloat("shakesuppress", &shakesuppress, 0.0f, 1.0f);
+        }
     }
     ImGui::End();
 }
@@ -136,7 +145,7 @@ void CameraController::UpdateMouse(float elapsedTime)
     Mouse& mouse = Input::Instance().GetMouse();
 
     // マウスカーソル非表示
-    // 今はカーソルの動きを見るため実行しない
+    // 今はカーソルの動きを見るため実行しない、本番ではコメントを外す
     //ShowCursor(false);
 
     float speed = mouseRollSpeed * elapsedTime;
@@ -508,21 +517,29 @@ void CameraController::GetTargetPerspective()
         float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
         DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
 
-        perspective;
-
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
         player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
         player->GetPosition().z - playerEnemyLength.z * playerRange);
 }
 
-void CameraController::UpdateTransitionState(float elapsedTime)
+DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 {
-
+    DirectX::XMFLOAT3 interpolation;
+    DirectX::XMFLOAT3 start = GetPerspective();
+    interpolation = Mathf::LerpFloat3(start, perspective, 3.0f);
+    if (timerer > 1.0f)
+    {
+        state = CameraContorollerState::NormalTargetState;
+    }
+    timerer *= elapsedTime;
+    return interpolation;
 }
 
-void CameraController::GetPerspective()
+DirectX::XMFLOAT3 CameraController::GetPerspective()
 {
+    DirectX::XMFLOAT3 perspective;
+
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
 
@@ -534,4 +551,22 @@ void CameraController::GetPerspective()
     perspective.x = target.x - front.x * playerRange;
     perspective.y = target.y - front.y * playerRange;
     perspective.z = target.z - front.z * playerRange;
+
+    return perspective;
+}
+
+// カメラシェイク
+void CameraController::ShakeCamera(DirectX::XMFLOAT3 shakePower)
+{
+    shakePower.x = rand() % static_cast<int>(shakePower.x) * shakesuppress;
+    shakePower.y = rand() % static_cast<int>(shakePower.y) * shakesuppress;
+    shakePower.z = rand() % static_cast<int>(shakePower.z) * shakesuppress;
+
+    // シェイク分の加算     ※基本 0
+    target.x += shakePower.x;
+    target.y += shakePower.y;
+    target.z += shakePower.z;
+    perspective.x += shakePower.x;
+    perspective.y += shakePower.y;
+    perspective.z += shakePower.z;
 }

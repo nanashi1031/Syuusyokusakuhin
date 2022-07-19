@@ -41,15 +41,17 @@ private:
 
     void CameraRotationAxisLimit();
 
-    void UpdateTransitionState(float elapsedTime);
+    DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
     void LockOn(float elapsedTime);
     auto LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
     bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
 
+    void ShakeCamera(DirectX::XMFLOAT3 shakePower);
+
     void GetTargetPerspective();
-    void GetPerspective();
+    DirectX::XMFLOAT3 GetPerspective();
 
 private:
     CameraContorollerState state = CameraContorollerState::NormalTargetState;
@@ -79,4 +81,8 @@ private:
     DirectX::XMFLOAT3	farPoint[4] = {};	// FarÇÃéläpå`ÇÃÇSí∏ì_ÇÃç¿ïW
     float nearCamera = 0.0f;
     float farCamera = 0.0f;
+    int timerer = 0.0f;
+
+    DirectX::XMFLOAT3 shakePower = {1.0f, 1.0f, 1.0f};
+    float shakesuppress = 0;
 };
