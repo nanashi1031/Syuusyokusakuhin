@@ -1,9 +1,19 @@
 #include <stdlib.h>
 #include "Mathf.h"
 
-float Mathf::Lerp(float a, float b, float t)
+float Mathf::LerpFloat(float a, float b, float t)
 {
 	return a * (1.0f - t) + (b * t);
+}
+
+DirectX::XMFLOAT3 Mathf::LerpFloat3(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b, float t)
+{
+	DirectX::XMFLOAT3 lerp;
+	lerp.x = a.x * (1.0f - t) + (b.x * t);
+	lerp.y = a.y * (1.0f - t) + (b.y * t);
+	lerp.z = a.z * (1.0f - t) + (b.z * t);
+
+	return lerp;
 }
 
 float Mathf::RandomRange(float min, float max)

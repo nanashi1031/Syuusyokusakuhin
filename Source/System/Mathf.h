@@ -6,7 +6,8 @@ class Mathf
 {
 public:
 	// 線形補間
-	float Lerp(float a, float b, float t);
+	static float LerpFloat(float a, float b, float t);
+	static DirectX::XMFLOAT3 LerpFloat3(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b, float t);
 
 	// 指定範囲のランダム値を計算する
 	static float RandomRange(float min, float max);
