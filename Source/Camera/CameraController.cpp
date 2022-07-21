@@ -40,7 +40,6 @@ void CameraController::Update(float elapsedTime)
         // カメラノーマル状態
     case CameraContorollerState::NormalTargetState:
         perspective = GetPerspective();
-        nowTargetIndex = -1;
         break;
         // カメラロックオン状態
     case CameraContorollerState::LockOnTargetState:
@@ -225,7 +224,7 @@ void CameraController::LockOn(float elapsedTime)
     EnemyManager& enemyManager = EnemyManager::Instance();
     const int enemyCount = enemyManager.GetEnemyCount();
 
-    const DirectX::XMFLOAT3 playerFront = player->GetFront();
+    //const DirectX::XMFLOAT3 playerFront = player->GetFront();
 
     DirectX::XMFLOAT3 cameraPos = perspective;
     for (int i = 0; i < enemyCount; i++)
@@ -239,23 +238,22 @@ void CameraController::LockOn(float elapsedTime)
         if (playerEnemyLengthTotal > lockOnRange) continue;
 
         enemyLengthTotal.push_back(playerEnemyLengthTotal);
-
+        Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
     }
 
     if (!enemyLengthTotal.size())
     {
         // カメラをプレイヤーの正面へ向ける
-        ResetCamera(elapsedTime);
         lockOnFlag = false;
         return;
     }
 
-    // エネミーの番号取得
-    targetIndex.sort();
-    auto lis = enemyLengthTotal.begin();
-    for (int i = 1; i <= enemyLengthTotal.size(); lis++)
+    // 小さい順に並べ替え
+    enemyLengthTotal.sort();
+    auto list = enemyLengthTotal.begin();
+    for (int i = 1; i <= enemyLengthTotal.size(); list++)
     {
-        if (lis == enemyLengthTotal.end()) break;
+        if (list == enemyLengthTotal.end()) break;
 
         for (int j = 0; j < enemyCount; j++)
         {
@@ -265,7 +263,7 @@ void CameraController::LockOn(float elapsedTime)
             DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
             float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
 
-            if (*lis == playerEnemyLengthTotal)
+            if (*list == playerEnemyLengthTotal)
             {
                 // プレイヤーから近い順のエネミーの番号
                 targetIndex.push_back(j);
@@ -289,7 +287,7 @@ auto CameraController::LockOnSwitching()
             // listの最大値じゃなければ対象を変更
             if (itr != targetIndex.end())
                 // 遷移ステートへ移動
-                state = CameraContorollerState::TransitionState;
+                //state = CameraContorollerState::TransitionState;
                 return itr++;
         }
         // 左向きにスクリーンの横幅からを100割った数だけ移動したら
@@ -299,7 +297,7 @@ auto CameraController::LockOnSwitching()
             if (itr != targetIndex.begin())
             {
                 // 遷移ステートへ移動
-                state = CameraContorollerState::TransitionState;
+                //state = CameraContorollerState::TransitionState;
                 return itr--;
             }
         }
@@ -503,6 +501,20 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
 
     return perspective;
 }
+DirectX::XMFLOAT3 CameraController::PlayerEnemyLength(int number)
+{
+    PlayerManager& playerManager = PlayerManager::Instance();
+    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+
+    EnemyManager& enemyManager = EnemyManager::Instance();
+
+    DirectX::XMFLOAT3 length =
+        Mathf::SubtractFloat3(enemyManager.GetEnemy(number)->GetPosition(), player->GetPosition());
+    float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+    DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+
+    return playerEnemyLength;
+}
 
 void CameraController::GetTargetPerspective()
 {
@@ -513,10 +525,13 @@ void CameraController::GetTargetPerspective()
     EnemyManager& enemyManager = EnemyManager::Instance();
 
     auto enemyNumber = LockOnSwitching();
+    DirectX::XMFLOAT3 i = player->GetPosition();
     DirectX::XMFLOAT3 length =
             Mathf::SubtractFloat3(enemyManager.GetEnemy(*enemyNumber)->GetPosition(), player->GetPosition());
         float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
-        DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+        DirectX::XMFLOAT3 playerEnemyLength = PlayerEnemyLength(*enemyNumber);
+
+        nowTargetIndex = *enemyNumber;
 
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
@@ -531,7 +546,7 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
     //interpolation = Mathf::LerpFloat3(start, perspective, 3.0f);
     //if (timerer > 1.0f)
     {
-        state = CameraContorollerState::NormalTargetState;
+        state = CameraContorollerState::LockOnTargetState;
     }
     timerer += elapsedTime;
     return interpolation;
@@ -540,6 +555,8 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 DirectX::XMFLOAT3 CameraController::GetPerspective()
 {
     DirectX::XMFLOAT3 perspective;
+
+    nowTargetIndex = -1;
 
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);

@@ -43,6 +43,8 @@ private:
 
     DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
+    DirectX::XMFLOAT3 PlayerEnemyLength(int number);
+
     void LockOn(float elapsedTime);
     auto LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);

@@ -15,6 +15,24 @@ void SceneGame::Initialize()
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
 
+	// プレイヤー
+	PlayerManager& playerManager = PlayerManager::Instance();
+	Player* player = new Player;
+	playerManager.Register(player);
+
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	//エネミー
+	for (int i = 0; i < 2; i++)
+	{
+		EnemyBoss* boss = new EnemyBoss();
+		boss->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10.0f));
+		enemyManager.Register(boss);
+	}
+
+	EnemySlime* slime = new EnemySlime;
+	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+	enemyManager.Register(slime);
+
 	// カメラ
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -30,25 +48,7 @@ void SceneGame::Initialize()
 	);
 	cameraController = new CameraController();
 
-	// プレイヤー
-	PlayerManager& playerManager = PlayerManager::Instance();
-	Player* player = new Player;
-	playerManager.Register(player);
-
-	//エネミー
-	for (int i = 0; i < 2; i++)
-	{
-		EnemyManager& enemyManager = EnemyManager::Instance();
-		EnemyBoss* boss = new EnemyBoss();
-		boss->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10.0f));
-		enemyManager.Register(boss);
-	}
-
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	EnemySlime* slime = new EnemySlime;
-	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-	enemyManager.Register(slime);
-
+	// スプライト
 	targetRing = std::make_unique<Sprite>("Data/Sprite/Ring.png");
 }
 
