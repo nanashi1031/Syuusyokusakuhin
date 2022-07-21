@@ -15,9 +15,9 @@ private:
 
     enum class CameraContorollerState
     {
-        NormalTargetState,   //
-        LockOnTargetState,
-        TransitionState,
+        NormalTargetState,  // カメラ通常状態
+        LockOnTargetState,  // ロックオン
+        TransitionState,    // 移動補間
     };
 
 public:
@@ -66,10 +66,10 @@ private:
     float minAngleX = DirectX::XMConvertToRadians(-45);
 
     DirectX::XMFLOAT3 perspective;
-    float loclOnRange = 0;
+    float lockOnRange = 0;
     int nowTargetIndex = 0;
     bool lockOnFlag = false;
-    float lockOnPossitionY = 5.0f;
+    float lockOnPositionY = 5.0f;
     float lockOnTimer = 0;
     bool cameraMouseOperationFlag = false;
     std::list<int> targetIndex = {};

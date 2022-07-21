@@ -114,7 +114,7 @@ void CameraController::DrawDebugGUI()
                 ImGui::Text("lockOnFlag %s", str);
             }
             ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
-            ImGui::SliderFloat("lockOnPossitionY", &lockOnPossitionY, -10.0f, 10.0f);
+            ImGui::SliderFloat("lockOnPossitionY", &lockOnPositionY, -10.0f, 10.0f);
             Mouse& mouse = Input::Instance().GetMouse();
             ImGui::Text("holdDown %d", mouse.GetHoldDown());
             ImGui::SliderFloat("lockOnTimer", &lockOnTimer, 0, 1000);
@@ -131,7 +131,8 @@ void CameraController::DrawDebugGUI()
             if (ImGui::Button("MouseOperation"))
                 cameraMouseOperationFlag = true;
         }
-        if (ImGui::CollapsingHeader("CameraShake"), ImGuiTreeNodeFlags_DefaultOpen)
+        ImGui::SliderFloat("lockOnRange", &lockOnRange, 0.0f, 10.0f);
+        if (ImGui::CollapsingHeader("CameraShake", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::SliderFloat3("shakePower", &shakePower.x, 1.0f, 10.0f);
             ImGui::SliderFloat("shakesuppress", &shakesuppress, 0.0f, 1.0f);
@@ -235,7 +236,7 @@ void CameraController::LockOn(float elapsedTime)
         DirectX::XMFLOAT3 playerEnemyLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
         float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
 
-        if (playerEnemyLengthTotal > loclOnRange) continue;
+        if (playerEnemyLengthTotal > lockOnRange) continue;
 
         enemyLengthTotal.push_back(playerEnemyLengthTotal);
 
@@ -519,20 +520,20 @@ void CameraController::GetTargetPerspective()
 
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
-        player->GetPosition().y - playerEnemyLength.y + lockOnPossitionY,
+        player->GetPosition().y - playerEnemyLength.y + lockOnPositionY,
         player->GetPosition().z - playerEnemyLength.z * playerRange);
 }
 
 DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 {
-    DirectX::XMFLOAT3 interpolation;
+    DirectX::XMFLOAT3 interpolation = {};
     DirectX::XMFLOAT3 start = GetPerspective();
-    interpolation = Mathf::LerpFloat3(start, perspective, 3.0f);
-    if (timerer > 1.0f)
+    //interpolation = Mathf::LerpFloat3(start, perspective, 3.0f);
+    //if (timerer > 1.0f)
     {
         state = CameraContorollerState::NormalTargetState;
     }
-    timerer *= elapsedTime;
+    timerer += elapsedTime;
     return interpolation;
 }
 
@@ -562,7 +563,7 @@ void CameraController::ShakeCamera(DirectX::XMFLOAT3 shakePower)
     shakePower.y = rand() % static_cast<int>(shakePower.y) * shakesuppress;
     shakePower.z = rand() % static_cast<int>(shakePower.z) * shakesuppress;
 
-    // シェイク分の加算     ※基本 0
+    // シェイク分の加算
     target.x += shakePower.x;
     target.y += shakePower.y;
     target.z += shakePower.z;
