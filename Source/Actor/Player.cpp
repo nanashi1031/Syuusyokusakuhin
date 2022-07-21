@@ -106,7 +106,6 @@ DirectX::XMFLOAT3 Player::GetFront() const
     front.y = 0.0f;
     front.z = cosf(angle.y);
 
-
     return front;
 }
 

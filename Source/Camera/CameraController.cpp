@@ -244,6 +244,7 @@ void CameraController::LockOn(float elapsedTime)
     if (!enemyLengthTotal.size())
     {
         // カメラをプレイヤーの正面へ向ける
+        //ResetCamera(elapsedTime);
         lockOnFlag = false;
         return;
     }
@@ -486,6 +487,11 @@ bool CameraController::frustumCulling(DirectX::XMFLOAT3 position, float radius)
 
 DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
 {
+    PlayerManager& playerManager = PlayerManager::Instance();
+    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+
+    const DirectX::XMFLOAT3 playerFront = player->GetFront();
+
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
 
@@ -495,12 +501,13 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
     DirectX::XMStoreFloat3(&front, frontVec);
 
     DirectX::XMFLOAT3 perspective;
-    perspective.x = target.x - front.x * playerRange;
-    perspective.y = target.y - front.y * playerRange;
-    perspective.z = target.z - front.z * playerRange;
+    perspective.x = target.x - playerFront.x * playerRange;
+    perspective.y = target.y - playerFront.y * playerRange;
+    perspective.z = target.z - playerFront.z * playerRange;
 
     return perspective;
 }
+
 DirectX::XMFLOAT3 CameraController::PlayerEnemyLength(int number)
 {
     PlayerManager& playerManager = PlayerManager::Instance();
