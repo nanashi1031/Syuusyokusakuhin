@@ -7,6 +7,13 @@
 class CameraController
 {
 private:
+    struct Target
+    {
+        float enemyLengthTotal;     // 敵との距離
+        int index;                  // 敵のインデックス番号
+    };
+    std::vector<Target> targets;
+
     struct Plane
     {
         DirectX::XMFLOAT3 normal;
@@ -43,8 +50,6 @@ private:
 
     DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
-    DirectX::XMFLOAT3 PlayerEnemyLength(int number);
-
     void LockOn(float elapsedTime);
     auto LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
@@ -74,7 +79,6 @@ private:
     float lockOnPositionY = 5.0f;
     float lockOnTimer = 0;
     bool cameraMouseOperationFlag = false;
-    std::list<int> targetIndex = {};
     float interpolationPosition;
 
     int	collisionState = 0;
