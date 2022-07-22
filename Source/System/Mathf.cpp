@@ -74,6 +74,16 @@ DirectX::XMFLOAT3 Mathf::SqFloat3(DirectX::XMFLOAT3 float3A)
 	return outFloat3;
 }
 
+DirectX::XMFLOAT3 Mathf::CalculateLength(DirectX::XMFLOAT3 objectA, DirectX::XMFLOAT3 objectB)
+{
+	DirectX::XMFLOAT3 length =
+		SubtractFloat3(objectA, objectB);
+	float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+	DirectX::XMFLOAT3 objectLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+
+	return objectLength;
+}
+
 template <typename T>
 static T Mathf::BubbleSort(T& all, int size)
 {

@@ -27,6 +27,9 @@ public:
 	// FLOAT3の二乗
 	static DirectX::XMFLOAT3 SqFloat3(DirectX::XMFLOAT3 float3A);
 
+	// 対象から対象までの距離を計算する
+	static DirectX::XMFLOAT3 CalculateLength(DirectX::XMFLOAT3 objectA, DirectX::XMFLOAT3 objectB);
+
 	// バブルソート
 	template <typename T>
 	static T BubbleSort(T& all, int size);
