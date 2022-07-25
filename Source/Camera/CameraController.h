@@ -13,6 +13,7 @@ private:
         float enemyLengthTotal;     // 敵との距離
         int index;                  // 敵のインデックス番号
 
+        // これをしないとソートできない
         // 最後のconstを忘れると"instantiated from here"というエラーが出てコンパイルできないので注意
         bool operator<(const Target& right) const
         {
@@ -58,7 +59,7 @@ private:
     DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
     void LockOn(float elapsedTime);
-    auto LockOnSwitching();
+    bool LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
     bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
 

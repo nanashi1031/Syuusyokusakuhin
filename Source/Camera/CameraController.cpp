@@ -217,6 +217,7 @@ void CameraController::LockOn(float elapsedTime)
 
     // 前の情報は必要無いためリセット
     targets.clear();
+    nowTargetIndex = 0;
 
     PlayerManager& playerManager = PlayerManager::Instance();
     Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
@@ -252,15 +253,12 @@ void CameraController::LockOn(float elapsedTime)
     }
 
     // 小さい順に並べ替え
-    //targets.sort();
     std::sort(targets.begin(), targets.end());
-    //Mathf::BubbleSort(targets, targets.size());
 }
 
-auto CameraController::LockOnSwitching()
+bool CameraController::LockOnSwitching()
 {
     Mouse& mouse = Input::Instance().GetMouse();
-    auto itr = targets.begin();
 
     if (cameraMouseOperationFlag)
     {
@@ -269,24 +267,28 @@ auto CameraController::LockOnSwitching()
         if (mousePos > mouse.GetScreenWidth() / 100)
         {
             // listの最大値じゃなければ対象を変更
-            if (itr != targets.end())
+            if (nowTargetIndex != targets.end()->index)
+            {
                 // 遷移ステートへ移動
                 //state = CameraContorollerState::TransitionState;
-                return itr++;
+                nowTargetIndex++;
+                return true;
+            }
         }
         // 左向きにスクリーンの横幅からを100割った数だけ移動したら
         else if (mousePos < -mouse.GetScreenWidth() / 100)
         {
             // listの最小値じゃなければ対象を変更
-            if (itr != targets.begin())
+            if (nowTargetIndex != targets.begin()->index)
             {
                 // 遷移ステートへ移動
                 //state = CameraContorollerState::TransitionState;
-                return itr--;
+                nowTargetIndex--;
+                return true;
             }
         }
     }
-    return itr;
+    return false;
 }
 
 void CameraController::CalculateFrustum(Plane* frustum)
@@ -499,14 +501,12 @@ void CameraController::GetTargetPerspective()
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    auto enemyNumber = LockOnSwitching();
+    if(LockOnSwitching());
     DirectX::XMFLOAT3 i = player->GetPosition();
     DirectX::XMFLOAT3 length =
-            Mathf::SubtractFloat3(enemyManager.GetEnemy(1)->GetPosition(), player->GetPosition());
+            Mathf::SubtractFloat3(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
         float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
         DirectX::XMFLOAT3 playerEnemyLength = {10, 10, 10};
-
-        //nowTargetIndex = *enemyNumber;
 
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
@@ -531,7 +531,7 @@ DirectX::XMFLOAT3 CameraController::GetPerspective()
 {
     DirectX::XMFLOAT3 perspective;
 
-    nowTargetIndex = -1;
+    //nowTargetIndex = -1;
 
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
