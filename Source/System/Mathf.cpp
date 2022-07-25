@@ -83,9 +83,3 @@ DirectX::XMFLOAT3 Mathf::CalculateLength(DirectX::XMFLOAT3 objectA, DirectX::XMF
 
 	return objectLength;
 }
-
-template <typename T>
-static T Mathf::BubbleSort(T& all, int size)
-{
-
-}
