@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include <vector>
 #include <list>
 
 // カメラコントローラー
@@ -11,6 +12,12 @@ private:
     {
         float enemyLengthTotal;     // 敵との距離
         int index;                  // 敵のインデックス番号
+
+        // 最後のconstを忘れると"instantiated from here"というエラーが出てコンパイルできないので注意
+        bool operator<(const Target& right) const
+        {
+            return right.enemyLengthTotal == right.enemyLengthTotal ? index < right.index : enemyLengthTotal < right.enemyLengthTotal;
+        }
     };
     std::vector<Target> targets;
 
@@ -69,8 +76,8 @@ private:
     float mouseRollSpeed = 0.11f;
     float playerRange = 10.0f;
 
-    float maxAngleX = DirectX::XMConvertToRadians(45);
-    float minAngleX = DirectX::XMConvertToRadians(-45);
+    const float maxAngleX = DirectX::XMConvertToRadians(45);
+    const float minAngleX = DirectX::XMConvertToRadians(-45);
 
     DirectX::XMFLOAT3 perspective;
     float lockOnRange = 0;

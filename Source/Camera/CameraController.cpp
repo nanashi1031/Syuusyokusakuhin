@@ -5,6 +5,7 @@
 #include "PlayerManager.h"
 #include "EnemyManager.h"
 #include "Mathf.h"
+#include <algorithm>
 
 void CameraController::Update(float elapsedTime)
 {
@@ -235,10 +236,13 @@ void CameraController::LockOn(float elapsedTime)
 
         if (playerEnemyLengthTotal > lockOnRange) continue;
 
-        targets.emplace_back();
-        Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+        Target target;
+        target.enemyLengthTotal = playerEnemyLengthTotal;
+        target.index = i;
+        targets.emplace_back(target);
     }
 
+    // 対象がいなかった場合
     if (!targets.size())
     {
         // カメラをプレイヤーの正面へ向ける
@@ -249,25 +253,8 @@ void CameraController::LockOn(float elapsedTime)
 
     // 小さい順に並べ替え
     //targets.sort();
-    auto list = targets.begin();
-    for (int i = 1; i <= targets.size(); list++)
-    {
-        if (list == targets.end()) break;
-
-        for (int j = 0; j < enemyCount; j++)
-        {
-            DirectX::XMFLOAT3 playerEnemyLength =
-                Mathf::CalculateLength(enemyManager.GetEnemy(i)->GetPosition(), player->GetPosition());
-            float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
-
-            //if (*list == playerEnemyLengthTotal)
-            {
-                // プレイヤーから近い順のエネミーの番号
-                //targets->push_back(j);
-                break;
-            }
-        }
-    }
+    std::sort(targets.begin(), targets.end());
+    //Mathf::BubbleSort(targets, targets.size());
 }
 
 auto CameraController::LockOnSwitching()
