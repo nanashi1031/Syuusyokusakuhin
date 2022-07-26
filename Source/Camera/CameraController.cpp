@@ -262,12 +262,13 @@ bool CameraController::LockOnSwitching()
 
     if (cameraMouseOperationFlag)
     {
+        int i = targets.back().index;
         float mousePos = mouse.GetPositionX() - mouse.GetOldPositionX();
         // 右向きにスクリーンの横幅からを100割った数だけ移動したら
         if (mousePos > mouse.GetScreenWidth() / 100)
         {
             // listの最大値じゃなければ対象を変更
-            if (nowTargetIndex != targets.end()->index)
+            if (nowTargetIndex != targets.back().index)
             {
                 // 遷移ステートへ移動
                 //state = CameraContorollerState::TransitionState;
@@ -279,7 +280,7 @@ bool CameraController::LockOnSwitching()
         else if (mousePos < -mouse.GetScreenWidth() / 100)
         {
             // listの最小値じゃなければ対象を変更
-            if (nowTargetIndex != targets.begin()->index)
+            if (nowTargetIndex != targets.front().index)
             {
                 // 遷移ステートへ移動
                 //state = CameraContorollerState::TransitionState;
@@ -495,6 +496,8 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
 
 void CameraController::GetTargetPerspective()
 {
+    if (targets.size() <= 0)  return;
+
     // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
     PlayerManager& playerManager = PlayerManager::Instance();
     Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
