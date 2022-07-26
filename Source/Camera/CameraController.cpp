@@ -505,11 +505,8 @@ void CameraController::GetTargetPerspective()
     EnemyManager& enemyManager = EnemyManager::Instance();
 
     if(LockOnSwitching());
-    DirectX::XMFLOAT3 i = player->GetPosition();
-    DirectX::XMFLOAT3 length =
-            Mathf::SubtractFloat3(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
-        float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
-        DirectX::XMFLOAT3 playerEnemyLength = {10, 10, 10};
+        DirectX::XMFLOAT3 playerEnemyLength =
+            Mathf::CalculateLength(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
 
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
