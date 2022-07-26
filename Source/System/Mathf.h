@@ -9,6 +9,8 @@ public:
 	static float LerpFloat(float a, float b, float t);
 	static DirectX::XMFLOAT3 LerpFloat3(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b, float t);
 
+	// 球面補間
+
 	// 指定範囲のランダム値を計算する
 	static float RandomRange(float min, float max);
 
