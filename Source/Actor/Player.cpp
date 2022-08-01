@@ -5,6 +5,7 @@
 #include "Collision.h"
 #include "Player.h"
 #include "EnemyManager.h"
+#include "Mathf.h"
 
 Player::Player()
 {
@@ -45,7 +46,6 @@ void Player::Update(float elapsedTime)
 
     model->UpdateTransform(transform);
 }
-
 // ˆÚ“®“ü—Íˆ—
 void Player::InputMove(float elapsedTime)
 {

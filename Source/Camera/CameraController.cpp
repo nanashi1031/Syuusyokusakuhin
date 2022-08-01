@@ -59,7 +59,8 @@ void CameraController::Update(float elapsedTime)
     {
         lockOnFlag = !lockOnFlag;
         lockOnTimer = 0.0f;
-        if (lockOnFlag) LockOn(elapsedTime);
+        if (lockOnFlag)
+            LockOn(elapsedTime);
     }
     lockOnTimer += elapsedTime;
 
@@ -150,8 +151,8 @@ void CameraController::UpdateMouse(float elapsedTime)
     //ShowCursor(false);
 
     float speed = mouseRollSpeed * elapsedTime;
-    angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() * 0.5f) * speed;
-    angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() * 0.5f) * speed;
+    angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() / 2.0f) * speed;
+    angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() / 2.0f) * speed;
 
     mouse.SetMiddlePosition();
 }
@@ -267,7 +268,7 @@ bool CameraController::LockOnSwitching()
         // 右向きにスクリーンの横幅からを100割った数だけ移動したら
         if (mousePos > mouse.GetScreenWidth() / 100)
         {
-            // listの最大値じゃなければ対象を変更
+            // targets.indexの末尾じゃなければ対象を変更
             if (nowTargetIndex != targets.back().index)
             {
                 // 遷移ステートへ移動
@@ -279,7 +280,7 @@ bool CameraController::LockOnSwitching()
         // 左向きにスクリーンの横幅からを100割った数だけ移動したら
         else if (mousePos < -mouse.GetScreenWidth() / 100)
         {
-            // listの最小値じゃなければ対象を変更
+            // targets.indexの先頭じゃなければ対象を変更
             if (nowTargetIndex != targets.front().index)
             {
                 // 遷移ステートへ移動
@@ -504,9 +505,9 @@ void CameraController::GetTargetPerspective()
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    if(LockOnSwitching());
-        DirectX::XMFLOAT3 playerEnemyLength =
-            Mathf::CalculateLength(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
+    if (LockOnSwitching()) {};
+    DirectX::XMFLOAT3 playerEnemyLength =
+        Mathf::CalculateLength(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
 
     perspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,

@@ -10,6 +10,7 @@ public:
 	static DirectX::XMFLOAT3 LerpFloat3(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b, float t);
 
 	// 球面補間
+	static DirectX::XMFLOAT3* SphereLinear(DirectX::XMFLOAT3* out, DirectX::XMFLOAT3* start, DirectX::XMFLOAT3* end, float t);
 
 	// 指定範囲のランダム値を計算する
 	static float RandomRange(float min, float max);
