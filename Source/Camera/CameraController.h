@@ -81,8 +81,9 @@ private:
     const float minAngleX = DirectX::XMConvertToRadians(-45);
 
     DirectX::XMFLOAT3 perspective;
+    DirectX::XMFLOAT3 perspectiveq;
     float lockOnRange = 0;
-    int nowTargetIndex = 0;
+    int nowTargetIndex = -1;
     bool lockOnFlag = false;
     float lockOnPositionY = 5.0f;
     float lockOnTimer = 0;
@@ -95,7 +96,7 @@ private:
     DirectX::XMFLOAT3	farPoint[4] = {};	// Farの四角形の４頂点の座標
     float nearCamera = 0.0f;
     float farCamera = 0.0f;
-    int timerer = 0.0f;
+    float timerer = 0.0f;
 
     DirectX::XMFLOAT3 shakePower = {1.0f, 1.0f, 1.0f};
     float shakesuppress = 0;

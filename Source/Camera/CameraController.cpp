@@ -52,7 +52,7 @@ void CameraController::Update(float elapsedTime)
         break;
     }
 
-    // ロックオンのオンオフ
+    // マウスのホイル押し込みもしくはQボタンか右スティックが押し込まれたらロックオンのオンオフ
     if ((mouse.GetButtonDown() & mouse.BTN_MIDDLE ||
         gamePad.GetButtonDown() & gamePad.BTN_RIGHT_THUMB) &&
         lockOnTimer > 0.5f)
@@ -61,6 +61,8 @@ void CameraController::Update(float elapsedTime)
         lockOnTimer = 0.0f;
         if (lockOnFlag)
             LockOn(elapsedTime);
+        else if (!lockOnFlag)
+            state = CameraContorollerState::NormalTargetState;
     }
     lockOnTimer += elapsedTime;
 
@@ -115,6 +117,22 @@ void CameraController::DrawDebugGUI()
                 ImGui::Text("lockOnFlag %s", str);
             }
             ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
+            {
+                char* str = {};
+                switch (state)
+                {
+                case CameraContorollerState::NormalTargetState:
+                    str = "NormalTargetState";
+                    break;
+                case CameraContorollerState::LockOnTargetState:
+                    str = "LockOnTargetState";
+                    break;
+                case CameraContorollerState::TransitionState:
+                    str = "TransitionState";
+                    break;
+                }
+                ImGui::Text("state %s", str);
+            }
             ImGui::SliderFloat("lockOnPossitionY", &lockOnPositionY, -10.0f, 10.0f);
             Mouse& mouse = Input::Instance().GetMouse();
             ImGui::Text("holdDown %d", mouse.GetHoldDown());
@@ -137,6 +155,7 @@ void CameraController::DrawDebugGUI()
         {
             ImGui::SliderFloat3("shakePower", &shakePower.x, 1.0f, 10.0f);
             ImGui::SliderFloat("shakesuppress", &shakesuppress, 0.0f, 1.0f);
+            ImGui::SliderFloat("timerer", &timerer, 0.0f, 1.0f);
         }
     }
     ImGui::End();
@@ -264,7 +283,7 @@ bool CameraController::LockOnSwitching()
     if (cameraMouseOperationFlag)
     {
         int i = targets.back().index;
-        float mousePos = mouse.GetPositionX() - mouse.GetOldPositionX();
+        float mousePos = static_cast<float>(mouse.GetPositionX() - mouse.GetOldPositionX());
         // 右向きにスクリーンの横幅からを100割った数だけ移動したら
         if (mousePos > mouse.GetScreenWidth() / 100)
         {
@@ -272,7 +291,7 @@ bool CameraController::LockOnSwitching()
             if (nowTargetIndex != targets.back().index)
             {
                 // 遷移ステートへ移動
-                //state = CameraContorollerState::TransitionState;
+                state = CameraContorollerState::TransitionState;
                 nowTargetIndex++;
                 return true;
             }
@@ -284,7 +303,7 @@ bool CameraController::LockOnSwitching()
             if (nowTargetIndex != targets.front().index)
             {
                 // 遷移ステートへ移動
-                //state = CameraContorollerState::TransitionState;
+                state = CameraContorollerState::TransitionState;
                 nowTargetIndex--;
                 return true;
             }
@@ -509,7 +528,7 @@ void CameraController::GetTargetPerspective()
     DirectX::XMFLOAT3 playerEnemyLength =
         Mathf::CalculateLength(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
 
-    perspective = DirectX::XMFLOAT3(
+    perspectiveq = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
         player->GetPosition().y - playerEnemyLength.y + lockOnPositionY,
         player->GetPosition().z - playerEnemyLength.z * playerRange);
@@ -518,9 +537,10 @@ void CameraController::GetTargetPerspective()
 DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 {
     DirectX::XMFLOAT3 interpolation = {};
-    DirectX::XMFLOAT3 start = GetPerspective();
-    //interpolation = Mathf::LerpFloat3(start, perspective, 3.0f);
-    //if (timerer > 1.0f)
+    interpolation.x = Mathf::LerpFloat(perspective.x, perspectiveq.x, timerer);
+    interpolation.y = Mathf::LerpFloat(perspective.y, perspectiveq.y, timerer);
+    interpolation.z = Mathf::LerpFloat(perspective.z, perspectiveq.z, timerer);
+    if (timerer > 1.0f)
     {
         state = CameraContorollerState::LockOnTargetState;
     }
