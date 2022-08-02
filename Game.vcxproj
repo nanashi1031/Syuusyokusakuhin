@@ -191,7 +191,7 @@
     <ClCompile Include="Source\Input\Mouse.cpp" />
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\SceneGame.cpp" />
+    <ClCompile Include="Source\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Stage\StageMain.cpp" />
     <ClCompile Include="Source\Stage\StageManager.cpp" />
     <ClCompile Include="Source\System\Mathf.cpp" />
