@@ -148,11 +148,12 @@
     <ClInclude Include="Source\Input\Mouse.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\Misc.h" />
-    <ClInclude Include="Source\SceneGame.h" />
+    <ClInclude Include="Source\Scene\SceneGame.h" />
     <ClInclude Include="Source\Stage\Stage.h" />
     <ClInclude Include="Source\Stage\StageMain.h" />
     <ClInclude Include="Source\Stage\StageManager.h" />
     <ClInclude Include="Source\System\Mathf.h" />
+    <ClInclude Include="Source\System\UI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\DirectXTex\WICTextureLoader.cpp" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Source\Stage\StageMain.cpp" />
     <ClCompile Include="Source\Stage\StageManager.cpp" />
     <ClCompile Include="Source\System\Mathf.cpp" />
+    <ClCompile Include="Source\System\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Debug.hlsli" />
