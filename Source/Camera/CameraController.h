@@ -65,7 +65,7 @@ private:
 
     void ShakeCamera(DirectX::XMFLOAT3 shakePower);
 
-    void GetTargetPerspective();
+    bool GetTargetPerspective();
     DirectX::XMFLOAT3 GetPerspective();
 
 private:

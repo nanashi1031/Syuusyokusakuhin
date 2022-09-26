@@ -232,9 +232,6 @@ void CameraController::CameraRotationAxisLimit()
 
 void CameraController::LockOn(float elapsedTime)
 {
-    // 遷移ステートへ移動
-    state = CameraContorollerState::TransitionState;
-
     // 前の情報は必要無いためリセット
     targets.clear();
     nowTargetIndex = 0;
@@ -274,6 +271,9 @@ void CameraController::LockOn(float elapsedTime)
 
     // 小さい順に並べ替え
     std::sort(targets.begin(), targets.end());
+
+    // 遷移ステートへ移動
+    state = CameraContorollerState::TransitionState;
 }
 
 bool CameraController::LockOnSwitching()
@@ -514,9 +514,10 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
     return perspective;
 }
 
-void CameraController::GetTargetPerspective()
+bool CameraController::GetTargetPerspective()
 {
-    if (targets.size() <= 0)  return;
+    if (targets.size() <= 0)
+        return false;
 
     // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
     PlayerManager& playerManager = PlayerManager::Instance();
@@ -532,6 +533,9 @@ void CameraController::GetTargetPerspective()
         player->GetPosition().x - playerEnemyLength.x * playerRange,
         player->GetPosition().y - playerEnemyLength.y + lockOnPositionY,
         player->GetPosition().z - playerEnemyLength.z * playerRange);
+
+    perspective = perspectiveq;
+    return true;
 }
 
 DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
@@ -540,11 +544,14 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
     interpolation.x = Mathf::LerpFloat(perspective.x, perspectiveq.x, timerer);
     interpolation.y = Mathf::LerpFloat(perspective.y, perspectiveq.y, timerer);
     interpolation.z = Mathf::LerpFloat(perspective.z, perspectiveq.z, timerer);
+
+    timerer += elapsedTime;
+
     if (timerer > 1.0f)
     {
         state = CameraContorollerState::LockOnTargetState;
+        timerer = 0.0f;
     }
-    timerer += elapsedTime;
     return interpolation;
 }
 
