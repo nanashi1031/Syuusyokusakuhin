@@ -110,7 +110,7 @@ void CameraController::DrawDebugGUI()
             // レンジ
             ImGui::SliderFloat("playerRange", &playerRange, 0.001f, 50.0f);
         }
-        if (ImGui::CollapsingHeader("Target", ImGuiTreeNodeFlags_DefaultOpen))
+        if (ImGui::CollapsingHeader("LockOn", ImGuiTreeNodeFlags_DefaultOpen))
         {
             {
                 char* str = lockOnFlag ? "true" : "false";
@@ -155,7 +155,11 @@ void CameraController::DrawDebugGUI()
         {
             ImGui::SliderFloat3("shakePower", &shakePower.x, 1.0f, 10.0f);
             ImGui::SliderFloat("shakesuppress", &shakesuppress, 0.0f, 1.0f);
-            ImGui::SliderFloat("timerer", &timerer, 0.0f, 1.0f);
+        }
+        if (ImGui::CollapsingHeader("Learp", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            ImGui::SliderFloat("lerpSpeed", &lerpSpeed, 0.0f, 10.0f);
+            ImGui::SliderFloat("lerpTimer", &lerpTimer, 0.0f, 1.0f);
         }
     }
     ImGui::End();
@@ -167,7 +171,7 @@ void CameraController::UpdateMouse(float elapsedTime)
 
     // マウスカーソル非表示
     // TODO 今はカーソルの動きを見るため実行しない、本番ではコメントを外す
-    ShowCursor(false);
+    //ShowCursor(false);
 
     float speed = mouseRollSpeed * elapsedTime;
     angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() / 2.0f) * speed;
@@ -219,7 +223,7 @@ void CameraController::CameraRotationAxisLimit()
         angle.x = maxAngleX;
     }
 
-    // X軸のカメラ回転を制限
+    // y軸のカメラ回転を制限
     if (angle.y < -DirectX::XM_PI)
     {
         angle.y += DirectX::XM_2PI;
@@ -242,10 +246,12 @@ void CameraController::LockOn(float elapsedTime)
     EnemyManager& enemyManager = EnemyManager::Instance();
     const int enemyCount = enemyManager.GetEnemyCount();
 
-    // プレイヤーの前方向(前方向とれてないかも)
+    // プレイヤーの前方向( TODO 前方向とれてないかも)
     //const DirectX::XMFLOAT3 playerFront = player->GetFront();
 
     DirectX::XMFLOAT3 cameraPos = perspective;
+
+    Target target;
     for (int i = 0; i < enemyCount; i++)
     {
         DirectX::XMFLOAT3 playerEnemyLength =
@@ -254,7 +260,6 @@ void CameraController::LockOn(float elapsedTime)
 
         if (playerEnemyLengthTotal > lockOnRange) continue;
 
-        Target target;
         target.enemyLengthTotal = playerEnemyLengthTotal;
         target.index = i;
         targets.emplace_back(target);
@@ -264,6 +269,7 @@ void CameraController::LockOn(float elapsedTime)
     if (!targets.size())
     {
         // カメラをプレイヤーの正面へ向ける
+        target.index = -1;
         perspective = ResetCamera(elapsedTime);
         lockOnFlag = false;
         return;
@@ -276,6 +282,31 @@ void CameraController::LockOn(float elapsedTime)
     state = CameraContorollerState::TransitionState;
 }
 
+DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
+{
+    PlayerManager& playerManager = PlayerManager::Instance();
+    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+
+    // プレイヤーの前方向( TODO 前方向とれてないかも)
+    const DirectX::XMFLOAT3 playerFront = player->GetFront();
+
+    // カメラ回転値を回転行列に変換
+    DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
+
+    // 回転行列から前方向ベクトルを取り出す
+    DirectX::XMVECTOR frontVec = Transform.r[2];
+    DirectX::XMFLOAT3 front;
+    DirectX::XMStoreFloat3(&front, frontVec);
+
+    DirectX::XMFLOAT3 perspective;
+    perspective.x = target.x - playerFront.x * playerRange;
+    perspective.y = target.y - playerFront.y * playerRange;
+    perspective.z = target.z - playerFront.z * playerRange;
+
+    return perspective;
+}
+
+// ロックオン対象変更
 bool CameraController::LockOnSwitching()
 {
     Mouse& mouse = Input::Instance().GetMouse();
@@ -491,29 +522,6 @@ bool CameraController::frustumCulling(DirectX::XMFLOAT3 position, float radius)
     return false;
 }
 
-DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
-{
-    PlayerManager& playerManager = PlayerManager::Instance();
-    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
-
-    const DirectX::XMFLOAT3 playerFront = player->GetFront();
-
-    // カメラ回転値を回転行列に変換
-    DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-
-    // 回転行列から前方向ベクトルを取り出す
-    DirectX::XMVECTOR frontVec = Transform.r[2];
-    DirectX::XMFLOAT3 front;
-    DirectX::XMStoreFloat3(&front, frontVec);
-
-    DirectX::XMFLOAT3 perspective;
-    perspective.x = target.x - playerFront.x * playerRange;
-    perspective.y = target.y - playerFront.y * playerRange;
-    perspective.z = target.z - playerFront.z * playerRange;
-
-    return perspective;
-}
-
 bool CameraController::GetTargetPerspective()
 {
     if (targets.size() <= 0)
@@ -541,16 +549,16 @@ bool CameraController::GetTargetPerspective()
 DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 {
     DirectX::XMFLOAT3 interpolation = {};
-    interpolation.x = Mathf::LerpFloat(perspective.x, perspectiveq.x, timerer);
-    interpolation.y = Mathf::LerpFloat(perspective.y, perspectiveq.y, timerer);
-    interpolation.z = Mathf::LerpFloat(perspective.z, perspectiveq.z, timerer);
+    interpolation.x = Mathf::LerpFloat(perspective.x, perspectiveq.x, lerpTimer);
+    interpolation.y = Mathf::LerpFloat(perspective.y, perspectiveq.y, lerpTimer);
+    interpolation.z = Mathf::LerpFloat(perspective.z, perspectiveq.z, lerpTimer);
 
-    timerer += elapsedTime;
+    lerpTimer += elapsedTime * lerpSpeed;
 
-    if (timerer > 1.0f)
+    if (lerpTimer > 1.0f)
     {
         state = CameraContorollerState::LockOnTargetState;
-        timerer = 0.0f;
+        lerpTimer = 0.0f;
     }
     return interpolation;
 }

@@ -96,7 +96,9 @@ private:
     DirectX::XMFLOAT3	farPoint[4] = {};	// Farの四角形の４頂点の座標
     float nearCamera = 0.0f;
     float farCamera = 0.0f;
-    float timerer = 0.0f;
+    float lerpTimer = 0.0f;
+    // 線形補間速度
+    float lerpSpeed = 1.0f;
 
     DirectX::XMFLOAT3 shakePower = {1.0f, 1.0f, 1.0f};
     float shakesuppress = 0;
