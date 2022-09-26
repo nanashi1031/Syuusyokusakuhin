@@ -43,6 +43,12 @@
     <Filter Include="Source\System">
       <UniqueIdentifier>{dc579446-2fae-4c53-ad1e-7fa4634c1a10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Actor\Player">
+      <UniqueIdentifier>{1defb041-0d3e-4a30-a6eb-8b093f04dc07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Actor\Enemy">
+      <UniqueIdentifier>{c0000b07-97ec-4e3a-bd5f-c009d4df9fb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -126,9 +132,6 @@
     <ClInclude Include="Source\Input\Mouse.h">
       <Filter>Source\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SceneGame.h">
-      <Filter>Source\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Stage\Stage.h">
       <Filter>Source\Stage</Filter>
     </ClInclude>
@@ -144,23 +147,11 @@
     <ClInclude Include="Source\Stage\StageManager.h">
       <Filter>Source\Stage</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\Player.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Camera\Camera.h">
       <Filter>Source\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Source\Camera\CameraController.h">
       <Filter>Source\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\Enemy.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyManager.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyBoss.h">
-      <Filter>Source\Actor</Filter>
     </ClInclude>
     <ClInclude Include="Source\Actor\StateMachine.h">
       <Filter>Source\Actor</Filter>
@@ -171,17 +162,35 @@
     <ClInclude Include="Source\Actor\StateDerived.h">
       <Filter>Source\Actor</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\EnemySlime.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Source\System\Mathf.h">
       <Filter>Source\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\PlayerManager.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\Collision.h">
       <Filter>Source\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\UI.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene\SceneGame.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Player.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\PlayerManager.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Enemy.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\EnemyBoss.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\EnemyManager.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\EnemySlime.h">
+      <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -263,31 +272,16 @@
     <ClCompile Include="Source\Stage\StageManager.cpp">
       <Filter>Source\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Player.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Camera\Camera.cpp">
       <Filter>Source\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Source\Camera\CameraController.cpp">
       <Filter>Source\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Enemy.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyManager.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyBoss.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\StateMachine.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\StateDerived.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemySlime.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\StateBase.cpp">
@@ -296,14 +290,32 @@
     <ClCompile Include="Source\System\Mathf.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\PlayerManager.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\Collision.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneGame.cpp">
       <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\UI.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Player.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\PlayerManager.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Enemy.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemyBoss.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemyManager.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemySlime.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

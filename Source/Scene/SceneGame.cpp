@@ -152,6 +152,7 @@ void SceneGame::Render()
 
 		ImGui::Begin("ImGuiManager");
 		{
+
 			//bool imguiPlayer = false;
 			//if (ImGui::Button("Player"))
 			//{
