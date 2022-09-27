@@ -48,8 +48,12 @@ void CameraController::Update(float elapsedTime)
         break;
         // カメラ遷移状態
     case CameraContorollerState::TransitionState:
-        perspective = UpdateTransitionState(elapsedTime);
         break;
+    }
+
+    if (lerpFlag)
+    {
+        perspective = UpdateTransitionState(elapsedTime);
     }
 
     // マウスのホイル押し込みもしくはQボタンか右スティックが押し込まれたらロックオンのオンオフ
@@ -246,7 +250,7 @@ void CameraController::LockOn(float elapsedTime)
     EnemyManager& enemyManager = EnemyManager::Instance();
     const int enemyCount = enemyManager.GetEnemyCount();
 
-    // プレイヤーの前方向( TODO 前方向とれてないかも)
+    // プレイヤーの前方向(TODO 前方向とれてないかも)
     //const DirectX::XMFLOAT3 playerFront = player->GetFront();
 
     DirectX::XMFLOAT3 cameraPos = perspective;
@@ -269,9 +273,9 @@ void CameraController::LockOn(float elapsedTime)
     if (!targets.size())
     {
         // カメラをプレイヤーの正面へ向ける
-        target.index = -1;
+        target.index = 1;
         perspective = ResetCamera(elapsedTime);
-        lockOnFlag = false;
+        //lockOnFlag = false;
         return;
     }
 
@@ -279,16 +283,24 @@ void CameraController::LockOn(float elapsedTime)
     std::sort(targets.begin(), targets.end());
 
     // 遷移ステートへ移動
-    state = CameraContorollerState::TransitionState;
+    lerpFlag = true;
 }
 
+// カメラをプレーヤーの正面へ向ける
 DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
 {
     PlayerManager& playerManager = PlayerManager::Instance();
     Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
 
-    // プレイヤーの前方向( TODO 前方向とれてないかも)
+    // プレイヤーの前方向(TODO 前方向とれてないかも)
     const DirectX::XMFLOAT3 playerFront = player->GetFront();
+    DirectX::XMVECTOR playerFrontVec = DirectX::XMLoadFloat3(&playerFront);
+    // ターゲット
+    DirectX::XMVECTOR targetVec = DirectX::XMVectorScale(playerFrontVec, 10);
+    DirectX::XMFLOAT3 target;
+    DirectX::XMStoreFloat3(&target, targetVec);
+
+    return target;
 
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
@@ -322,7 +334,7 @@ bool CameraController::LockOnSwitching()
             if (nowTargetIndex != targets.back().index)
             {
                 // 遷移ステートへ移動
-                state = CameraContorollerState::TransitionState;
+                lerpFlag = true;
                 nowTargetIndex++;
                 return true;
             }
@@ -334,7 +346,7 @@ bool CameraController::LockOnSwitching()
             if (nowTargetIndex != targets.front().index)
             {
                 // 遷移ステートへ移動
-                state = CameraContorollerState::TransitionState;
+                lerpFlag = true;
                 nowTargetIndex--;
                 return true;
             }
@@ -559,6 +571,7 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
     {
         state = CameraContorollerState::LockOnTargetState;
         lerpTimer = 0.0f;
+        lerpFlag = false;
     }
     return interpolation;
 }

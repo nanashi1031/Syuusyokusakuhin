@@ -100,6 +100,9 @@ private:
     // 線形補間速度
     float lerpSpeed = 1.0f;
 
+    // 線形補間フラグ
+    bool lerpFlag;
+
     DirectX::XMFLOAT3 shakePower = {1.0f, 1.0f, 1.0f};
     float shakesuppress = 0;
 };
