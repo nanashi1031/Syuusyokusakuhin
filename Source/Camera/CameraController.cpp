@@ -325,10 +325,10 @@ bool CameraController::LockOnSwitching()
 
     if (cameraMouseOperationFlag)
     {
-        int i = targets.back().index;
-        float mousePos = static_cast<float>(mouse.GetPositionX() - mouse.GetOldPositionX());
-        // 右向きにスクリーンの横幅からを100割った数だけ移動したら
-        if (mousePos > mouse.GetScreenWidth() / 100)
+        //float mousePos = static_cast<float>(mouse.GetPositionX() - mouse.GetOldPositionX());
+        float mousePos = static_cast<float>(mouse.GetPositionX());
+        // マウスの位置がスクリーンの真ん中から左に移動したら
+        if (mousePos < mouse.GetScreenWidth() * 0.5 - 50)
         {
             // targets.indexの末尾じゃなければ対象を変更
             if (nowTargetIndex != targets.back().index)
@@ -339,8 +339,8 @@ bool CameraController::LockOnSwitching()
                 return true;
             }
         }
-        // 左向きにスクリーンの横幅からを100割った数だけ移動したら
-        else if (mousePos < -mouse.GetScreenWidth() / 100)
+        // マウスの位置がスクリーンの真ん中から右に移動したら
+        else if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
         {
             // targets.indexの先頭じゃなければ対象を変更
             if (nowTargetIndex != targets.front().index)
@@ -539,13 +539,16 @@ bool CameraController::GetTargetPerspective()
     if (targets.size() <= 0)
         return false;
 
-    // プレーヤーから一番近いエネミーを算出する(カメラ内かどうかは無視)
+    // プレーヤーから一番近いエネミーを算出する TODO (カメラ内かどうかは無視)
     PlayerManager& playerManager = PlayerManager::Instance();
     Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    if (LockOnSwitching()) {};
+    if (!lerpFlag)
+    {
+        if (LockOnSwitching()) {};
+    }
     DirectX::XMFLOAT3 playerEnemyLength =
         Mathf::CalculateLength(enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition(), player->GetPosition());
 
