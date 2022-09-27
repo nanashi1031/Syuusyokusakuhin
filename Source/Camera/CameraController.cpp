@@ -328,7 +328,7 @@ bool CameraController::LockOnSwitching()
         //float mousePos = static_cast<float>(mouse.GetPositionX() - mouse.GetOldPositionX());
         float mousePos = static_cast<float>(mouse.GetPositionX());
         // マウスの位置がスクリーンの真ん中から左に移動したら
-        if (mousePos < mouse.GetScreenWidth() * 0.5 - 50)
+        if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
         {
             // targets.indexの末尾じゃなければ対象を変更
             if (nowTargetIndex != targets.back().index)
@@ -340,7 +340,7 @@ bool CameraController::LockOnSwitching()
             }
         }
         // マウスの位置がスクリーンの真ん中から右に移動したら
-        else if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
+        else if (mousePos < mouse.GetScreenWidth() * 0.5 - 50)
         {
             // targets.indexの先頭じゃなければ対象を変更
             if (nowTargetIndex != targets.front().index)
