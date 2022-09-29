@@ -120,6 +120,8 @@
     <ClInclude Include="Source\Actor\EnemyBoss.h" />
     <ClInclude Include="Source\Actor\EnemyManager.h" />
     <ClInclude Include="Source\Actor\EnemySlime.h" />
+    <ClInclude Include="Source\Actor\Insect.h" />
+    <ClInclude Include="Source\Actor\InsectManager.h" />
     <ClInclude Include="Source\Actor\Object.h" />
     <ClInclude Include="Source\Actor\Player.h" />
     <ClInclude Include="Source\Actor\PlayerManager.h" />
@@ -167,6 +169,8 @@
     <ClCompile Include="Source\Actor\EnemyBoss.cpp" />
     <ClCompile Include="Source\Actor\EnemyManager.cpp" />
     <ClCompile Include="Source\Actor\EnemySlime.cpp" />
+    <ClCompile Include="Source\Actor\Insect.cpp" />
+    <ClCompile Include="Source\Actor\InsectManager.cpp" />
     <ClCompile Include="Source\Actor\Object.cpp" />
     <ClCompile Include="Source\Actor\Player.cpp" />
     <ClCompile Include="Source\Actor\PlayerManager.cpp" />

@@ -49,6 +49,9 @@
     <Filter Include="Source\Actor\Enemy">
       <UniqueIdentifier>{c0000b07-97ec-4e3a-bd5f-c009d4df9fb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Actor\BihaviiorTree">
+      <UniqueIdentifier>{56fac59e-8a9b-45cb-8173-7065240f6817}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -192,6 +195,12 @@
     <ClInclude Include="Source\Actor\EnemySlime.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\Insect.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\InsectManager.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -316,6 +325,12 @@
     </ClCompile>
     <ClCompile Include="Source\Actor\EnemySlime.cpp">
       <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Insect.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\InsectManager.cpp">
+      <Filter>Source\Actor\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
