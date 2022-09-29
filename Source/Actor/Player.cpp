@@ -98,7 +98,6 @@ DirectX::XMFLOAT3 Player::GetMoveVec() const
     return vec;
 }
 
-//‘O•ûŒü‚ðŽæ“¾
 DirectX::XMFLOAT3 Player::GetFront() const
 {
     DirectX::XMFLOAT3 front;
@@ -108,6 +107,7 @@ DirectX::XMFLOAT3 Player::GetFront() const
 
     return front;
 }
+
 
 void Player::InputAttack(float elapsedTime)
 {

@@ -27,6 +27,13 @@ public:
     // ‘O•ûŒü‚ðŽæ“¾
     DirectX::XMFLOAT3 GetFront() const;
 
+    // ƒm[ƒhî•ñŽæ“¾
+    Model::Node* Player::GetNode(const char* nodeName) const
+    {
+        Model::Node* node = model->FindNode(nodeName);
+        return node;
+    }
+
 private:
     void InputMove(float elapsedTime);
 
