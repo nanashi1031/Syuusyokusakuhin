@@ -32,7 +32,6 @@ private:
     {
         NormalTargetState,  // カメラ通常状態
         LockOnTargetState,  // ロックオン
-        TransitionState,    // 移動補間
     };
 
 public:

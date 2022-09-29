@@ -7,6 +7,9 @@
 #include "Mathf.h"
 #include <algorithm>
 
+
+#include "EnemyBoss.h"
+
 void CameraController::Update(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
@@ -45,9 +48,6 @@ void CameraController::Update(float elapsedTime)
         // カメラロックオン状態
     case CameraContorollerState::LockOnTargetState:
         GetTargetPerspective();
-        break;
-        // カメラ遷移状態
-    case CameraContorollerState::TransitionState:
         break;
     }
 
@@ -130,9 +130,6 @@ void CameraController::DrawDebugGUI()
                     break;
                 case CameraContorollerState::LockOnTargetState:
                     str = "LockOnTargetState";
-                    break;
-                case CameraContorollerState::TransitionState:
-                    str = "TransitionState";
                     break;
                 }
                 ImGui::Text("state %s", str);
@@ -273,10 +270,8 @@ void CameraController::LockOn(float elapsedTime)
     if (!targets.size())
     {
         // カメラをプレイヤーの正面へ向ける
-        target.index = 1;
+        target.index = 0;
         perspective = ResetCamera(elapsedTime);
-        //lockOnFlag = false;
-        return;
     }
 
     // 小さい順に並べ替え
@@ -299,6 +294,16 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
     DirectX::XMVECTOR targetVec = DirectX::XMVectorScale(playerFrontVec, 10);
     DirectX::XMFLOAT3 target;
     DirectX::XMStoreFloat3(&target, targetVec);
+
+    //TODO 前方向とれてるかテスト、絶対消すこと
+    {
+        EnemyManager& enemyManager = EnemyManager::Instance();
+
+        EnemyBoss* boss = new EnemyBoss();
+        boss->SetPosition(DirectX::XMFLOAT3(target));
+        boss->SetScale(DirectX::XMFLOAT3(1, 1000, 1));
+        enemyManager.Register(boss);
+    }
 
     return target;
 
