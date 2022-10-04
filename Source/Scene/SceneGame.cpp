@@ -4,6 +4,7 @@
 #include "EnemySlime.h"
 #include "EnemyBoss.h"
 #include "PlayerManager.h"
+#include "InsectManager.h"
 #include "SceneGame.h"
 #include "StageMain.h"
 
@@ -21,17 +22,21 @@ void SceneGame::Initialize()
 	playerManager.Register(player);
 
 	EnemyManager& enemyManager = EnemyManager::Instance();
+
 	//エネミー
-	for (int i = 0; i < 2; i++)
-	{
-		EnemyBoss* boss = new EnemyBoss();
-		boss->SetPosition(DirectX::XMFLOAT3(i * 2.0f, 0, 10.0f));
-		enemyManager.Register(boss);
-	}
+	EnemyBoss* boss = new EnemyBoss();
+	boss->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+	enemyManager.Register(boss);
 
 	EnemySlime* slime = new EnemySlime;
 	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
 	enemyManager.Register(slime);
+
+	// 虫
+	Insect* insect = new Insect;
+	insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+	insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
+	InsectManager::Instance().Register(insect);
 
 	// カメラ
 	Graphics& graphics = Graphics::Instance();
@@ -68,6 +73,9 @@ void SceneGame::Finalize()
 	//プレイヤー
 	PlayerManager::Instance().Clear();
 
+	// 虫
+	InsectManager::Instance().Clear();
+
 	//エネミー
 	EnemyManager::Instance().Clear();
 }
@@ -84,6 +92,8 @@ void SceneGame::Update(float elapsedTime)
 	cameraController->Update(elapsedTime);
 
 	PlayerManager::Instance().Update(elapsedTime);
+
+	InsectManager::Instance().Update(elapsedTime);
 
 	EnemyManager::Instance().Update(elapsedTime);
 }
@@ -119,6 +129,8 @@ void SceneGame::Render()
 		StageManager::Instance().Render(dc, shader);
 
 		PlayerManager::Instance().Render(dc, shader);
+
+		InsectManager::Instance().Render(dc, shader);
 
 		EnemyManager::Instance().Render(dc, shader);
 
@@ -164,6 +176,7 @@ void SceneGame::Render()
 			//}
 		}
 		PlayerManager::Instance().DrawDebugGUI();
+		InsectManager::Instance().DrawDebugGUI();
 		cameraController->DrawDebugGUI();
 		EnemyManager::Instance().DrawDebugGUI();
 

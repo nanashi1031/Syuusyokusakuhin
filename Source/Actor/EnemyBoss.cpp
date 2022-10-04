@@ -2,7 +2,7 @@
 
 EnemyBoss::EnemyBoss()
 {
-    model = new Model("Data/Model/Slime/Slime.mdl");
+    model = new Model("Data/Model/Enemy/PurpleDragon/PurpleDragon.mdl");
 
     scale.x = scale.y = scale.z = 0.01f;
 
@@ -10,6 +10,8 @@ EnemyBoss::EnemyBoss()
     height = 0.5f;
 
     health = 10.0f;
+
+    model->PlayAnimation(6, true);
 }
 
 EnemyBoss::~EnemyBoss()
@@ -21,6 +23,8 @@ void EnemyBoss::Update(float elapsedTime)
 {
     //オブジェクト行列を更新
     UpdateTransform();
+
+    model->UpdateAnimation(elapsedTime);
 
     //モデル行列更新
     model->UpdateTransform(transform);
