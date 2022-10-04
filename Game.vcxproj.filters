@@ -201,6 +201,30 @@
     <ClInclude Include="Source\Actor\InsectManager.h">
       <Filter>Source\Actor\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\ActionBase.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\ActionDerived.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\BehaviorData.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\BehaviorTree.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\JudgmentBase.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\JudgmentDerived.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\NodeBase.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\EnemyBlueSlime.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -331,6 +355,24 @@
     </ClCompile>
     <ClCompile Include="Source\Actor\InsectManager.cpp">
       <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\BehaviorTree\ActionDerived.cpp">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\BehaviorTree\BehaviorData.cpp">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\BehaviorTree\BehaviorTree.cpp">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\BehaviorTree\NodeBase.cpp">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemyBlueSlime.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

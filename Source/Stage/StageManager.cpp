@@ -30,8 +30,3 @@ void StageManager::Clear()
     }
     stages.clear();
 }
-
-bool StageManager::RayaCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
-{
-    return false;
-}

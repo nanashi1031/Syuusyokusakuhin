@@ -33,7 +33,7 @@ bool Collision::IntersectSphereVsSpherer(
 }
 
 // ƒŒƒC‚Æƒ‚ƒfƒ‹‚ÌŒğ·”»’è
-bool Collision::IntersecrRayVsModel(
+bool Collision::IntersectRayVsModel(
     const DirectX::XMFLOAT3& start,
     const DirectX::XMFLOAT3& end,
     const Model* model,

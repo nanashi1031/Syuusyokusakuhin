@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "EnemyManager.h"
 #include "EnemySlime.h"
+#include "EnemyBlueSlime.h"
 #include "EnemyBoss.h"
 #include "PlayerManager.h"
 #include "InsectManager.h"
@@ -31,6 +32,10 @@ void SceneGame::Initialize()
 	EnemySlime* slime = new EnemySlime;
 	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
 	enemyManager.Register(slime);
+
+	EnemyBlueSlime* blueslime = new EnemyBlueSlime();
+	blueslime->SetPosition(DirectX::XMFLOAT3(10, 0, 0));
+	enemyManager.Register(blueslime);
 
 	// ’Ž
 	Insect* insect = new Insect;

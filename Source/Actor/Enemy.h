@@ -3,6 +3,7 @@
 #include "Graphics/Shader.h"
 #include "Graphics/Graphics.h"
 #include "Character.h"
+#include "PlayerManager.h"
 
 class Enemy : public Character
 {
@@ -16,6 +17,9 @@ public:
     virtual void DrawDebugPrimitive() {};
 
     virtual void DrawDebugGUI() {};
+
+    // ゲッター　セッター
+    DirectX::XMFLOAT3 GetPlayerPosition() { return PlayerManager::Instance().GetPlayer(PlayerManager::Instance().GetplayerOneIndex())->GetPosition(); }
 
     //破棄
     void Destroy();

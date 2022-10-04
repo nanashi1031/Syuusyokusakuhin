@@ -11,6 +11,11 @@ class StageManager
     ~StageManager() {};
 
 public:
+    enum class StageName
+    {
+        ExampleStage,
+    };
+
     // 唯一のインスタンス取得
     static StageManager& Instance()
     {
@@ -26,7 +31,9 @@ public:
 
     void Clear();
 
-    bool RayaCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
+    int GetStageCount() const { return static_cast<int>(stages.size()); }
+
+    Stage* GetStage(int index) { return stages.at(index); }
 
 private:
     std::vector<Stage*> stages;

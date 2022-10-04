@@ -24,7 +24,7 @@ public:
         DirectX::XMFLOAT3& outPosition);
 
     // ƒŒƒC‚Æƒ‚ƒfƒ‹‚ÌŒğ·”»’è
-    static bool IntersecrRayVsModel(
+    static bool IntersectRayVsModel(
         const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end,
         const Model* model,

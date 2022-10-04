@@ -4,7 +4,7 @@ EnemyBoss::EnemyBoss()
 {
     model = new Model("Data/Model/Enemy/PurpleDragon/PurpleDragon.mdl");
 
-    scale.x = scale.y = scale.z = 0.01f;
+    scale.x = scale.y = scale.z = 0.05f;
 
     radius = 0.5f;
     height = 0.5f;

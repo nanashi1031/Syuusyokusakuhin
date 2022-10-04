@@ -30,4 +30,6 @@ protected:
         0,0,1,0,
         0,0,0,1
     };
+
+    DirectX::XMFLOAT3 velocity = { 0,0,0 };
 };
