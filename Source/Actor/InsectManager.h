@@ -17,6 +17,7 @@ public:
         return instance;
     }
 
+    void Initialize();
     void Clear();
 
     void Update(float elapsedTime);

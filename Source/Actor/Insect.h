@@ -3,24 +3,29 @@
 
 class Insect : public Character
 {
+public:
     Insect();
     ~Insect();
 
+    void Initialize();
     void Update(float elapsedTime);
     void Render(ID3D11DeviceContext* dc, Shader* shader);
     void DrawDebugPrimitive();
     void DrawDebugGUI();
 
-    // プレイヤーの剣に追尾
-    void PlayerWeaponTracking(float elapsedTime);
-
     // ゲッター セッター
 
 private:
-    std::unique_ptr<Model> model = nullptr;
+    // プレイヤーの剣に追尾
+    void PlayerWeaponTracking(float elapsedTime);
 
-    const float size = 0.015f;
+private:
+    Model* model = nullptr;
+
+    const float size = 1.0f;
     const float moveSpeed = 5.0f;
 
     float turnSpeed = DirectX::XMConvertToRadians(720);
+
+    DirectX::XMFLOAT3 weaponPosition;
 };

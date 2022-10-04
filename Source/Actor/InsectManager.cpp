@@ -1,5 +1,13 @@
 #include "InsectManager.h"
 
+void InsectManager::Initialize()
+{
+    for (Insect* insect : insects)
+    {
+        insect->Initialize();
+    }
+}
+
 void InsectManager::Clear()
 {
     for (Insect* insect : insects)
