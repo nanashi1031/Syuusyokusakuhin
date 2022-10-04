@@ -88,7 +88,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
         // レイキャストによる地面判定
         HitResult hit;
         StageManager& stageManager = StageManager::Instance();
-        if (stageManager.GetStage(static_cast<int>(StageManager::StageName::ExampleStage)));
+        if (stageManager.GetStage(static_cast<int>(StageManager::StageName::ExampleStage)))
         {
             // 地面に接地している
             position.y = hit.collisionPosition.y;
@@ -118,4 +118,129 @@ void Character::UpdateVerticalMove(float elapsedTime)
         position.y += my;
         isGround = false;
     }
+}
+
+// 水平速力処理更新
+void Character::UpdateHorizontalVelocity(float elapsedFrame)
+{
+	// XZ平面の速力を減速する
+	float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	if (length > 0.0f)
+	{
+		// 摩擦力
+		float friction = this->friction * elapsedFrame;
+
+		// 空中にいるときは摩擦力を減らす
+		if (!isGround) friction *= airControl;
+
+		// 摩擦による横方向の減速処理
+		if (length > friction)
+		{
+			// 単位ベクトル化
+			float vx = velocity.x / length;
+			float vz = velocity.z / length;
+
+			velocity.x -= vx * friction;
+			velocity.z -= vz * friction;
+		}
+		// 横方向の速度が摩擦力以下になったので速力を無効化
+		else
+		{
+			velocity.x = 0.0f;
+			velocity.z = 0.0f;
+		}
+	}
+	// XZ平面の速力を加速する
+	if (length <= maxMoveSpeed)
+	{
+		// 移動ベクトルがゼロベクトルでないなら加速する
+		float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
+		if (moveVecLength > 0.0f)
+		{
+			// 加速力
+			float acceleration = this->acceleration * elapsedFrame;
+			// 空中にいるときは加速力を減らす
+			if (!isGround)acceleration *= airControl;
+
+			// 移動ベクトルによる加速処理
+			velocity.x += moveVecX * acceleration;
+			velocity.z += moveVecZ * acceleration;
+
+			// 最大速度制限
+			float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+			if (length > maxMoveSpeed)
+			{
+				float vx = velocity.x / length;
+				float vz = velocity.z / length;
+
+				velocity.x = vx * maxMoveSpeed;
+				velocity.z = vz * maxMoveSpeed;
+			}
+			if (isGround && slopeRate > 0.0f)
+			{
+				velocity.y -= length * slopeRate * elapsedFrame;
+			}
+		}
+	}
+	// 移動ベクトルをリセット
+	moveVecX = 0.0f;
+	moveVecZ = 0.0f;
+}
+// 水平移動更新処理
+void Character::UpdateHorizontalMove(float elapsedTime)
+{
+	// 水平速力量計算
+	float velocityLengthXZ = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	if (velocityLengthXZ > 0.0f)
+	{
+		// 水平移動値
+		float mx = velocity.x * elapsedTime;
+		float mz = velocity.z * elapsedTime;
+
+		// レイとの開始位置と終点位置
+		DirectX::XMFLOAT3 start = { position.x , position.y + stepOffset , position.z };
+		DirectX::XMFLOAT3 end = { position.x + mx , position.y + stepOffset , position.z + mz };
+
+		// レイキャストによる壁判定
+		HitResult hit;
+		if (Stage::Instance().RayCast(start, end, hit))
+		{
+			// 壁までのベクトル
+			DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
+			DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
+			DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+			// 壁の法線
+			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+			//入射ベクトルを法線に射影
+			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
+
+			// 補正位置の計算
+			DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End);
+			DirectX::XMFLOAT3 collectPosition;
+			DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
+
+			// 壁ずり方向へレイキャスト
+			HitResult hit2;
+			if (!Stage::Instance().RayCast(hit.position, collectPosition, hit2))
+			{
+				// 壁ずり方向で壁に当たらなかったら補正位置に移動
+				position.x = collectPosition.x;
+				position.z = collectPosition.z;
+			}
+			else
+			{
+				position.x = hit2.position.x;
+				position.z = hit2.position.z;
+			}
+		}
+		else
+		{
+			// 移動
+			position.x += mx;
+			position.z += mz;
+		}
+
+	}
 }
