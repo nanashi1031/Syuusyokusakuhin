@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "Model.h"
 
 // オブジェクト
 class Object
@@ -21,6 +22,8 @@ public:
     void SetScale(const DirectX::XMFLOAT3& scale) { this->scale; }
 
 protected:
+    Model* model = nullptr;
+
     DirectX::XMFLOAT3 position = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };
     DirectX::XMFLOAT3 scale = { 1, 1, 1 };

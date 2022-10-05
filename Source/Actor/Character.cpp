@@ -87,8 +87,8 @@ void Character::UpdateVerticalMove(float elapsedTime)
 
         // レイキャストによる地面判定
         HitResult hit;
-        StageManager& stageManager = StageManager::Instance();
-        if (stageManager.GetStage(static_cast<int>(StageManager::StageName::ExampleStage)))
+		StageManager& stageManager = StageManager::Instance();
+        if (stageManager.GetStage(stageManager.GetNowStage())->RayCast(start, end, hit))
         {
             // 地面に接地している
             position.y = hit.collisionPosition.y;
@@ -203,7 +203,8 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 
 		// レイキャストによる壁判定
 		HitResult hit;
-		if (Stage::Instance().RayCast(start, end, hit))
+		StageManager& stageManager = StageManager::Instance();
+		if (stageManager.GetStage(stageManager.GetNowStage())->RayCast(start, end, hit))
 		{
 			// 壁までのベクトル
 			DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
@@ -211,7 +212,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
 
 			// 壁の法線
-			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.collisionNormal);
 
 			//入射ベクトルを法線に射影
 			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
@@ -223,7 +224,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 
 			// 壁ずり方向へレイキャスト
 			HitResult hit2;
-			if (!Stage::Instance().RayCast(hit.position, collectPosition, hit2))
+			if (!stageManager.GetStage(stageManager.GetNowStage())->RayCast(hit.collisionPosition, collectPosition, hit2))
 			{
 				// 壁ずり方向で壁に当たらなかったら補正位置に移動
 				position.x = collectPosition.x;
@@ -231,8 +232,8 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			}
 			else
 			{
-				position.x = hit2.position.x;
-				position.z = hit2.position.z;
+				position.x = hit2.collisionPosition.x;
+				position.z = hit2.collisionPosition.z;
 			}
 		}
 		else

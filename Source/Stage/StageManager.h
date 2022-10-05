@@ -35,6 +35,11 @@ public:
 
     Stage* GetStage(int index) { return stages.at(index); }
 
+    int GetNowStage() { return nowStage; }
+    void SetNowStage(const int index) { nowStage = index; }
+
 private:
     std::vector<Stage*> stages;
+
+    int nowStage = 0;
 };

@@ -54,4 +54,10 @@ protected:
     float	gravity = -1.0f;
     bool	isGround = false;
     float	slopeRate = 1.0f;
+    float	friction = 0.5f;
+    float	acceleration = 1.0f;
+    float	maxMoveSpeed = 5.0f;
+    float	moveVecX = 0.0f;
+    float	moveVecZ = 0.0f;
+    float	airControl = 0.3f;
 };
