@@ -81,13 +81,14 @@ NodeBase* NodeBase::Inference(EnemyBlueSlime* enemy, BehaviorData* data)
 		// children.at(i)->judgmentがnullptrでなければ
 		if (children.at(i)->judgment != nullptr)
 		{
-			// TODO 04_03 children.at(i)->judgment->Judgment()関数を実行し、tureであれば
+			// children.at(i)->judgment->Judgment()関数を実行し、tureであれば
 			// listにchildren.at(i)を追加していく
-
+			if (children.at(i)->judgment->Judgment())
+				list.push_back(children.at(i));
 		}
 		else {
-			// TODO 04_03 判定クラスがなければ無条件に追加
-
+			// 判定クラスがなければ無条件に追加
+			list.push_back(children.at(i));
 		}
 	}
 
@@ -131,8 +132,15 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* list)
 	NodeBase* selectNode = nullptr;
 	int priority = INT_MAX;
 
-	// TODO 04_04 一番優先順位が高いノードを探してselectNodeに格納
-
+	// 一番優先順位が高いノードを探してselectNodeに格納
+	for (int i = 0; i < list->size(); i++)
+	{
+		if (priority > list->at(i)->GetPriority())
+		{
+			priority = list->at(i)->GetPriority();
+			selectNode = list->at(i);
+		}
+	}
 
 	return selectNode;
 }
@@ -142,9 +150,9 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* list)
 NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* list)
 {
 	int selectNo = 0;
-	// TODO 04_05 listのサイズで乱数を取得してselectNoに格納
+	// listのサイズで乱数を取得してselectNoに格納
+	selectNo = rand() % list->size();
 
-	
 	// listのselectNo番目の実態をリターン
 	return (*list).at(selectNo);
 }
@@ -160,14 +168,18 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 	// 中間ノードに登録されているノード数以上の場合、
 	if (step >= children.size())
 	{
-		// TODO 04_06 ルールによって処理を切り替える
+		// ルールによって処理を切り替える
 		// ルールがBehaviorTree::SelectRule::SequentialLoopingのときは最初から実行するため、stepに0を代入
 		// ルールがBehaviorTree::SelectRule::Sequenceのときは次に実行できるノードがないため、nullptrをリターン
-
-
-
-
-
+		switch (selectRule)
+		{
+		case BehaviorTree::SelectRule::SequentialLooping:
+			step = 0;
+			break;
+		case BehaviorTree::SelectRule::Sequence:
+			return nullptr;
+			break;
+		}
 	}
 	// 実行可能リストに登録されているデータの数だけループを行う
 	for (auto itr = list->begin(); itr != list->end(); itr++)
@@ -194,10 +206,10 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 // 判定
 bool NodeBase::Judgment(EnemyBlueSlime* enemy)
 {
-	// TODO 04_07 judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
+	// judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
 	if (judgment != nullptr)
 	{
-
+		return judgment->Judgment();
 	}
 	return true;
 }
@@ -205,11 +217,10 @@ bool NodeBase::Judgment(EnemyBlueSlime* enemy)
 // ノード実行
 ActionBase::State NodeBase::Run(EnemyBlueSlime* enemy,float elapsedTime)
 {
-	// TODO 04_08 actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
+	// actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
 	if (action != nullptr)
 	{
-
-
+		return action->Run(elapsedTime);
 	}
 
 	return ActionBase::State::Failed;

@@ -19,7 +19,7 @@ bool AttackJudgment::Judgment()
 {
 	// ‘ÎÛ‚Æ‚Ì‹——£‚ðŽZo
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	DirectX::XMFLOAT3 targetPosition = owner->GetPlayerPosition();
+	DirectX::XMFLOAT3 targetPosition = Player::Instance().GetPosition();
 
 	float vx = targetPosition.x - position.x;
 	float vy = targetPosition.y - position.y;

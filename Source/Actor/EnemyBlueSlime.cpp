@@ -1,7 +1,8 @@
 #include "Graphics/Graphics.h"
 #include "Mathf.h"
 #include "EnemyBlueSlime.h"
-#include "PLayerManager.h"
+#include "Player.h"
+#include "ProjectileStraite.h"
 #include "BehaviorTree.h"
 #include "BehaviorData.h"
 #include "NodeBase.h"
@@ -18,8 +19,6 @@ EnemyBlueSlime::EnemyBlueSlime()
 
 	radius = 0.5f;
 	height = 1.0f;
-
-	maxHealth = 10.0f;
 
 	// ビヘイビアツリー設定
 	behaviorData = new BehaviorData();
@@ -72,8 +71,12 @@ void EnemyBlueSlime::Update(float elapsedTime)
 		activeNode = aiTree->Run(activeNode, behaviorData, elapsedTime);
 	}
 
+
 	// 速力処理更新
 	UpdateVelocity(elapsedTime);
+
+	// 無敵時間更新
+	UpdateInvincibleTimer(elapsedTime);
 
 	// オブジェクト行列更新
 	UpdateTransform();
@@ -140,7 +143,7 @@ void EnemyBlueSlime::MoveToTarget(float elapsedTime, float speedRate)
 	vz /= dist;
 
 	// 移動処理
-	Move(elapsedTime, vx, vz, moveSpeed * speedRate);
+	Move(vx, vz, moveSpeed * speedRate);
 	Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
 
@@ -149,8 +152,7 @@ bool EnemyBlueSlime::SearchPlayer()
 {
 
 	// プレイヤーとの高低差を考慮して3Dで距離判定をする
-	PlayerManager& playerManager = PlayerManager::Instance();
-	const DirectX::XMFLOAT3& playerPosition = playerManager.GetPlayer(playerManager.GetplayerOneIndex())->GetPosition();
+	const DirectX::XMFLOAT3& playerPosition = Player::Instance().GetPosition();
 	float vx = playerPosition.x - position.x;
 	float vy = playerPosition.y - position.y;
 	float vz = playerPosition.z - position.z;

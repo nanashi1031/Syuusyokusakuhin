@@ -213,17 +213,17 @@
     <ClInclude Include="Source\Actor\BehaviorTree\BehaviorTree.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\BehaviorTree\JudgmentBase.h">
-      <Filter>Source\Actor\BihaviiorTree</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\BehaviorTree\JudgmentDerived.h">
-      <Filter>Source\Actor\BihaviiorTree</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\BehaviorTree\NodeBase.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Actor\EnemyBlueSlime.h">
       <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\JudgmentBase.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\BehaviorTree\JudgmentDerived.h">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -365,14 +365,14 @@
     <ClCompile Include="Source\Actor\BehaviorTree\BehaviorTree.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp">
-      <Filter>Source\Actor\BihaviiorTree</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\BehaviorTree\NodeBase.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\EnemyBlueSlime.cpp">
       <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp">
+      <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
