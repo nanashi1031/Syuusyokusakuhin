@@ -225,6 +225,9 @@
     <ClInclude Include="Source\Actor\BehaviorTree\JudgmentDerived.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\EnemyPurpleDragon.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -373,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemyPurpleDragon.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
