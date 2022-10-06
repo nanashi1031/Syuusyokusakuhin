@@ -20,7 +20,7 @@ public:
     void SetMaxHealth(float f) { this->maxHealth = f; }
 
 protected:
-    void Move(float elapsedTime, float vx, float vz, float speed);
+    void Move(float vx, float vz, float speed);
     void Turn(float elapsedTime, float vx, float vz, float speed);
 
     // Ž€–S‚µ‚½Žž‚ÉŒÄ‚Î‚ê‚é

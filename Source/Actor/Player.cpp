@@ -40,6 +40,9 @@ void Player::Update(float elapsedTime)
 
     CollisionNodeVsEnemies("mixamorig:Sword_joint", 0.5f);
 
+    // ‘¬—Íˆ—XV
+    UpdateVelocity(elapsedTime);
+
     UpdateTransform();
 
     model->UpdateAnimation(elapsedTime);
@@ -51,7 +54,7 @@ void Player::InputMove(float elapsedTime)
 {
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
-    Move(elapsedTime, moveVec.x, moveVec.z, moveSpeed);
+    Move(moveVec.x, moveVec.z, moveSpeed);
 
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 }
@@ -198,6 +201,10 @@ void Player::DrawDebugGUI()
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::DragFloat3("Postion", &position.x, 0.1f);
+            if (ImGui::Button("FallRescue"))
+            {
+                position = { 0, 5, 0 };
+            }
 
             DirectX::XMFLOAT3 a;
             a.x = DirectX::XMConvertToDegrees(angle.x);

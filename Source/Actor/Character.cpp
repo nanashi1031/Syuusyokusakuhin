@@ -2,11 +2,14 @@
 #include "Collision.h"
 #include "StageManager.h"
 
-void Character::Move(float elapsedTime, float vx, float vz, float speed)
+void Character::Move(float vx, float vz, float speed)
 {
-    speed *= elapsedTime;
-    position.x += vx * speed;
-    position.z += vz * speed;
+	// 移動方向ベクトルを設定
+	moveVecX = vx;
+	moveVecZ = vz;
+
+	// 最大速度設定
+	maxMoveSpeed = speed;
 }
 
 void Character::Turn(float elapsedTime, float vx, float vz, float speed)
@@ -186,6 +189,7 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 	moveVecX = 0.0f;
 	moveVecZ = 0.0f;
 }
+
 // 水平移動更新処理
 void Character::UpdateHorizontalMove(float elapsedTime)
 {
@@ -197,9 +201,12 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 		float mx = velocity.x * elapsedTime;
 		float mz = velocity.z * elapsedTime;
 
+		DirectX::XMVECTOR Velocity = DirectX::XMVectorScale(DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&velocity)), radius);
+		Velocity = DirectX::XMVectorSetY(Velocity, 0.0f);
+
 		// レイとの開始位置と終点位置
-		DirectX::XMFLOAT3 start = { position.x , position.y + stepOffset , position.z };
-		DirectX::XMFLOAT3 end = { position.x + mx , position.y + stepOffset , position.z + mz };
+		DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
+		DirectX::XMFLOAT3 end = { position.x + mx + DirectX::XMVectorGetX(Velocity), position.y + stepOffset, position.z + mz + DirectX::XMVectorGetZ(Velocity) };
 
 		// レイキャストによる壁判定
 		HitResult hit;
@@ -209,6 +216,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			// 壁までのベクトル
 			DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
 			DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
+			End = DirectX::XMVectorSubtract(End, Velocity);
 			DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
 
 			// 壁の法線
@@ -222,18 +230,43 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			DirectX::XMFLOAT3 collectPosition;
 			DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
 
+			collectPosition.y = position.y;
+			hit.collisionPosition.y = position.y;
+
 			// 壁ずり方向へレイキャスト
 			HitResult hit2;
 			if (!stageManager.GetStage(stageManager.GetNowStage())->RayCast(hit.collisionPosition, collectPosition, hit2))
 			{
+				hit2.collisionPosition.y = position.y;
 				// 壁ずり方向で壁に当たらなかったら補正位置に移動
+#if 0
 				position.x = collectPosition.x;
 				position.z = collectPosition.z;
+#endif
+				hit.collisionNormal.y = 0;
+				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit.collisionNormal));
+				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit.collisionPosition));
+				Dot = DirectX::XMVector3Dot(Vec, Normal);
+				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&collectPosition), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
+				float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.collisionPosition), DirectX::XMLoadFloat3(&position)), Normal));
+
+				// positionをスタートにすることでその場から動かない(はずだったのに)
+				//start.y = position.y;
+				//position = start;
+
+				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&position), DirectX::XMVectorScale(Normal, radius + dot)));
 			}
 			else
 			{
-				position.x = hit2.collisionPosition.x;
-				position.z = hit2.collisionPosition.z;
+				//position.x = hit2.collisionPosition.x;
+				//position.z = hit2.collisionPosition.z;
+
+				hit2.collisionPosition.y = position.y;
+				hit2.collisionNormal.y = 0;
+				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit2.collisionNormal));
+				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit2.collisionPosition));
+				Dot = DirectX::XMVector3Dot(Vec, Normal);
+				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit2.collisionPosition), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
 			}
 		}
 		else
