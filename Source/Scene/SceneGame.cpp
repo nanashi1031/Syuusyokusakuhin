@@ -4,6 +4,7 @@
 #include "EnemySlime.h"
 #include "EnemyBlueSlime.h"
 #include "EnemyBoss.h"
+#include "EnemyPurpleDragon.h"
 #include "PlayerManager.h"
 #include "InsectManager.h"
 #include "SceneGame.h"
@@ -25,9 +26,9 @@ void SceneGame::Initialize()
 	EnemyManager& enemyManager = EnemyManager::Instance();
 
 	//エネミー
-	EnemyBoss* boss = new EnemyBoss();
-	boss->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-	enemyManager.Register(boss);
+	EnemyPurpleDragon* purpleDragon = new EnemyPurpleDragon();
+	purpleDragon->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+	enemyManager.Register(purpleDragon);
 
 	EnemySlime* slime = new EnemySlime;
 	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));

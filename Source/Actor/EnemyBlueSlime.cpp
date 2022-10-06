@@ -2,7 +2,6 @@
 #include "Mathf.h"
 #include "EnemyBlueSlime.h"
 #include "Player.h"
-#include "ProjectileStraite.h"
 #include "BehaviorTree.h"
 #include "BehaviorData.h"
 #include "NodeBase.h"
@@ -74,9 +73,6 @@ void EnemyBlueSlime::Update(float elapsedTime)
 
 	// 速力処理更新
 	UpdateVelocity(elapsedTime);
-
-	// 無敵時間更新
-	UpdateInvincibleTimer(elapsedTime);
 
 	// オブジェクト行列更新
 	UpdateTransform();
@@ -152,7 +148,9 @@ bool EnemyBlueSlime::SearchPlayer()
 {
 
 	// プレイヤーとの高低差を考慮して3Dで距離判定をする
-	const DirectX::XMFLOAT3& playerPosition = Player::Instance().GetPosition();
+	PlayerManager& playerManager = PlayerManager::Instance();
+	const DirectX::XMFLOAT3& playerPosition =
+		playerManager.GetPlayer(playerManager.GetplayerOneIndex())->GetPosition();
 	float vx = playerPosition.x - position.x;
 	float vy = playerPosition.y - position.y;
 	float vz = playerPosition.z - position.z;
