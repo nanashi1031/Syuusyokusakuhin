@@ -38,6 +38,13 @@ public:
         return node;
     }
 
+    // アニメーション再生テンプレート
+    template<typename T>
+    void SetPlayAnimation(T animSuu, bool loop, float blendSeconds = 0.2f)
+    {
+        model->PlayAnimation(static_cast<int>(animSuu), loop, blendSeconds);
+    }
+
 protected:
     void Move(float vx, float vz, float speed);
     void Turn(float elapsedTime, float vx, float vz, float speed);
