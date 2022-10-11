@@ -84,7 +84,6 @@ public:
 
 
 private:
-	Model* model = nullptr;
 	DirectX::XMFLOAT3	targetPosition = { 0.0f,0.0f,0.0f };
 	DirectX::XMFLOAT3	territoryOrigin = { 0.0f,0.0f,0.0f };
 	float				territoryRange = 10.0f;

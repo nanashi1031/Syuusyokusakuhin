@@ -1,13 +1,14 @@
 #pragma once
 #include "JudgmentBase.h"
-#include "EnemyBlueSlime.h"
+#include "Enemy.h"
 
 
 // BattleNode‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class BattleJudgment : public JudgmentBase
 {
 public:
-	BattleJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+	template<typename T>
+	BattleJudgment(T* enemy) :JudgmentBase(enemy) {};
 	// ”»’è
 	bool Judgment();
 };
@@ -16,7 +17,8 @@ public:
 class AttackJudgment : public JudgmentBase
 {
 public:
-	AttackJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+	template<typename T>
+	AttackJudgment(T* enemy) :JudgmentBase(enemy) {};
 	// ”»’è
 	bool Judgment();
 };
@@ -25,7 +27,8 @@ public:
 class SkillShotJudgment : public JudgmentBase
 {
 public:
-	SkillShotJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+	template<typename T>
+	SkillShotJudgment(T* enemy) :JudgmentBase(enemy) {};
 	// ”»’è
 	bool Judgment();
 };
@@ -34,7 +37,8 @@ public:
 class WanderJudgment : public JudgmentBase
 {
 public:
-	WanderJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+	template<typename T>
+	WanderJudgment(T* enemy) :JudgmentBase(enemy) {};
 	// ”»’è
 	bool Judgment();
 };
@@ -43,8 +47,8 @@ public:
 // Escape‚É‘JˆÚ‚Å‚«‚é‚©”»’è
 class EscapeJudgment : public JudgmentBase
 {
-public:
-	EscapeJudgment(EnemyBlueSlime* enemy) :JudgmentBase(enemy) {};
+public:template<typename T>
+	EscapeJudgment(T* enemy) :JudgmentBase(enemy) {};
 	// ”»’è
 	bool Judgment();
 };

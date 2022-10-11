@@ -19,6 +19,25 @@ public:
     const float GetMaxHealth() const { return this->maxHealth; }
     void SetMaxHealth(float f) { this->maxHealth = f; }
 
+    // ターゲットポジション設定
+    void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
+
+    // ターゲットポジション取得
+    DirectX::XMFLOAT3 GetTargetPosition() { return targetPosition; }
+
+    // 目標地点へ移動
+    void MoveToTarget(float elapsedTime, float speedRate);
+
+    // モデル取得
+    Model* GetModel() { return model; }
+
+    // ノード情報取得
+    Model::Node* GetNode(const char* nodeName) const
+    {
+        Model::Node* node = model->FindNode(nodeName);
+        return node;
+    }
+
 protected:
     void Move(float vx, float vz, float speed);
     void Turn(float elapsedTime, float vx, float vz, float speed);
@@ -43,6 +62,8 @@ private:
     void UpdateHorizontalMove(float elapsedTime);
 
 protected:
+    DirectX::XMFLOAT3	targetPosition = { 0.0f,0.0f,0.0f };
+
     float radius = 0.0f;
     float height = 0.0f;
 
@@ -60,4 +81,7 @@ protected:
     float	moveVecX = 0.0f;
     float	moveVecZ = 0.0f;
     float	airControl = 0.3f;
+
+    float moveSpeed = 0.3f;
+    float turnSpeed = DirectX::XMConvertToRadians(360);
 };

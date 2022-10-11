@@ -69,61 +69,15 @@ NodeBase* NodeBase::SearchNode(std::string searchName)
 	return nullptr;
 }
 
-// ノード推論
-NodeBase* NodeBase::Inference(EnemyBlueSlime* enemy, BehaviorData* data)
+// 実行可否判定
+bool NodeBase::Judgment()
 {
-	std::vector<NodeBase*> list;
-	NodeBase* result = nullptr;
-
-	// childrenの数だけループを行う。
-	for (int i = 0; i < children.size(); i++)
+	// judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
+	if (judgment != nullptr)
 	{
-		// children.at(i)->judgmentがnullptrでなければ
-		if (children.at(i)->judgment != nullptr)
-		{
-			// children.at(i)->judgment->Judgment()関数を実行し、tureであれば
-			// listにchildren.at(i)を追加していく
-			if (children.at(i)->judgment->Judgment())
-				list.push_back(children.at(i));
-		}
-		else {
-			// 判定クラスがなければ無条件に追加
-			list.push_back(children.at(i));
-		}
+		return judgment->Judgment();
 	}
-
-	// 選択ルールでノード決め
-	switch (selectRule)
-	{
-		// 優先順位
-	case BehaviorTree::SelectRule::Priority:
-		result = SelectPriority(&list);
-		break;
-		// ランダム
-	case BehaviorTree::SelectRule::Random:
-		result = SelectRandom(&list);
-		break;
-		// シーケンス
-	case BehaviorTree::SelectRule::Sequence:
-	case BehaviorTree::SelectRule::SequentialLooping:
-		result = SelectSequence(&list, data);
-		break;
-	}
-
-	if (result != nullptr)
-	{
-		// 行動があれば終了
-		if (result->HasAction() == true)
-		{
-			return result;
-		}
-		else {
-			// 決まったノードで推論開始
-			result = result->Inference(enemy, data);
-		}
-	}
-
-	return result;
+	return true;
 }
 
 // 優先順位でノード選択
@@ -144,7 +98,6 @@ NodeBase* NodeBase::SelectPriority(std::vector<NodeBase*>* list)
 
 	return selectNode;
 }
-
 
 // ランダムでノード選択
 NodeBase* NodeBase::SelectRandom(std::vector<NodeBase*>* list)
@@ -203,19 +156,7 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 	return nullptr;
 }
 
-// 判定
-bool NodeBase::Judgment(EnemyBlueSlime* enemy)
-{
-	// judgmentがあるか判断。あればメンバ関数Judgment()実行した結果をリターン。
-	if (judgment != nullptr)
-	{
-		return judgment->Judgment();
-	}
-	return true;
-}
-
-// ノード実行
-ActionBase::State NodeBase::Run(EnemyBlueSlime* enemy,float elapsedTime)
+ActionBase::State NodeBase::Run(float elapsedTime)
 {
 	// actionがあるか判断。あればメンバ関数Run()実行した結果をリターン。
 	if (action != nullptr)

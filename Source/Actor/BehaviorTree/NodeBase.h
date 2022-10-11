@@ -51,7 +51,7 @@ public:
 	// 行動データを持っているか
 	bool HasAction() { return action != nullptr ? true : false; }
 	// 実行可否判定
-	bool Judgment(EnemyBlueSlime* enemy);
+	bool Judgment();
 	// 優先順位選択
 	NodeBase* SelectPriority(std::vector<NodeBase*>* list);
 	// ランダム選択
@@ -61,9 +61,65 @@ public:
 	// ノード検索
 	NodeBase* SearchNode(std::string searchName);
 	// ノード推論
-	NodeBase* Inference(EnemyBlueSlime* enemy, BehaviorData* data);
+	template<typename T>
+	NodeBase* Inference(T* actor, BehaviorData* data)
+	{
+		std::vector<NodeBase*> list;
+		NodeBase* result = nullptr;
+
+		// childrenの数だけループを行う。
+		for (int i = 0; i < children.size(); i++)
+		{
+			// children.at(i)->judgmentがnullptrでなければ
+			if (children.at(i)->judgment != nullptr)
+			{
+				// children.at(i)->judgment->Judgment()関数を実行し、tureであれば
+				// listにchildren.at(i)を追加していく
+				if (children.at(i)->judgment->Judgment())
+					list.push_back(children.at(i));
+			}
+			else {
+				// 判定クラスがなければ無条件に追加
+				list.push_back(children.at(i));
+			}
+		}
+
+		// 選択ルールでノード決め
+		switch (selectRule)
+		{
+			// 優先順位
+		case BehaviorTree::SelectRule::Priority:
+			result = SelectPriority(&list);
+			break;
+			// ランダム
+		case BehaviorTree::SelectRule::Random:
+			result = SelectRandom(&list);
+			break;
+			// シーケンス
+		case BehaviorTree::SelectRule::Sequence:
+		case BehaviorTree::SelectRule::SequentialLooping:
+			result = SelectSequence(&list, data);
+			break;
+		}
+
+		if (result != nullptr)
+		{
+			// 行動があれば終了
+			if (result->HasAction() == true)
+			{
+				return result;
+			}
+			else {
+				// 決まったノードで推論開始
+				result = result->Inference(actor, data);
+			}
+		}
+
+		return result;
+	}
+
 	// 実行
-	ActionBase::State Run(EnemyBlueSlime* enemy,float elapsedTime);
+	ActionBase::State Run(float elapsedTime);
 	std::vector<NodeBase*>		children;		// 子ノード
 protected:
 	std::string					name;			// 名前

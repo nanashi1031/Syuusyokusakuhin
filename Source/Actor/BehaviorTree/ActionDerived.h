@@ -6,8 +6,7 @@
 class AttackAction : public ActionBase
 {
 public:
-	template<typename T>
-	AttackAction(T* enemy) :ActionBase(enemy) {}
+	AttackAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
 
@@ -15,8 +14,7 @@ public:
 class SkillAction : public ActionBase
 {
 public:
-	template<typename T>
-	SkillAction(T* enemy) :ActionBase(enemy) {}
+	SkillAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
 
@@ -24,8 +22,7 @@ public:
 class PursuitAction : public ActionBase
 {
 public:
-	template<typename T>
-	PursuitAction(T* enemy) :ActionBase(enemy) {}
+	PursuitAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
 
@@ -33,8 +30,7 @@ public:
 class WanderAction : public ActionBase
 {
 public:
-	template<typename T>
-	WanderAction(T* enemy) :ActionBase(enemy) {}
+	WanderAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
 
@@ -42,8 +38,7 @@ public:
 class IdleAction : public ActionBase
 {
 public:
-	template<typename T>
-	IdleAction(T* enemy) :ActionBase(enemy) {}
+	IdleAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
 
@@ -51,8 +46,7 @@ public:
 class LeaveAction : public ActionBase
 {
 public:
-	template<typename T>
-	LeaveAction(T* enemy) :ActionBase(enemy) {}
+	LeaveAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
 
@@ -60,7 +54,6 @@ public:
 class RecoverAction : public ActionBase
 {
 public:
-	template<typename T>
-	RecoverAction(T* enemy) :ActionBase(enemy) {}
+	RecoverAction(EnemyBlueSlime* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };

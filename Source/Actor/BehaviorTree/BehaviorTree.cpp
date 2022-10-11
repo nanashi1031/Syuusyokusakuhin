@@ -2,7 +2,6 @@
 #include "ActionBase.h"
 #include "NodeBase.h"
 #include "JudgmentBase.h"
-#include "EnemyBlueSlime.h"
 #include "BehaviorData.h"
 
 
@@ -52,7 +51,7 @@ NodeBase* BehaviorTree::SequenceBack(NodeBase* sequenceNode, BehaviorData* data)
 NodeBase* BehaviorTree::Run(NodeBase* actionNode, BehaviorData* data,float elapsedTime)
 {
 	// ノード実行
-	ActionBase::State state = actionNode->Run(owner,elapsedTime);
+	ActionBase::State state = actionNode->Run(elapsedTime);
 
 	// 正常終了
 	if (state == ActionBase::State::Complete)

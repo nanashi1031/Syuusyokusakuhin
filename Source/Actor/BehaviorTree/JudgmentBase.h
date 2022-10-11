@@ -1,13 +1,14 @@
 #pragma once
 
-class EnemyBlueSlime;
+class Enemy;
 
 // é¿çsîªíË
 class JudgmentBase
 {
 public:
-	JudgmentBase(EnemyBlueSlime* enemy) :owner(enemy) {}
+	template<typename T>
+	JudgmentBase(T* actor) :owner(actor) {}
 	virtual bool Judgment() = 0;
 protected:
-	EnemyBlueSlime* owner;
+	Enemy* owner;
 };

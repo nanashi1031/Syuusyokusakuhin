@@ -278,3 +278,18 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 
 	}
 }
+
+// 目的地点へ移動
+void Character::MoveToTarget(float elapsedTime, float speedRate)
+{
+	// ターゲット方向への進行ベクトルを算出
+	float vx = targetPosition.x - position.x;
+	float vz = targetPosition.z - position.z;
+	float dist = sqrtf(vx * vx + vz * vz);
+	vx /= dist;
+	vz /= dist;
+
+	// 移動処理
+	Move(vx, vz, moveSpeed * speedRate);
+	Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
+}

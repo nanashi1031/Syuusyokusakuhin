@@ -1,12 +1,13 @@
 #pragma once
 
-class EnemyBlueSlime;
+class Enemy;
 
 // 行動処理基底クラス
 class ActionBase
 {
 public:
-	ActionBase(EnemyBlueSlime* enemy):owner(enemy){}
+	template<typename T>
+	ActionBase(T* actor):owner(actor){}
 	// 実行情報
 	enum class State
 	{
@@ -18,6 +19,6 @@ public:
 	// 実行処理(純粋仮想関数)
 	virtual ActionBase::State Run(float elapsedTime) = 0;
 protected:
-	EnemyBlueSlime* owner;
+	Enemy* owner;
 	int step = 0;
 };
