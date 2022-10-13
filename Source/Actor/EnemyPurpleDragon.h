@@ -44,5 +44,15 @@ public:
 	// デバッグプリミティブ描画
 	void DrawDebugPrimitive() override;
 
+	// 縄張り設定
+	void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
+	// ターゲットポジション設定
+	void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
+
+private:
+	DirectX::XMFLOAT3	targetPosition = { 0.0f,0.0f,0.0f };
+	DirectX::XMFLOAT3	territoryOrigin = { 0.0f,0.0f,0.0f };
+	float				territoryRange = 10.0f;
+	float				searchRange = 5.0f;
 };

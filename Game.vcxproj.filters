@@ -52,6 +52,9 @@
     <Filter Include="Source\Actor\BihaviiorTree">
       <UniqueIdentifier>{56fac59e-8a9b-45cb-8173-7065240f6817}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Actor\StateMachine">
+      <UniqueIdentifier>{cfc9b25e-d149-4617-9e2a-359028fb35c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -228,6 +231,21 @@
     <ClInclude Include="Source\Actor\EnemyPurpleDragon.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Actor\EnemyPurpleDragonActionDerived.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\PlayerActionDerived.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\StateBase.h">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\StateDerived.h">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -379,6 +397,21 @@
     </ClCompile>
     <ClCompile Include="Source\Actor\EnemyPurpleDragon.cpp">
       <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemyPurpleDragonActionDerived.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\PlayerActionDerived.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\StateBase.cpp">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\StateDerived.cpp">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
+      <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

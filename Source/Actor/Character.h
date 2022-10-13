@@ -1,5 +1,8 @@
 #pragma once
 #include "Object.h"
+#include "BehaviorTree.h"
+#include "BehaviorData.h"
+#include "NodeBase.h"
 
 // キャラクター
 class Character : public Object
@@ -91,4 +94,8 @@ protected:
 
     float moveSpeed = 0.3f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
+
+    BehaviorTree* aiTree = nullptr;
+    BehaviorData* behaviorData = nullptr;
+    NodeBase* activeNode = nullptr;
 };

@@ -30,14 +30,6 @@ void SceneGame::Initialize()
 	purpleDragon->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
 	enemyManager.Register(purpleDragon);
 
-	EnemySlime* slime = new EnemySlime;
-	slime->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-	enemyManager.Register(slime);
-
-	EnemyBlueSlime* blueslime = new EnemyBlueSlime();
-	blueslime->SetPosition(DirectX::XMFLOAT3(10, 0, 0));
-	enemyManager.Register(blueslime);
-
 	// ’Ž
 	Insect* insect = new Insect;
 	insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
@@ -168,25 +160,11 @@ void SceneGame::Render()
 		float alpha = 0.35f;
 		ImGui::SetNextWindowBgAlpha(alpha);
 
-		ImGui::Begin("ImGuiManager");
-		{
-
-			//bool imguiPlayer = false;
-			//if (ImGui::Button("Player"))
-			//{
-			//	imguiPlayer = true;
-			//}
-			//if (imguiPlayer)
-			//{
-
-			//}
-		}
 		PlayerManager::Instance().DrawDebugGUI();
 		InsectManager::Instance().DrawDebugGUI();
 		cameraController->DrawDebugGUI();
 		EnemyManager::Instance().DrawDebugGUI();
 
-		ImGui::End();
 #endif
 	}
 }

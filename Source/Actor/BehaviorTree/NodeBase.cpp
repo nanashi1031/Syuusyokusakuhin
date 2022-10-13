@@ -147,9 +147,10 @@ NodeBase* NodeBase::SelectSequence(std::vector<NodeBase*>* list, BehaviorData* d
 			// 　保存にはdata->SetSequenceStep関数を使用。
 			// 　保存データは中間ノードの名前と次のステップ数です(step + 1)
 			// ③ステップ番号目の子ノードを実行ノードとしてリターンする
+			data->PushSequenceNode(this);
+			data->SetSequenceStep(this->GetName(), step + 1);
 
-
-
+			return children.at(step);
 		}
 	}
 	// 指定された中間ノードに実行可能ノードがないのでnullptrをリターンする
