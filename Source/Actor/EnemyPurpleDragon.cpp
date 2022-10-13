@@ -12,7 +12,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 
 	health = 10.0f;
 
-	SetPlayAnimation(EnemyPurpleDragonAnimation::FryGlide, true);
+	SetPlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
 }
 
 EnemyPurpleDragon::~EnemyPurpleDragon()
