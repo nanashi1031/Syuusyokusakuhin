@@ -159,15 +159,6 @@
     <ClInclude Include="Source\Camera\CameraController.h">
       <Filter>Source\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\StateBase.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\StateDerived.h">
-      <Filter>Source\Actor</Filter>
-    </ClInclude>
     <ClInclude Include="Source\System\Mathf.h">
       <Filter>Source\System</Filter>
     </ClInclude>
@@ -195,9 +186,6 @@
     <ClInclude Include="Source\Actor\EnemyManager.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\EnemySlime.h">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\Insect.h">
       <Filter>Source\Actor\Player</Filter>
     </ClInclude>
@@ -219,9 +207,6 @@
     <ClInclude Include="Source\Actor\BehaviorTree\NodeBase.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyBlueSlime.h">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\BehaviorTree\JudgmentBase.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
@@ -234,16 +219,13 @@
     <ClInclude Include="Source\Actor\EnemyPurpleDragonActionDerived.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\PlayerActionDerived.h">
-      <Filter>Source\Actor\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\StateMachine\StateBase.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\StateDerived.h">
+    <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
+    <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -332,15 +314,6 @@
     <ClCompile Include="Source\Camera\CameraController.cpp">
       <Filter>Source\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\StateDerived.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\StateBase.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Mathf.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
@@ -368,9 +341,6 @@
     <ClCompile Include="Source\Actor\EnemyManager.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\EnemySlime.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\Insect.cpp">
       <Filter>Source\Actor\Player</Filter>
     </ClCompile>
@@ -389,9 +359,6 @@
     <ClCompile Include="Source\Actor\BehaviorTree\NodeBase.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyBlueSlime.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
@@ -401,16 +368,13 @@
     <ClCompile Include="Source\Actor\EnemyPurpleDragonActionDerived.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\PlayerActionDerived.cpp">
-      <Filter>Source\Actor\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\StateMachine\StateBase.cpp">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine\StateDerived.cpp">
+    <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
+    <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
   </ItemGroup>

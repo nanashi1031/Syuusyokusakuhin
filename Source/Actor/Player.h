@@ -7,10 +7,82 @@
 // ÉvÉåÉCÉÑÅ[
 class Player : public Character
 {
-private:
-    enum class Animation
+public:
+    enum class State
     {
+        Action,
+        Battle,
+    };
 
+    enum class Action
+    {
+        Idle,
+        Neglect,
+        Walk,
+        Run,
+    };
+
+    enum class Battle
+    {
+        AttackCombo1,
+        AttackCombo2,
+        AttackCombo3,
+        AttackDashu,
+        Avoidance,
+    };
+
+    enum class PlayerAnimation
+    {
+        AnimNon,
+        SwordStorage,
+        SwordDrawing,
+        TurnRun,
+        TurnWalk,
+        SlashRotaryLeft,
+        SlashRotary,
+        HiltPunch,
+        SlashKillingBlow,
+        BlockBack,
+        Block,
+        BlockStart,
+        SkillMagic,
+        SkillSword,
+        CrouchBlockHit,
+        CrouchBlockIdle,
+        CrouchBlockStart,
+        CrouchIdle,
+        Crouch,
+        CrouchHitSmall,
+        CrouchhitBig,
+        CrouchEnd,
+        DeathFront,
+        DeathBack,
+        Neglect1,
+        Neglect2,
+        Idle,
+        Neglect3,
+        HitSmall,
+        HitBig,
+        HitBlock,
+        Jump,
+        JumpFront,
+        Kick,
+        PowerUp,
+        RunFront,
+        RunBack,
+        SlashTripleAttack,
+        SlashLeftRoundUp,
+        SlashKaratake,
+        SlashLeg,
+        SlashKesakiri,
+        StrafeLeft,
+        StrafeRunLeft,
+        StrafeRunRight,
+        StrafeRight,
+        TurnLeft,
+        TurnRight,
+        WalkBack,
+        WalkFront,
     };
 
 public:

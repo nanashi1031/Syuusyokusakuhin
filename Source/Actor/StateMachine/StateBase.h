@@ -1,13 +1,12 @@
 #pragma once
 #include <vector>
-class EnemySlime;
+class Character;
 
 class State
 {
 public:
 
 	template<class T>
-	//EnemySlimeにしか対応してないのでテンプレート化する
 	State(T* t) :owner(t) {}
 	virtual ~State() {}
 
@@ -18,7 +17,7 @@ public:
 	// ステートから出ていくときのメソッド
 	virtual void Exit() = 0;
 protected:
-	EnemySlime* owner;
+	Character* owner;
 };
 
 class HierarchicalState : public State
