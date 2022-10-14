@@ -6,11 +6,11 @@ class State
 {
 public:
 
+	template<class T>
 	//EnemySlimeにしか対応してないのでテンプレート化する
-	// コンストラクタ
-	State(EnemySlime* enemy) :owner(enemy) {}
+	State(T* t) :owner(t) {}
 	virtual ~State() {}
-	// 全て継承先で実装させる必要があるため純粋仮想関数で実装
+
 	// ステートに入った時のメソッド
 	virtual void Enter() = 0;
 	// ステートで実行するメソッド
@@ -24,11 +24,10 @@ protected:
 class HierarchicalState : public State
 {
 public :
-	//コンストラクタ
-	HierarchicalState(EnemySlime* enemy) : State((enemy)) {}
+	template<class T>
+	HierarchicalState(T* t) : State((t)) {}
 	virtual ~HierarchicalState() {}
 
-	//全て継承先で実装させる必要があるため純粋仮想関数で実装
 	//ステートに入った時のメソッド
 	virtual void Enter() = 0;
 	//ステートで実行するメソッド
@@ -39,11 +38,11 @@ public :
 	virtual void SetSubState(int newState);
 	//サブステート変更
 	virtual void ChangeSubState(int newState);
-	//サブステート登録
+
 	virtual void RegisterSubState(State* state);
-	//サブステート取得
+
 	virtual State* GetSubState() { return subState; }
-	//サブステート番号取得
+
 	virtual int GetSubStateIndex();
 
 protected:

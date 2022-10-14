@@ -1,10 +1,7 @@
 #include "StateDerived.h"
-#include "Player.h"
+#include "PlayerManager.h"
 #include "Mathf.h"
 
-// TODO 03_03 HierarchicalStateを継承した親ステートの
-// 書き方の例としてSearchStateクラスは記述しておきます。
-// サーチステートデストラクタ
 SearchState::~SearchState()
 {
 	for (State* state : subStatePool)
@@ -147,7 +144,7 @@ void PursuitState::Enter()
 void PursuitState::Execute(float elapsedTime)
 {
 	// 目標地点をプレイヤー位置に設定
-	owner->SetTargetPosition(Player::Instance().GetPosition());
+	owner->SetTargetPosition(PlayerManager::Instance().GetPlayer(PlayerManager::Instance().GetplayerOneIndex())->GetPosition());
 
 	// 目的地点へ移動
 	owner->MoveToTarget(elapsedTime, 1.0);
