@@ -12,7 +12,7 @@ ActionBase::State AttackAction::Run(float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		owner->SetTargetPosition(owner->GetPlayerPosition());
 		// アニメーション再生
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::WingStrike, false);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::WingStrike, false);
 		step++;
 		break;
 	case 1:
@@ -39,7 +39,7 @@ ActionBase::State SkillAction::Run(float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		owner->SetTargetPosition(owner->GetPlayerPosition());
 		// アニメーション再生
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::FryFloat, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::FryFloat, true);
 		step++;
 	case 1:
 		// アニメーションが終了しているとき
@@ -62,7 +62,7 @@ ActionBase::State WanderAction::Run(float elapsedTime)
 	{
 	case 0:
 		// 徘徊モーション設定
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::WalkFound, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::WalkFound, true);
 		step++;
 		break;
 	case 1:
@@ -108,7 +108,7 @@ ActionBase::State PursuitAction::Run(float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		owner->SetTargetPosition(owner->GetPlayerPosition());
 		owner->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::RunFound, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::RunFound, true);
 		step++;
 		break;
 	case 1:
@@ -155,7 +155,7 @@ ActionBase::State IdleAction::Run(float elapsedTime)
 	{
 	case 0:
 		owner->SetRunTimer(Mathf::RandomRange(3.0f, 5.0f));
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::IdleNormal, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::IdleNormal, true);
 		step++;
 		break;
 	case 1:
@@ -204,7 +204,7 @@ ActionBase::State LeaveAction::Run(float elapsedTime)
 		targetPosition.z += owner->GetPosition().z;
 		owner->SetTargetPosition(targetPosition);
 
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::RunFound, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::RunFound, true);
 		step++;
 		break;
 	case 1:
@@ -239,7 +239,7 @@ ActionBase::State RecoverAction::Run(float elapsedTime)
 	switch (step)
 	{
 	case 0:
-		owner->SetPlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Sleep, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Sleep, true);
 		step++;
 		break;
 	case 1:

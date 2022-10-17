@@ -179,16 +179,6 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 }
 
-void Model::PlayAnimation(int index, bool loop, float blendSeconds)
-{
-	currentAnimationIndex = index;
-	currentAnimationSeconds = 0.0f;
-	animationLoopFlag = loop;
-	animationEndFlag = false;
-	animationBlendTime = 0.0f;
-	animationBlendSeconds = blendSeconds;
-}
-
 bool Model::IsPlayAnimation() const
 {
 	if (currentAnimationIndex < 0) return false;

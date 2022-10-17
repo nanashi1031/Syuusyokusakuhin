@@ -36,7 +36,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	aiTree->AddNode("Attack", "Skill", 8, BehaviorTree::SelectRule::Non, new SkillShotJudgment(this), new SkillAction(this));
 	aiTree->AddNode("Battle", "Pursuit", 10, BehaviorTree::SelectRule::Non, nullptr, new PursuitAction(this));
 
-	SetPlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
+	model->PlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
 }
 
 EnemyPurpleDragon::~EnemyPurpleDragon()

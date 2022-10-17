@@ -3,10 +3,10 @@
 #include "StateMachine.h"
 
 // アクションステート
-class ActionState : public State
+class ActionState : public HierarchicalState
 {
 public:
-	ActionState(Player* actor) : State(actor) {}
+	ActionState(Player* actor) : HierarchicalState(actor) {}
 	~ActionState();
 
 	// ステートに入った時のメソッド
@@ -32,27 +32,12 @@ public:
 	void Exit();
 };
 
-// 徘徊ステート
-class WanderState : public State
-{
-public:
-	WanderState(Player* actor) :State(actor) {};
-	~WanderState() {}
-
-	// ステートに入った時のメソッド
-	void Enter()override;
-	// ステートで実行するメソッド
-	void Execute(float elapsedTime)override;
-	// ステートから出ていくときのメソッド
-	void Exit()override;
-};
-
 // 待機ステート
 class IdleState : public State
 {
 public:
 	IdleState(Player* actor) :State(actor) {};
-	~IdleState() {}
+	~IdleState() {};
 
 	// ステートに入った時のメソッド
 	void Enter()override;
@@ -62,12 +47,12 @@ public:
 	void Exit()override;
 };
 
-// 追跡ステート
-class PursuitState : public State
+// 放置ステート
+class NeglectState : public State
 {
 public:
-	PursuitState(Player* actor) :State(actor) {};
-	~PursuitState() {}
+	NeglectState(Player* actor) :State(actor) {};
+	~NeglectState() {}
 
 	// ステートに入った時のメソッド
 	void Enter()override;
@@ -77,12 +62,102 @@ public:
 	void Exit()override;
 };
 
-// 攻撃ステート
-class AttackState : public State
+// 歩きステート
+class WalkState : public State
 {
 public:
-	AttackState(Player* actor) :State(actor) {};
-	~AttackState() {}
+	WalkState(Player* actor) :State(actor) {};
+	~WalkState() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// 走りステート
+class RunState : public State
+{
+public:
+	RunState(Player* actor) :State(actor) {};
+	~RunState() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// コンボ攻撃1ステート
+class AttackCombo1State : public State
+{
+public:
+	AttackCombo1State(Player* actor) :State(actor) {};
+	~AttackCombo1State() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// コンボ攻撃2ステート
+class AttackCombo2State : public State
+{
+public:
+	AttackCombo2State(Player* actor) :State(actor) {};
+	~AttackCombo2State() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// コンボ攻撃3ステート
+class AttackCombo3State : public State
+{
+public:
+	AttackCombo3State(Player* actor) :State(actor) {};
+	~AttackCombo3State() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// ダッシュ攻撃ステート
+class AttackDashuState : public State
+{
+public:
+	AttackDashuState(Player* actor) :State(actor) {};
+	~AttackDashuState() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// 回避ステート
+class AvoiDanceState : public State
+{
+public:
+	AvoiDanceState(Player* actor) :State(actor) {};
+	~AvoiDanceState() {}
 
 	// ステートに入った時のメソッド
 	void Enter()override;

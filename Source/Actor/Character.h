@@ -3,6 +3,7 @@
 #include "BehaviorTree.h"
 #include "BehaviorData.h"
 #include "NodeBase.h"
+#include "StateMachine.h"
 
 // キャラクター
 class Character : public Object
@@ -22,6 +23,11 @@ public:
     const float GetMaxHealth() const { return this->maxHealth; }
     void SetMaxHealth(float f) { this->maxHealth = f; }
 
+    //ステートマシン取得
+    StateMachine* GetStateMachine() { return stateMachine; }
+
+    bool GetMoveNow() const { return moveNow; }
+
     // ターゲットポジション設定
     void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
 
@@ -39,13 +45,6 @@ public:
     {
         Model::Node* node = model->FindNode(nodeName);
         return node;
-    }
-
-    // アニメーション再生テンプレート
-    template<typename T>
-    void SetPlayAnimation(T animSuu, bool loop, float blendSeconds = 0.2f)
-    {
-        model->PlayAnimation(static_cast<int>(animSuu), loop, blendSeconds);
     }
 
 protected:
@@ -95,7 +94,10 @@ protected:
     float moveSpeed = 0.3f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
 
+    bool moveNow = false;
+
     BehaviorTree* aiTree = nullptr;
     BehaviorData* behaviorData = nullptr;
     NodeBase* activeNode = nullptr;
+    StateMachine* stateMachine = nullptr;
 };

@@ -30,7 +30,17 @@ public:
 
 	void UpdateAnimation(float elapsedTime);
 
-	void PlayAnimation(int index, bool loop, float blendSeconds = 0.2f);
+	template<typename T>
+	void PlayAnimation(T tIndex, bool loop, float blendSeconds = 0.2f)
+	{
+		int index = static_cast<int>(tIndex);
+		currentAnimationIndex = index;
+		currentAnimationSeconds = 0.0f;
+		animationLoopFlag = loop;
+		animationEndFlag = false;
+		animationBlendTime = 0.0f;
+		animationBlendSeconds = blendSeconds;
+	}
 
 	bool IsPlayAnimation() const;
 

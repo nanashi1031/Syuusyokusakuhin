@@ -11,29 +11,64 @@ public:
 	~StateMachine();
 	// 更新処理
 	void Update(float elapsedTime);
+
 	// ステートセット
-	void SetState(int setstate);
+	template<typename T>
+	void SetState(T tSetstate)
+	{
+		int setState = tSetstate;
+		currentState = statePool.at(setState);
+		currentState->Enter();
+	}
+
 	// ステート変更
-	void ChangeState(int newState);
-	// TODO 03_04 第１階層のステート登録にあたり引数の型を変更
+	template<typename T>
+	void ChangeState(T newState)
+	{
+		if (currentState != nullptr)
+		{
+			//現在のステートのExit関数を実行
+			currentState->Exit();
+
+			// 現在実行されているサブステートのExit関数を実行
+			currentState->GetSubState()->Exit();
+
+			//新しいステートをセット
+			SetState(newState);
+
+			//新しいステートのEnter関数を呼び出す。
+			currentState->Enter();
+		}
+	}
 	// ステート登録
 	void RegisterState(HierarchicalState* state);
+
 	// 現在のステート番号取得
 	int GetStateIndex();
-	// TODO 03_04 新規で第２階層のステート関連を登録
+
 	// ２層目ステート変更
-	void ChangeSubState(int newState);
+	template<typename T>
+	void ChangeSubState(T newState)
+	{
+		int state = static_cast<int>(newState);
+		currentState->ChangeSubState(state);
+	}
+
 	// ２層目ステート登録
-	void RegisterSubState(int index, State* subState);
+	template<typename T>
+	void RegisterSubState(T tIndex, State* subState)
+	{
+		int index = static_cast<int>(tIndex);
+		statePool.at(index)->RegisterSubState(subState);
+	}
+
 	// ステート取得
 	HierarchicalState* GetState() { return currentState; }
-	// TODO 03_04 第１階層のステート登録にあたり型を変更
 
 private:
-	// TODO 03_04 第１階層のステート登録にあたり型を変更
 	// 現在のステート
 	HierarchicalState* currentState = nullptr;
-	// TODO 03_04 ステートを保持するvectorの保存型を変更
+
 	// 各ステートを保持する配列
 	std::vector<HierarchicalState*> statePool;
 };

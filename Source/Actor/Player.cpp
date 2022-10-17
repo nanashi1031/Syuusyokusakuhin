@@ -6,17 +6,34 @@
 #include "Player.h"
 #include "EnemyManager.h"
 #include "Mathf.h"
+#include "PlayerDerived.h"
 
 Player::Player()
 {
     model = new Model("Data/Model/Player/Player.mdl");
-    model->PlayAnimation(40, true);
     scale.x = scale.y = scale.z = size;
 
     radius = 0.5f;
     height = 2.0f;
 
     health = 1000.0f;
+
+    stateMachine = new StateMachine();
+
+    stateMachine->RegisterState(new ActionState(this));
+    //stateMachine->RegisterState(new BattleState(this));
+    // 各親ステートにサブステートを登録(WanderState以外の2層目のステートも同様の方法で各自追加してください。)
+    stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new IdleState(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new NeglectState(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new WalkState(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new RunState(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackCombo1State(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackCombo2State(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackCombo3State(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackDashuState(this));
+    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AvoiDanceState(this));
+    // ステートをセット
+    stateMachine->SetState(static_cast<int>(State::Action));
 }
 
 Player::~Player()
@@ -49,6 +66,7 @@ void Player::Update(float elapsedTime)
 
     model->UpdateTransform(transform);
 }
+
 // 移動入力処理
 void Player::InputMove(float elapsedTime)
 {
@@ -57,6 +75,17 @@ void Player::InputMove(float elapsedTime)
     Move(moveVec.x, moveVec.z, moveSpeed);
 
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+
+    // 進行ベクトルがゼロベクトルでない場合はスティックで移動中
+    float moveVecLength =
+        DirectX::XMVectorGetX(
+            DirectX::XMVector3Length(
+                DirectX::XMLoadFloat3(&moveVec)));
+
+    if (moveVecLength > 0.0f)
+        moveNow = true;
+    else
+        moveNow = false;
 }
 
 // スティック入力値から移動ベクトルを取得
