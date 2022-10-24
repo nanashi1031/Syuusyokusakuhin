@@ -172,3 +172,37 @@ Model::Node* Model::FindNode(const char* name)
 
 	return nullptr;
 }
+
+DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
+{
+	if (!IsPlayAnimation()) return;
+
+	Model::Node* node = FindNode(nodeName);
+
+	const std::vector<ModelResource::Animation>& animations = resource->GetAnimations();
+	const ModelResource::Animation& animation = animations.at(currentAnimationIndex);
+
+	const std::vector<ModelResource::Keyframe>& keyframes = animation.keyframes;
+	int keyCount = static_cast<int>(keyframes.size());
+	for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex)
+	{
+		const ModelResource::Keyframe& keyframe0 = keyframes.at(keyIndex);
+		const ModelResource::Keyframe& keyframe1 = keyframes.at(keyIndex + 1);
+		if (currentAnimationSeconds >= keyframe0.seconds &&
+			currentAnimationSeconds < keyframe1.seconds)
+		{
+			// 再生時間とキーフレームの時間から補間率を算出する
+			float rate = (currentAnimationSeconds - keyframe0.seconds) / (keyframe0.seconds - keyframe1.seconds);
+
+			int nodeCount = static_cast<int>(nodes.size());
+			for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
+			{
+				// ２つのキーフレーム間の補完計算
+				const ModelResource::NodeKeyData& key0 = keyframe0.nodeKeys.at(nodeIndex);
+				const ModelResource::NodeKeyData& key1 = keyframe1.nodeKeys.at(nodeIndex);
+
+	node->translate.x;
+
+	DirectX::XMFLOAT3 i = {0, 0, 0};
+	return i;
+}

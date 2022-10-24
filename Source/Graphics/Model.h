@@ -49,13 +49,14 @@ public:
 
 	Node* FindNode(const char* name);
 
+	// ルートモーション
+	DirectX::XMFLOAT3 RootMotion(const char* nodeName);
+
 	// ゲッター　セッター
 	// ノードリスト取得
 	const std::vector<Node>& GetNodes() const { return nodes; }
 
 	const ModelResource* GetResource() const { return resource.get(); }
-
-	void RootNode(const char* nodeName, float nodeRadius);
 
 private:
 	std::shared_ptr<ModelResource>	resource;
