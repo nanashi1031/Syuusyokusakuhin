@@ -62,7 +62,7 @@ ActionBase::State WanderAction::Run(float elapsedTime)
 	{
 	case 0:
 		// œpœjƒ‚[ƒVƒ‡ƒ“Ý’è
-		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::WalkFound, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::FryTakeOf, true);
 		step++;
 		break;
 	case 1:
