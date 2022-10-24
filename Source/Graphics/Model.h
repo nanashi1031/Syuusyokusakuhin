@@ -31,7 +31,7 @@ public:
 	void UpdateAnimation(float elapsedTime);
 
 	template<typename T>
-	void PlayAnimation(T tIndex, bool loop, float blendSeconds = 0.2f)
+	void PlayAnimation(T tIndex, bool loop, float blendSeconds = 0.2f, float playSpeed = 1.0f, float seconds = 0.0f, float speed = 1.0f)
 	{
 		int index = static_cast<int>(tIndex);
 		currentAnimationIndex = index;
@@ -40,6 +40,9 @@ public:
 		animationEndFlag = false;
 		animationBlendTime = 0.0f;
 		animationBlendSeconds = blendSeconds;
+		animationPlaySpeed = playSpeed;
+		animationSeconds = seconds;
+		animationSpeed = speed;
 	}
 
 	bool IsPlayAnimation() const;
@@ -51,6 +54,8 @@ public:
 	const std::vector<Node>& GetNodes() const { return nodes; }
 
 	const ModelResource* GetResource() const { return resource.get(); }
+
+	void RootNode(const char* nodeName, float nodeRadius);
 
 private:
 	std::shared_ptr<ModelResource>	resource;
@@ -64,4 +69,7 @@ private:
 	bool animationEndFlag = false;
 	float animationBlendTime = 0.0f;
 	float animationBlendSeconds = 0.0f;
+	float	animationPlaySpeed = 1.0f;
+	float	animationSeconds = 0.0f;
+	float	animationSpeed = 0.0f;
 };

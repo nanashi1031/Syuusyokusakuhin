@@ -70,16 +70,7 @@ void Model::UpdateAnimation(float elapsedTime)
 
 	// ブレンド率の計算
 	float blendRate = 1.0f;
-	if (animationBlendTime < animationBlendSeconds)
-	{
-		animationBlendTime += elapsedTime;
-		if (animationBlendTime >= animationBlendSeconds)
-		{
-			animationBlendTime = animationBlendSeconds;
-		}
-		blendRate = animationBlendTime / animationBlendSeconds;
-		blendRate *= blendRate;
-	}
+	blendRate = currentAnimationSeconds / animationBlendSeconds;
 
 	const std::vector<ModelResource::Animation>& animations = resource->GetAnimations();
 	const ModelResource::Animation& animation = animations.at(currentAnimationIndex);
@@ -99,56 +90,30 @@ void Model::UpdateAnimation(float elapsedTime)
 			int nodeCount = static_cast<int>(nodes.size());
 			for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
 			{
-				// 2つのキーフレーム間の補間計算
+				// ２つのキーフレーム間の補完計算
 				const ModelResource::NodeKeyData& key0 = keyframe0.nodeKeys.at(nodeIndex);
 				const ModelResource::NodeKeyData& key1 = keyframe1.nodeKeys.at(nodeIndex);
 
 				Node& node = nodes[nodeIndex];
 
-				DirectX::XMFLOAT3 translate, scale;
-				DirectX::XMFLOAT4 rotate;
-
-				DirectX::XMStoreFloat3(&translate, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&key0.translate), DirectX::XMLoadFloat3(&key1.translate), rate));
-				node.translate = translate;
-				DirectX::XMStoreFloat3(&scale, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&key0.scale), DirectX::XMLoadFloat3(&key1.scale), rate));
-				node.scale = scale;
-				DirectX::XMStoreFloat4(&rotate, DirectX::XMQuaternionSlerp(DirectX::XMLoadFloat4(&key0.rotate), DirectX::XMLoadFloat4(&key1.rotate), rate));
-				node.rotate = rotate;
+				//DirectX::VECTOR Position = DirectX::XMVectorLerp(Key0_Position, Key1_Position, t);
+				//DirectX::XMVECTOR Rotation = DirectX::XMQuaternionSlerp(Key0_Rotation, Key1_Rotation, t);
 
 				// ブレンド補完処理
 				if (blendRate < 1.0f)
 				{
-					DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&node.scale);
-					DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scale);
-					DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&node.rotate);
-					DirectX::XMVECTOR R1 = DirectX::XMLoadFloat4(&key1.rotate);
-					DirectX::XMVECTOR T0 = DirectX::XMLoadFloat3(&node.translate);
-					DirectX::XMVECTOR T1 = DirectX::XMLoadFloat3(&key1.translate);
-					DirectX::XMVECTOR S = DirectX::XMVectorLerp(S0, S1, blendRate);
-					DirectX::XMVECTOR R = DirectX::XMQuaternionSlerp(R0, R1, blendRate);
-					DirectX::XMVECTOR T = DirectX::XMVectorLerp(T0, T1, blendRate);
-					// 計算結果をボーンに格納
-					DirectX::XMStoreFloat3(&node.scale, S);
-					DirectX::XMStoreFloat4(&node.rotate, R);
-					DirectX::XMStoreFloat3(&node.translate, T);
+					// 現在の姿勢と次のキーフレームとの姿勢の補完
+					DirectX::XMStoreFloat3(&node.translate, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&node.translate), DirectX::XMLoadFloat3(&key1.translate), blendRate));
+					DirectX::XMStoreFloat3(&node.scale, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&node.scale), DirectX::XMLoadFloat3(&key1.scale), blendRate));
+					DirectX::XMStoreFloat4(&node.rotate, DirectX::XMQuaternionSlerp(DirectX::XMLoadFloat4(&node.rotate), DirectX::XMLoadFloat4(&key1.rotate), blendRate));
 				}
 				// 通常の計算
 				else
 				{
 					// 前のキーフレームと次のキーフレームの姿勢を補完
-					DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&key0.scale);
-					DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scale);
-					DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&key0.rotate);
-					DirectX::XMVECTOR R1 = DirectX::XMLoadFloat4(&key1.rotate);
-					DirectX::XMVECTOR T0 = DirectX::XMLoadFloat3(&key0.translate);
-					DirectX::XMVECTOR T1 = DirectX::XMLoadFloat3(&key1.translate);
-					DirectX::XMVECTOR S = DirectX::XMVectorLerp(S0, S1, rate);
-					DirectX::XMVECTOR R = DirectX::XMQuaternionSlerp(R0, R1, rate);
-					DirectX::XMVECTOR T = DirectX::XMVectorLerp(T0, T1, rate);
-					// 計算結果をボーンに格納
-					DirectX::XMStoreFloat3(&node.scale, S);
-					DirectX::XMStoreFloat4(&node.rotate, R);
-					DirectX::XMStoreFloat3(&node.translate, T);
+					DirectX::XMStoreFloat3(&node.translate, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&key0.translate), DirectX::XMLoadFloat3(&key1.translate), rate));
+					DirectX::XMStoreFloat3(&node.scale, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&key0.scale), DirectX::XMLoadFloat3(&key1.scale), rate));
+					DirectX::XMStoreFloat4(&node.rotate, DirectX::XMQuaternionSlerp(DirectX::XMLoadFloat4(&key0.rotate), DirectX::XMLoadFloat4(&key1.rotate), rate));
 				}
 			}
 			break;
@@ -165,7 +130,15 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 
 	// 時間経過
-	currentAnimationSeconds += elapsedTime;
+	if (animationSeconds <= 0)
+		currentAnimationSeconds += (elapsedTime * animationPlaySpeed);
+	else
+	{
+		if (currentAnimationSeconds < animationSeconds)
+			currentAnimationSeconds += (elapsedTime * animationPlaySpeed);
+		else if (currentAnimationSeconds >= animationSeconds)
+			currentAnimationSeconds += (elapsedTime * animationSpeed);
+	}
 
 	// 再生時間が終端時間を超えたら
 	if (currentAnimationSeconds >= animation.secondsLength && animationLoopFlag)
