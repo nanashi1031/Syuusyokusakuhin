@@ -12,6 +12,8 @@ public:
     {
         Action,
         Battle,
+        Dash,
+        Avoid,
     };
 
     enum class Action
@@ -27,7 +29,15 @@ public:
         AttackCombo1,
         AttackCombo2,
         AttackCombo3,
+    };
+
+    enum class Dash
+    {
         AttackDashu,
+    };
+
+    enum class Avoid
+    {
         Avoidance,
     };
 
@@ -68,8 +78,8 @@ public:
         JumpFront,
         Kick,
         PowerUp,
-        RunFront,
         RunBack,
+        RunFront,
         SlashTripleAttack,
         SlashLeftRoundUp,
         SlashKaratake,
@@ -108,7 +118,7 @@ private:
 
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
-    DirectX::XMFLOAT3 GetMoveVec() const;
+    DirectX::XMFLOAT3 GetMoveVec();
 
 private:
     const float size = 0.015f;

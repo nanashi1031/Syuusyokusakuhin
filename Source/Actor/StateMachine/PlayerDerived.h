@@ -7,7 +7,7 @@ class ActionState : public HierarchicalState
 {
 public:
 	ActionState(Player* actor) : HierarchicalState(actor) {}
-	~ActionState();
+	~ActionState() {};
 
 	// ステートに入った時のメソッド
 	void Enter();
@@ -21,8 +21,8 @@ public:
 class BattleState : public HierarchicalState
 {
 public:
-	BattleState(Player* actor) :HierarchicalState(actor) {}
-	~BattleState();
+	BattleState(Player* actor) :HierarchicalState(actor) {};
+	~BattleState() {};
 
 	// ステートに入った時のメソッド
 	void Enter();
@@ -32,12 +32,43 @@ public:
 	void Exit();
 };
 
+// ダッシュステート
+class DashState : public HierarchicalState
+{
+public:
+	DashState(Player* actor) :HierarchicalState(actor) {};
+	~DashState() {};
+
+	// ステートに入った時のメソッド
+	void Enter();
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime);
+	// ステートから出ていくときのメソッド
+	void Exit();
+};
+
+// 回避ステート
+class AvoidState : public HierarchicalState
+{
+public:
+	AvoidState(Player* actor) :HierarchicalState(actor) {};
+	~AvoidState() {};
+
+	// ステートに入った時のメソッド
+	void Enter();
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime);
+	// ステートから出ていくときのメソッド
+	void Exit();
+};
+
+
 // 待機ステート
 class IdleState : public State
 {
 public:
 	IdleState(Player* actor) :State(actor) {};
-	~IdleState() {};
+	~IdleState() {}
 
 	// ステートに入った時のメソッド
 	void Enter()override;
@@ -45,6 +76,9 @@ public:
 	void Execute(float elapsedTime)override;
 	// ステートから出ていくときのメソッド
 	void Exit()override;
+
+private:
+	float stateTimer = 0.0f;
 };
 
 // 放置ステート
@@ -105,6 +139,9 @@ public:
 	void Execute(float elapsedTime)override;
 	// ステートから出ていくときのメソッド
 	void Exit()override;
+private:
+	float stateTimer = 0.0f;
+	bool nextAttackFlag = false;
 };
 
 // コンボ攻撃2ステート
@@ -120,6 +157,10 @@ public:
 	void Execute(float elapsedTime)override;
 	// ステートから出ていくときのメソッド
 	void Exit()override;
+
+private:
+	float stateTimer = 0.0f;
+	bool nextAttackFlag = false;
 };
 
 // コンボ攻撃3ステート
@@ -135,6 +176,8 @@ public:
 	void Execute(float elapsedTime)override;
 	// ステートから出ていくときのメソッド
 	void Exit()override;
+
+private:
 };
 
 // ダッシュ攻撃ステート
@@ -150,6 +193,10 @@ public:
 	void Execute(float elapsedTime)override;
 	// ステートから出ていくときのメソッド
 	void Exit()override;
+
+private:
+	float stateTimer = 0.0f;
+	bool nextAttackFlag = false;
 };
 
 // 回避ステート

@@ -23,10 +23,10 @@ public:
     const float GetMaxHealth() const { return this->maxHealth; }
     void SetMaxHealth(float f) { this->maxHealth = f; }
 
+    float GetMoveFlag() const { return moveFlag; }
+
     //ステートマシン取得
     StateMachine* GetStateMachine() { return stateMachine; }
-
-    bool GetMoveNow() const { return moveNow; }
 
     // ターゲットポジション設定
     void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
@@ -94,7 +94,7 @@ protected:
     float moveSpeed = 0.3f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
 
-    bool moveNow = false;
+    float moveFlag = 0.0f;
 
     BehaviorTree* aiTree = nullptr;
     BehaviorData* behaviorData = nullptr;

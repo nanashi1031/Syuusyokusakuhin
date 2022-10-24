@@ -16,7 +16,7 @@ public:
 	template<typename T>
 	void SetState(T tSetstate)
 	{
-		int setState = tSetstate;
+		int setState = static_cast<int>(tSetstate);
 		currentState = statePool.at(setState);
 		currentState->Enter();
 	}

@@ -21,19 +21,21 @@ Player::Player()
     stateMachine = new StateMachine();
 
     stateMachine->RegisterState(new ActionState(this));
-    //stateMachine->RegisterState(new BattleState(this));
+    stateMachine->RegisterState(new BattleState(this));
+    stateMachine->RegisterState(new DashState(this));
+    stateMachine->RegisterState(new AvoidState(this));
     // 各親ステートにサブステートを登録(WanderState以外の2層目のステートも同様の方法で各自追加してください。)
-    stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new IdleState(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new NeglectState(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new WalkState(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Action), new RunState(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackCombo1State(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackCombo2State(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackCombo3State(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AttackDashuState(this));
-    //stateMachine->RegisterSubState(static_cast<int>(Player::State::Battle), new AvoiDanceState(this));
+    stateMachine->RegisterSubState(Player::State::Action, new IdleState(this));
+    stateMachine->RegisterSubState(Player::State::Action, new NeglectState(this));
+    stateMachine->RegisterSubState(Player::State::Action, new WalkState(this));
+    stateMachine->RegisterSubState(Player::State::Action, new RunState(this));
+    stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo1State(this));
+    stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo2State(this));
+    stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo3State(this));
+    stateMachine->RegisterSubState(Player::State::Battle, new AttackDashuState(this));
+    stateMachine->RegisterSubState(Player::State::Battle, new AvoiDanceState(this));
     // ステートをセット
-    stateMachine->SetState(static_cast<int>(State::Action));
+    stateMachine->SetState(State::Action);
 }
 
 Player::~Player()
@@ -57,6 +59,8 @@ void Player::Update(float elapsedTime)
 
     CollisionNodeVsEnemies("mixamorig:Sword_joint", 0.5f);
 
+    stateMachine->Update(elapsedTime);
+
     // 速力処理更新
     UpdateVelocity(elapsedTime);
 
@@ -76,24 +80,19 @@ void Player::InputMove(float elapsedTime)
 
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 
-    // 進行ベクトルがゼロベクトルでない場合はスティックで移動中
-    float moveVecLength =
-        DirectX::XMVectorGetX(
-            DirectX::XMVector3Length(
-                DirectX::XMLoadFloat3(&moveVec)));
+    float moveVecLength = DirectX::XMVectorGetX(
+        DirectX::XMVector3Length(DirectX::XMLoadFloat3(&moveVec)));
 
-    if (moveVecLength > 0.0f)
-        moveNow = true;
-    else
-        moveNow = false;
+    moveFlag = moveVecLength;
 }
 
 // スティック入力値から移動ベクトルを取得
-DirectX::XMFLOAT3 Player::GetMoveVec() const
+DirectX::XMFLOAT3 Player::GetMoveVec()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
+
     // カメラ方向とスティックの入力値によって進行方向を計算する
     Camera& camera = Camera::Instance();
     const DirectX::XMFLOAT3& cameraRight = camera.GetRight();
