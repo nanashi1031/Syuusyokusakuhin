@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "Mathf.h"
+#include <time.h>
 
 float Mathf::LerpFloat(float a, float b, float t)
 {
