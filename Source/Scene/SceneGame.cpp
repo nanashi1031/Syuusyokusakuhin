@@ -29,10 +29,10 @@ void SceneGame::Initialize()
 	enemyManager.Register(purpleDragon);
 
 	// ’
-	Insect* insect = new Insect;
-	insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-	insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
-	InsectManager::Instance().Register(insect);
+	//Insect* insect = new Insect;
+	//insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+	//insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
+	//InsectManager::Instance().Register(insect);
 
 	// ƒJƒƒ‰
 	Graphics& graphics = Graphics::Instance();
