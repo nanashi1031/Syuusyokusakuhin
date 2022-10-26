@@ -235,7 +235,7 @@ void RunState::Exit()
 void AttackCombo1State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
-		Player::PlayerAnimation::SlashKesakiri, false, 0.2f, 2.0f);
+		Player::PlayerAnimation::SlashKesakiri, false, 1.2f, 2.0f);
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
 }
@@ -278,7 +278,7 @@ void AttackCombo1State::Exit()
 void AttackCombo2State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
-		Player::PlayerAnimation::SlashLeftRoundUp, false, 0.2f, 2.0f);
+		Player::PlayerAnimation::SlashLeftRoundUp, false, 1.2f, 2.0f);
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
 }
@@ -321,7 +321,7 @@ void AttackCombo2State::Exit()
 void AttackCombo3State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
-		Player::PlayerAnimation::SlashKaratake, false, 0.2f, 2.0f);
+		Player::PlayerAnimation::SlashKaratake, false, 1.2f, 2.0f);
 }
 
 // コンボ攻撃3ステートで実行するメソッド
