@@ -51,6 +51,9 @@ public:
 	// ノードを探す
 	Node* FindNode(const char* name);
 
+	// ノードの番号を探す
+	int FindNodeIndex(const char* name);
+
 	// ルートモーション
 	DirectX::XMFLOAT3 RootMotion(const char* nodeName);
 

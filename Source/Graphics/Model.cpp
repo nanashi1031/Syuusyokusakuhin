@@ -171,12 +171,29 @@ Model::Node* Model::FindNode(const char* name)
 	return nullptr;
 }
 
+int Model::FindNodeIndex(const char* name)
+{
+	int index = 0;
+	for (Node& node : nodes)
+	{
+		// 比べた名前が同じなら
+		if (::strcmp(node.name, name) == 0)
+		{
+			break;
+		}
+		index++;
+	}
+
+	return index;
+}
+
 DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 {
 	if (!IsPlayAnimation()) return {0, 0, 0};
 
 	Model::Node* node = FindNode(nodeName);
 	if (!node) return { 0, 0, 0 };
+	int nodeIndex = FindNodeIndex(nodeName);
 
 	const std::vector<ModelResource::Animation>& animations = resource->GetAnimations();
 	const ModelResource::Animation& animation = animations.at(currentAnimationIndex);
@@ -189,9 +206,6 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 	//	// 現在のキーフレーム探索
 	//	const ModelResource::Keyframe& keyframe = keyframes.at(keyIndex);
 	//	const ModelResource::Keyframe& keyframeNext = keyframes.at(keyIndex + 1);
-
-	//	if(node->name == )
-
 	//	if (currentAnimationSeconds >= keyframe.seconds &&
 	//		currentAnimationSeconds < keyframeNext.seconds)
 	//	{
@@ -204,7 +218,6 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 	//	}
 	//}
 	node->translate = {0, node->translate.y, 0};
-
 
 	return { 0, 0, 0 };
 }
