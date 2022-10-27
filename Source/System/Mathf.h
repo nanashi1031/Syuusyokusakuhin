@@ -18,7 +18,7 @@ public:
 	// FLOAT3ÇÃòa
 	static DirectX::XMFLOAT3 AddFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
 
-	// FLOAT3ÇÃç∑
+	// FLOAT3ÇÃç∑ A-B
 	static DirectX::XMFLOAT3 SubtractFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
 
 	// FLOAT3ÇÃèÊ
