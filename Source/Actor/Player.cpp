@@ -68,6 +68,8 @@ void Player::Update(float elapsedTime)
 
     model->UpdateAnimation(elapsedTime);
 
+    model->RootMotion("mixamorig:Hips");
+
     model->UpdateTransform(transform);
 }
 

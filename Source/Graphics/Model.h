@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 #include <DirectXMath.h>
-#include "Graphics/ModelResource.h"
+#include "ModelResource.h"
 
 // モデル
 class Model
@@ -45,8 +45,10 @@ public:
 		animationSpeed = speed;
 	}
 
+	// アニメーションが動いているか
 	bool IsPlayAnimation() const;
 
+	// ノードを探す
 	Node* FindNode(const char* name);
 
 	// ルートモーション
@@ -62,7 +64,9 @@ private:
 	std::shared_ptr<ModelResource>	resource;
 	std::vector<Node>				nodes;
 
+	// 現在のアニメーション番号
 	int currentAnimationIndex = -1;
+	// 現在のアニメーション秒数
 	float currentAnimationSeconds = 0.0f;
 
 	// アニメーション関連

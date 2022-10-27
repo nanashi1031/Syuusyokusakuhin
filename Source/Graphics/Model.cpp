@@ -1,5 +1,6 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/Model.h"
+#include "Mathf.h"
 
 Model::Model(const char* filename)
 {
@@ -96,9 +97,6 @@ void Model::UpdateAnimation(float elapsedTime)
 
 				Node& node = nodes[nodeIndex];
 
-				//DirectX::VECTOR Position = DirectX::XMVectorLerp(Key0_Position, Key1_Position, t);
-				//DirectX::XMVECTOR Rotation = DirectX::XMQuaternionSlerp(Key0_Rotation, Key1_Rotation, t);
-
 				// ブレンド補完処理
 				if (blendRate < 1.0f)
 				{
@@ -140,10 +138,10 @@ void Model::UpdateAnimation(float elapsedTime)
 			currentAnimationSeconds += (elapsedTime * animationSpeed);
 	}
 
-	// 再生時間が終端時間を超えたら
+	// 再生時間が終端時間を超えてループフラグがtrueなら
 	if (currentAnimationSeconds >= animation.secondsLength && animationLoopFlag)
 	{
-		// ループがtrueなら再生時間を巻き戻す
+		// 再生時間を巻き戻す
 		currentAnimationSeconds -= animation.secondsLength;
 	}
 	else if (currentAnimationSeconds >= animation.secondsLength)
@@ -175,34 +173,38 @@ Model::Node* Model::FindNode(const char* name)
 
 DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 {
-	if (!IsPlayAnimation()) return;
+	if (!IsPlayAnimation()) return {0, 0, 0};
 
 	Model::Node* node = FindNode(nodeName);
+	if (!node) return { 0, 0, 0 };
 
 	const std::vector<ModelResource::Animation>& animations = resource->GetAnimations();
 	const ModelResource::Animation& animation = animations.at(currentAnimationIndex);
 
 	const std::vector<ModelResource::Keyframe>& keyframes = animation.keyframes;
 	int keyCount = static_cast<int>(keyframes.size());
-	for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex)
-	{
-		const ModelResource::Keyframe& keyframe0 = keyframes.at(keyIndex);
-		const ModelResource::Keyframe& keyframe1 = keyframes.at(keyIndex + 1);
-		if (currentAnimationSeconds >= keyframe0.seconds &&
-			currentAnimationSeconds < keyframe1.seconds)
-		{
-			// 再生時間とキーフレームの時間から補間率を算出する
-			float rate = (currentAnimationSeconds - keyframe0.seconds) / (keyframe0.seconds - keyframe1.seconds);
 
-			int nodeCount = static_cast<int>(nodes.size());
-			for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
-			{
-				// ２つのキーフレーム間の補完計算
-				const ModelResource::NodeKeyData& key0 = keyframe0.nodeKeys.at(nodeIndex);
-				const ModelResource::NodeKeyData& key1 = keyframe1.nodeKeys.at(nodeIndex);
+	//for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex)
+	//{
+	//	// 現在のキーフレーム探索
+	//	const ModelResource::Keyframe& keyframe = keyframes.at(keyIndex);
+	//	const ModelResource::Keyframe& keyframeNext = keyframes.at(keyIndex + 1);
 
-	node->translate.x;
+	//	if(node->name == )
 
-	DirectX::XMFLOAT3 i = {0, 0, 0};
-	return i;
+	//	if (currentAnimationSeconds >= keyframe.seconds &&
+	//		currentAnimationSeconds < keyframeNext.seconds)
+	//	{
+	//		const ModelResource::NodeKeyData& nodekeyData = keyframe.nodeKeys.at(keyIndex);
+	//		const ModelResource::NodeKeyData& nodekeyDataNext = keyframe.nodeKeys.at(keyIndex + 1);
+
+	//		DirectX::XMFLOAT3 movement = Mathf::SubtractFloat3(
+	//			nodekeyDataNext.translate, nodekeyData.translate);
+	//		return movement;
+	//	}
+	//}
+	node->translate = {0, node->translate.y, 0};
+
+
+	return { 0, 0, 0 };
 }
