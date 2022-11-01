@@ -12,6 +12,15 @@ public:
     Character() {}
     virtual ~Character() override {}
 
+    // 目標地点へ移動
+    void MoveToTarget(float elapsedTime, float speedRate);
+
+    // ダメージを与える
+    bool ApplyDamage(const int damage, const float invincibleTime);
+
+    // 衝撃を与える
+    void AddImpulse(const DirectX::XMFLOAT3& impulse);
+
     // ゲッター、セッター
     const float GetRadius() const { return this->radius; }
 
@@ -25,20 +34,19 @@ public:
 
     float GetMoveFlag() const { return moveFlag; }
 
+    float GetNotStand() const { return notStand; }
+
     //ステートマシン取得
-    StateMachine* GetStateMachine() { return stateMachine; }
+    StateMachine* GetStateMachine() const { return stateMachine; }
 
     // ターゲットポジション設定
     void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
 
     // ターゲットポジション取得
-    DirectX::XMFLOAT3 GetTargetPosition() { return targetPosition; }
-
-    // 目標地点へ移動
-    void MoveToTarget(float elapsedTime, float speedRate);
+    DirectX::XMFLOAT3 GetTargetPosition() const { return targetPosition; }
 
     // モデル取得
-    Model* GetModel() { return model; }
+    Model* GetModel() const { return model; }
 
     // ノード情報取得
     Model::Node* GetNode(const char* nodeName) const
@@ -47,18 +55,34 @@ public:
         return node;
     }
 
+    // ノードの位置取得
+    DirectX::XMFLOAT3 GetNodePosition(const Model::Node* node) const
+    {
+        DirectX::XMFLOAT3 nodePosition(
+            node->worldTransform._41,
+            node->worldTransform._42,
+            node->worldTransform._43);
+        return nodePosition;
+    }
+
 protected:
     void Move(float vx, float vz, float speed);
     void Turn(float elapsedTime, float vx, float vz, float speed);
 
-    // 死亡した時に呼ばれる
-    virtual void OnDead() {}
+    // 着地した時に呼ばれる
+    virtual void OnLanding() {}
+
+    // ダメージを受けたときに呼ばれる
+    virtual void OnDamaged() {}
+
+    // 死亡したときに呼ばれる
+    virtual void OnDead() {};
+
+    //無敵時間
+    void UpdateInvincibleTime(float elapsedTime);
 
     // 速力処理更新
     void UpdateVelocity(float elapsedTime);
-
-    // 着地した時に呼ばれる
-    virtual void OnLanding() {}
 
 private:
     // 垂直速力処理更新
@@ -79,6 +103,13 @@ protected:
     // ステータス
     float health = 0.0f;
     float maxHealth = 0.0f;
+
+    //無敵時間
+    float invincibleTimer = 0.0f;
+    bool invincible = false;
+
+    // 吹き飛ばす力がこの数字以上なら吹き飛ぶ
+    float notStand = 0.0f;
 
     float	stepOffset = 1.0f;
     float	gravity = -1.0f;

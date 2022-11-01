@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics.h"
+#include "Character.h"
 
 // レイキャストのヒット結果
 struct HitResult
@@ -22,6 +23,17 @@ public:
         const DirectX::XMFLOAT3 positionB,
         const float radiusB,
         DirectX::XMFLOAT3& outPosition);
+
+    // ノードAからノードBへの攻撃判定
+    static void IntersectNodeVsNode(
+        const Character* characterA,
+        const char* nodeNameA,
+        const float nodeRadiusA,
+        Character* characterB,
+        const char* nodeNameB,
+        const float nodeRadiusB,
+        float damage = 0.0f,
+        float power = 0.0f);
 
     // レイとモデルの交差判定
     static bool IntersectRayVsModel(

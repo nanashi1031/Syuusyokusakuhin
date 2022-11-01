@@ -10,10 +10,10 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 
 	scale.x = scale.y = scale.z = 0.01f;
 
-	radius = 0.5f;
-	height = 0.5f;
+	radius = 3.5f;
+	height = 1.5f;
 
-	health = 10.0f;
+	health = 100.0f;
 
 	// ビヘイビアツリー設定
 	behaviorData = new BehaviorData();
@@ -62,10 +62,14 @@ void EnemyPurpleDragon::Update(float elapsedTime)
 	// 速力処理更新
 	UpdateVelocity(elapsedTime);
 
+	UpdateInvincibleTime(elapsedTime);
+
 	// オブジェクト行列更新
 	UpdateTransform();
 
 	model->UpdateAnimation(elapsedTime);
+
+	model->RootMotion("Root");
 
 	// モデル行列更新
 	model->UpdateTransform(transform);
@@ -83,6 +87,9 @@ void EnemyPurpleDragon::DrawDebugPrimitive()
 
 	DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
+	//衝突判定用のデバッグ円柱を描画
+	debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 1, 1));
+
 	// 縄張り範囲をデバッグ円柱描画
 	debugRenderer->DrawCylinder(territoryOrigin, territoryRange, 1.0f, DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 
@@ -91,6 +98,39 @@ void EnemyPurpleDragon::DrawDebugPrimitive()
 
 	// 索敵範囲をデバッグ円柱描画
 	debugRenderer->DrawCylinder(position, searchRange, 1.0f, DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+}
+
+void EnemyPurpleDragon::DrawDebugGUI()
+{
+	ImVec2 windowPosition = { 10, 10 };
+	ImGui::SetNextWindowPos(windowPosition, ImGuiCond_FirstUseEver);
+	ImVec2 windowSize = { 300, 300 };
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+	// ウィンドウの透明度
+	float alpha = 0.35f;
+	ImGui::SetNextWindowBgAlpha(alpha);
+	//ImGui::SetNextTreeNodeOpen();
+
+	if (ImGui::Begin("EnemyPurpleDragon", nullptr, ImGuiWindowFlags_None))
+	{
+		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::DragFloat3("Postion", &position.x, 0.1f);
+			DirectX::XMFLOAT3 a;
+			a.x = DirectX::XMConvertToDegrees(angle.x);
+			a.y = DirectX::XMConvertToDegrees(angle.y);
+			a.z = DirectX::XMConvertToDegrees(angle.z);
+			ImGui::DragFloat3("Angle", &a.x, 0.1f, 0, 360);
+			angle.x = DirectX::XMConvertToRadians(a.x);
+			angle.y = DirectX::XMConvertToRadians(a.y);
+			angle.z = DirectX::XMConvertToRadians(a.z);
+
+			ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
+		}
+		ImGui::DragFloat("Health", &health);
+		//ImGui::EndChild();
+	}
+	ImGui::End();
 }
 
 // 縄張り設定

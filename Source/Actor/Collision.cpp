@@ -1,8 +1,6 @@
 #include "Collision.h"
 #include "Mathf.h"
 
-
-
 // 球と球の当たり判定
 bool Collision::IntersectSphereVsSpherer(
     const DirectX::XMFLOAT3 positionA,
@@ -30,6 +28,74 @@ bool Collision::IntersectSphereVsSpherer(
     DirectX::XMStoreFloat3(&outPosition, positionBVec);
 
     return true;
+}
+
+// ノードAからノードBへの攻撃判定
+void Collision::IntersectNodeVsNode(
+	const Character* characterA,
+	const char* nodeNameA,
+	const float nodeRadiusA,
+	Character* characterB,
+	const char* nodeNameB,
+	const float nodeRadiusB,
+	float damage,
+	float power)
+{
+	Model::Node* nodeA = characterA->GetNode(nodeNameA);
+	if (nodeA != nullptr)
+	{
+		DirectX::XMFLOAT3 nodePositionA = characterA->GetNodePosition(nodeA);
+
+		Graphics::Instance().GetDebugRenderer()
+			->DrawSphere(
+				nodePositionA, nodeRadiusA, DirectX::XMFLOAT4(1, 0, 0, 1)
+			);
+
+		Model::Node* nodeB = characterB->GetNode(nodeNameB);
+		if (nodeB != nullptr)
+		{
+			DirectX::XMFLOAT3 nodePositionB = characterA->GetNodePosition(nodeB);
+
+			Graphics::Instance().GetDebugRenderer()
+				->DrawSphere(
+					nodePositionB, nodeRadiusB, DirectX::XMFLOAT4(0, 0, 1, 1)
+				);
+
+			DirectX::XMFLOAT3 outPosition;
+			if (Collision::IntersectSphereVsSpherer(
+				nodePositionA, nodeRadiusA,
+				nodePositionB, nodeRadiusB,
+				outPosition))
+			{
+				// ダメージを与える
+				if (characterB->ApplyDamage(damage, 1.0f))
+				{
+					//　powerが踏ん張る力より強いなら
+					if (power > characterB->GetNotStand())
+					{
+						// characterBを吹っ飛ばすベクトルを算出
+						DirectX::XMFLOAT3 vec;
+						vec.x = outPosition.x
+							- nodePositionA.x;
+						vec.z = outPosition.z
+							- nodePositionA.z;
+						float length = sqrtf(vec.x * vec.x + vec.z * vec.z);
+						vec.x /= length;
+						vec.z /= length;
+						// XZ平面に吹っ飛ばす力をかける
+						vec.x *= power;
+						vec.z *= power;
+						// Y方向にも力をかける
+						vec.y = 5.0f;
+						// 吹っ飛ばす
+						characterB->AddImpulse(vec);
+					}
+				}
+			}
+		}
+	}
+
+	return;
 }
 
 // レイとモデルの交差判定

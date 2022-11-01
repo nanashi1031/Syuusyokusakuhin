@@ -2,6 +2,8 @@
 #include "PlayerDerived.h"
 #include "Player.h"
 #include "Mathf.h"
+#include "Collision.h"
+#include "EnemyManager.h"
 
 // アクションステート
 void ActionState::Enter()
@@ -243,6 +245,15 @@ void AttackCombo1State::Enter()
 // コンボ攻撃1ステートで実行するメソッド
 void AttackCombo1State::Execute(float elapsedTime)
 {
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+	{
+		Collision::IntersectNodeVsNode(
+			owner, "mixamorig:Sword_joint", 1.0f,
+			enemyManager.GetEnemy(i), "Hand_L", 10.0f,
+			10.0f, 10.0f);
+	}
+
 	// 左クリックしたら攻撃フラグが建つ
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)

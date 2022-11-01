@@ -104,10 +104,13 @@ public:
     void DrawDebugPrimitive();
     void DrawDebugGUI();
 
-
     // ゲッター　セッター
     // 前方向を取得
     DirectX::XMFLOAT3 GetFront() const;
+
+protected:
+     // ダメージを受けたときに呼ばれる
+     void OnDamaged() override;
 
 private:
     void InputMove(float elapsedTime);
@@ -119,6 +122,10 @@ private:
     void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
     DirectX::XMFLOAT3 GetMoveVec();
+
+public:
+    // プレイヤーのノードの名前定数
+    const char* swordName = "mixamorig:Sword_joint";
 
 private:
     const float size = 0.015f;

@@ -293,3 +293,52 @@ void Character::MoveToTarget(float elapsedTime, float speedRate)
 	Move(vx, vz, moveSpeed * speedRate);
 	Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
 }
+
+bool Character::ApplyDamage(const int damage, const float invincibleTime)
+{
+	// ダメージが0未満の場合はダメージ無し
+	if (damage < 0) return false;
+
+	// 死亡している場合はダメージ無し
+	if (health <= 0) return false;
+
+	// 無敵(回避)の時はダメージ無し
+	if (invincible) return false;
+
+	// 無敵時間中はダメージ無し
+	if (invincibleTimer > 0.0f) return false;
+
+	health -= damage;
+
+	// 死亡通知
+	if (health <= 0)
+	{
+		health = 0;
+		OnDead();
+	}
+	// ダメージ通知
+	else
+		OnDamaged();
+
+	// ダメージを受けたので無敵になる
+	invincibleTimer = invincibleTime;
+
+	return true;
+}
+
+void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
+{
+	// 速力に力を与える
+	velocity.x += impulse.x;
+	velocity.y += impulse.y;
+	velocity.z += impulse.z;
+}
+
+//無敵時間更新
+void Character::UpdateInvincibleTime(float elapsedTime)
+{
+	if (invincibleTimer > 0.0f)
+	{
+		invincibleTimer -= elapsedTime;
+	}
+}

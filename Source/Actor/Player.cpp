@@ -57,12 +57,14 @@ void Player::Update(float elapsedTime)
 
     CollisionPlayerVsEnemies();
 
-    CollisionNodeVsEnemies("mixamorig:Sword_joint", 0.5f);
+    //CollisionNodeVsEnemies("mixamorig:Sword_joint", 0.5f);
 
     stateMachine->Update(elapsedTime);
 
     // ‘¬—Íˆ—XV
     UpdateVelocity(elapsedTime);
+
+    UpdateInvincibleTime(elapsedTime);
 
     UpdateTransform();
 
@@ -255,4 +257,9 @@ void Player::DrawDebugGUI()
         //ImGui::EndChild();
     }
     ImGui::End();
+}
+
+void Player::OnDamaged()
+{
+
 }
