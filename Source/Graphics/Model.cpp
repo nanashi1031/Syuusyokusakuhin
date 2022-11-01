@@ -201,6 +201,8 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 	const std::vector<ModelResource::Keyframe>& keyframes = animation.keyframes;
 	int keyCount = static_cast<int>(keyframes.size());
 
+	// TODO ルートモーション実装せず
+	// 現在は腰ノードの移動値を消している
 	//for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex)
 	//{
 	//	// 現在のキーフレーム探索
@@ -209,15 +211,15 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 	//	if (currentAnimationSeconds >= keyframe.seconds &&
 	//		currentAnimationSeconds < keyframeNext.seconds)
 	//	{
-	//		const ModelResource::NodeKeyData& nodekeyData = keyframe.nodeKeys.at(keyIndex);
-	//		const ModelResource::NodeKeyData& nodekeyDataNext = keyframe.nodeKeys.at(keyIndex + 1);
+	//		const ModelResource::NodeKeyData& nodeKeyData = keyframe.nodeKeys.at(keyIndex);
+	//		const ModelResource::NodeKeyData& nodeKeyDataNext = keyframe.nodeKeys.at(keyIndex + 1);
 
 	//		DirectX::XMFLOAT3 movement = Mathf::SubtractFloat3(
-	//			nodekeyDataNext.translate, nodekeyData.translate);
+	//			nodeKeyDataNext.translate, nodeKeyData.translate);
 	//		return movement;
 	//	}
 	//}
 	node->translate = {0, node->translate.y, 0};
 
-	return { 0, 0, 0 };
+	return { 0, node->translate.y, 0 };
 }
