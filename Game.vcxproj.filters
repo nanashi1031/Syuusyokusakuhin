@@ -219,13 +219,13 @@
     <ClInclude Include="Source\Actor\EnemyPurpleDragonActionDerived.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\StateBase.h">
+    <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h">
+    <ClInclude Include="Source\Actor\StateMachine\StateBase.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -368,13 +368,13 @@
     <ClCompile Include="Source\Actor\EnemyPurpleDragonActionDerived.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Actor\StateMachine\StateBase.cpp">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
   </ItemGroup>

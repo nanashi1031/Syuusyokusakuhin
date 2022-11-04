@@ -92,7 +92,7 @@ void IdleState::Execute(float elapsedTime)
 	{
 		owner->GetStateMachine()->ChangeSubState(Player::Action::Walk);
 	}
-	// スティックorキーボードでの移動が10秒以上無い場合放置ステートへ移動
+	// スティックorキーボードでの移動が10以上無い場合放置ステートへ移動
 	else if(owner->GetMoveFlag() == 0.0f)
 	{
 		if (stateTimer > 10)
@@ -109,7 +109,7 @@ void IdleState::Execute(float elapsedTime)
 		owner->GetStateMachine()->ChangeState(Player::State::Battle);
 	}
 
-	// 右クリック押されたら攻撃ステートへ遷移
+	// 右クリック押されたら回避ステートへ遷移
 	if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::Avoid);
@@ -251,7 +251,7 @@ void AttackCombo1State::Execute(float elapsedTime)
 		Collision::IntersectNodeVsNode(
 			owner, "mixamorig:Sword_joint", 1.0f,
 			enemyManager.GetEnemy(i), "Hand_L", 10.0f,
-			10.0f, 10.0f);
+			5.0f);
 	}
 
 	// 左クリックしたら攻撃フラグが建つ
@@ -297,6 +297,15 @@ void AttackCombo2State::Enter()
 // コンボ攻撃2ステートで実行するメソッド
 void AttackCombo2State::Execute(float elapsedTime)
 {
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+	{
+		Collision::IntersectNodeVsNode(
+			owner, "mixamorig:Sword_joint", 1.0f,
+			enemyManager.GetEnemy(i), "Hand_L", 10.0f,
+			5.0f);
+	}
+
 	// 左クリックしたら攻撃フラグが建つ
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
@@ -338,6 +347,15 @@ void AttackCombo3State::Enter()
 // コンボ攻撃3ステートで実行するメソッド
 void AttackCombo3State::Execute(float elapsedTime)
 {
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+	{
+		Collision::IntersectNodeVsNode(
+			owner, "mixamorig:Sword_joint", 1.0f,
+			enemyManager.GetEnemy(i), "Hand_L", 10.0f,
+			10.0f);
+	}
+
 	// アニメーション再生が終わったら
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
@@ -355,7 +373,7 @@ void AttackCombo3State::Exit()
 void AttackDashuState::Enter()
 {
 	owner->GetModel()->PlayAnimation(
-		Player::PlayerAnimation::SlashRotary, false);
+		Player::PlayerAnimation::SlashRotary, false, 0.0f, 1.5f);
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
 }
@@ -363,6 +381,15 @@ void AttackDashuState::Enter()
 // ダッシュ攻撃ステートで実行するメソッド
 void AttackDashuState::Execute(float elapsedTime)
 {
+	EnemyManager& enemyManager = EnemyManager::Instance();
+	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+	{
+		Collision::IntersectNodeVsNode(
+			owner, "mixamorig:Sword_joint", 1.0f,
+			enemyManager.GetEnemy(i), "Hand_L", 10.0f,
+			5.0f);
+	}
+
 	// 左クリックしたら攻撃フラグが建つ
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
@@ -376,13 +403,12 @@ void AttackDashuState::Execute(float elapsedTime)
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
 		{
-			owner->GetStateMachine()->ChangeSubState(Player::Battle::AttackCombo2);
+			owner->GetStateMachine()->ChangeState(Player::State::Battle);
 		}
 		else if (!nextAttackFlag)
 		{
 			// 1秒経ったら待機ステートへ移動
-			if (stateTimer >= 1)
-				owner->GetStateMachine()->ChangeState(Player::State::Action);
+			owner->GetStateMachine()->ChangeState(Player::State::Action);
 			stateTimer += elapsedTime;
 		}
 	}

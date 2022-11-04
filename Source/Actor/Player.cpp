@@ -32,8 +32,8 @@ Player::Player()
     stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo1State(this));
     stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo2State(this));
     stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo3State(this));
-    stateMachine->RegisterSubState(Player::State::Battle, new AttackDashuState(this));
-    stateMachine->RegisterSubState(Player::State::Battle, new AvoiDanceState(this));
+    stateMachine->RegisterSubState(Player::State::Dash, new AttackDashuState(this));
+    stateMachine->RegisterSubState(Player::State::Avoid, new AvoiDanceState(this));
     // ステートをセット
     stateMachine->SetState(State::Action);
 }
@@ -56,8 +56,6 @@ void Player::Update(float elapsedTime)
     InputAttack(elapsedTime);
 
     CollisionPlayerVsEnemies();
-
-    //CollisionNodeVsEnemies("mixamorig:Sword_joint", 0.5f);
 
     stateMachine->Update(elapsedTime);
 
@@ -204,15 +202,6 @@ void Player::DrawDebugPrimitive()
     DebugRenderer* debugRenderer = Graphics::Instance().GetDebugRenderer();
 
     debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 1, 1));
-
-    Model::Node* node = model->FindNode("mixamorig:Sword_joint");
-
-    DirectX::XMFLOAT3 nodePosition;
-    nodePosition.x = node->worldTransform._41;
-    nodePosition.y = node->worldTransform._42;
-    nodePosition.z = node->worldTransform._43;
-
-    debugRenderer->DrawSphere(nodePosition, 0.5f, DirectX::XMFLOAT4(1, 0, 0, 1));
 }
 
 void Player::DrawDebugGUI()

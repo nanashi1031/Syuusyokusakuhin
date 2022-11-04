@@ -9,6 +9,7 @@ StateMachine::~StateMachine()
 	}
 	statePool.clear();
 }
+
 // XVˆ—
 void StateMachine::Update(float elapsedTime)
 {

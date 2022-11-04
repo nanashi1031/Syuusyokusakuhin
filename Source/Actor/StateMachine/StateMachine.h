@@ -40,6 +40,7 @@ public:
 			currentState->Enter();
 		}
 	}
+
 	// ステート登録
 	void RegisterState(HierarchicalState* state);
 
