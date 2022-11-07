@@ -24,6 +24,14 @@ public:
         const float radiusB,
         DirectX::XMFLOAT3& outPosition);
 
+    // ‹…‚Æ‹…‚ÌG‚È“–‚½‚è”»’è
+    static bool IntersectSphereVsSphererEst(
+        const DirectX::XMFLOAT3 positionA,
+        const float radiusA,
+        const DirectX::XMFLOAT3 positionB,
+        const float radiusB,
+        DirectX::XMFLOAT3& outPosition);
+
     // ƒm[ƒhA‚©‚çƒm[ƒhB‚Ö‚ÌUŒ‚”»’è
     static void IntersectNodeVsNode(
         const Character* characterA,
