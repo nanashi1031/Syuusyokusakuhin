@@ -20,6 +20,7 @@ void CameraController::Update(float elapsedTime)
         UpdateMouse(elapsedTime);
     }
 #if _DEBUG
+    // TODO 本番ではマウス操作のため開発中のみ実行する
     // カメラのキーボードIJKL操作
     else if (!cameraMouseOperationFlag)
     {
@@ -41,13 +42,13 @@ void CameraController::Update(float elapsedTime)
 
     switch (state)
     {
-        // カメラノーマル状態
-    case CameraContorollerState::NormalTargetState:
-        perspective = GetPerspective();
+    case CameraMode::NormalCamera:
+        //perspective = GetPerspective();
+        UpdateNormalCamera(elapsedTime);
         break;
-        // カメラロックオン状態
-    case CameraContorollerState::LockOnTargetState:
-        GetTargetPerspective();
+    case CameraMode::LockOnCamera:
+        //GetTargetPerspective();
+        UpdateLockOnCamera(elapsedTime);
         break;
     }
 
@@ -66,7 +67,7 @@ void CameraController::Update(float elapsedTime)
         if (lockOnFlag)
             LockOn(elapsedTime);
         else if (!lockOnFlag)
-            state = CameraContorollerState::NormalTargetState;
+            state = CameraMode::NormalCamera;
     }
     lockOnTimer += elapsedTime;
 
@@ -125,11 +126,11 @@ void CameraController::DrawDebugGUI()
                 char* str = {};
                 switch (state)
                 {
-                case CameraContorollerState::NormalTargetState:
-                    str = "NormalTargetState";
+                case CameraMode::NormalCamera:
+                    str = "NormalCamera";
                     break;
-                case CameraContorollerState::LockOnTargetState:
-                    str = "LockOnTargetState";
+                case CameraMode::LockOnCamera:
+                    str = "LockOnCamera";
                     break;
                 }
                 ImGui::Text("state %s", str);
@@ -360,185 +361,6 @@ bool CameraController::LockOnSwitching()
     return false;
 }
 
-void CameraController::CalculateFrustum(Plane* frustum)
-{
-    Camera& camera = Camera::Instance();
-    DirectX::XMFLOAT3 cameraPos = camera.GetEye();
-
-    // ビュープロジェクション行列を取得する
-    DirectX::XMMATRIX matrix = {};
-    DirectX::XMMATRIX viewMat = DirectX::XMLoadFloat4x4(&camera.GetView());
-    DirectX::XMMATRIX projMat = DirectX::XMMatrixPerspectiveFovLH(
-        DirectX::XMConvertToRadians(45),
-        Graphics::Instance().GetScreenWidth() / Graphics::Instance().GetScreenHeight(),
-        nearCamera, farCamera);
-    matrix = viewMat * projMat;
-
-    //ビュープロジェクション行列の逆行列
-    DirectX::XMMATRIX invMatrix = DirectX::XMMatrixInverse(nullptr, matrix);
-    //ビュープロジェクション内の頂点算出用位置ベクトル
-    DirectX::XMVECTOR verts[8] =
-    {
-        // near plane corners
-        { -1, -1, 0 },	// [0]:左下
-        {  1, -1, 0 },	// [1]:右下
-        {  1,  1, 0 },	// [2]:右上
-        { -1,  1 ,0 },	// [3]:左上
-
-        // far plane corners.
-        { -1, -1, 1 },	// [4]:左下
-        {  1, -1, 1 },	// [5]:右下
-        {  1,  1, 1 },	// [6]:右上
-        { -1,  1, 1 } 	// [7]:左上
-    };
-
-    // ビュープロジェクション行列の逆行列を用いて、各頂点を算出する
-    for (int i = 0; i < 8; i++)
-    {
-        verts[i] = DirectX::XMVector3TransformCoord(verts[i], invMatrix);
-        if (i < 4)
-        {
-            DirectX::XMStoreFloat3(&nearPoint[i], verts[i]);
-        }
-        else
-        {
-            DirectX::XMStoreFloat3(&farPoint[i - 4], verts[i]);
-        }
-    }
-
-    DirectX::XMFLOAT4X4 matrix4X4 = {};
-    DirectX::XMStoreFloat4x4(&matrix4X4, matrix);
-
-    // 視錐台（フラスタム）を構成する６平面を算出する
-    // 0:左側面, 1:右側面, 2:下側面, 3:上側面, 4:奥側面, 5:手前側面
-    // 全ての面の法線は内側を向くように設定すること
-
-    // 左側面
-    frustum[0].normal.x = matrix4X4._14 + matrix4X4._11;
-    frustum[0].normal.y = matrix4X4._24 + matrix4X4._21;
-    frustum[0].normal.z = matrix4X4._34 + matrix4X4._31;
-    DirectX::XMStoreFloat3(&frustum[0].normal, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&frustum[0].normal)));
-    frustum[0].distance = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[0].normal), DirectX::XMLoadFloat3(&nearPoint[0])));
-
-    // 右側面
-    frustum[1].normal.x = matrix4X4._14 - matrix4X4._11;
-    frustum[1].normal.y = matrix4X4._24 - matrix4X4._21;
-    frustum[1].normal.z = matrix4X4._34 - matrix4X4._31;
-    DirectX::XMStoreFloat3(&frustum[1].normal, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&frustum[1].normal)));
-    frustum[1].distance = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[1].normal), DirectX::XMLoadFloat3(&nearPoint[1])));
-
-    // 下側面
-    frustum[2].normal.x = matrix4X4._14 + matrix4X4._12;
-    frustum[2].normal.y = matrix4X4._24 + matrix4X4._22;
-    frustum[2].normal.z = matrix4X4._34 + matrix4X4._32;
-    DirectX::XMStoreFloat3(&frustum[2].normal, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&frustum[2].normal)));
-    frustum[2].distance = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[2].normal), DirectX::XMLoadFloat3(&nearPoint[0])));
-
-    // 上側面
-    frustum[3].normal.x = matrix4X4._14 - matrix4X4._12;
-    frustum[3].normal.y = matrix4X4._24 - matrix4X4._22;
-    frustum[3].normal.z = matrix4X4._34 - matrix4X4._32;
-    DirectX::XMStoreFloat3(&frustum[3].normal, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&frustum[3].normal)));
-    frustum[3].distance = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[3].normal), DirectX::XMLoadFloat3(&nearPoint[2])));
-
-    // 奥側面
-    frustum[4].normal.x = -matrix4X4._14 - matrix4X4._13;
-    frustum[4].normal.y = -matrix4X4._24 - matrix4X4._23;
-    frustum[4].normal.z = -matrix4X4._34 - matrix4X4._33;
-    DirectX::XMStoreFloat3(&frustum[4].normal, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&frustum[4].normal)));
-    frustum[4].distance = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[4].normal), DirectX::XMLoadFloat3(&nearPoint[0])));
-
-    // 手前側面
-    frustum[5].normal.x = -matrix4X4._14 + matrix4X4._13;
-    frustum[5].normal.y = -matrix4X4._24 + matrix4X4._23;
-    frustum[5].normal.z = -matrix4X4._34 + matrix4X4._33;
-    DirectX::XMStoreFloat3(&frustum[5].normal, DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&frustum[5].normal)));
-    frustum[5].distance = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[5].normal), DirectX::XMLoadFloat3(&nearPoint[0])));
-}
-
-bool CameraController::frustumCulling(DirectX::XMFLOAT3 position, float radius)
-{
-    // 視錐台（フラスタム）との交差・内外判定
-      // AABBが視錐台の内部にある			：collisionState = 0
-      // AABBが視錐台の境界と交わっている	：collisionState = 1
-      // AABBが視錐台の外部にある			：collisionState = 2
-
-      // いったん内部にあるとしておく
-    collisionState = 0;
-
-    DirectX::XMFLOAT3 enemyPosition = position;
-    float enemyRadius = radius;
-    for (int j = 0; j < 6; j++)
-    {
-        // 各平面の法線の成分を用いてAABBの８頂点の中から最近点と最遠点を求める
-        DirectX::XMFLOAT3 NegaPos = enemyPosition;	// 最近点
-        DirectX::XMFLOAT3 PosiPos = enemyPosition;	// 最遠点
-
-        if (frustum[j].normal.x > 0.0f)
-        {
-            NegaPos.x -= enemyRadius;
-            PosiPos.x += enemyRadius;
-        }
-        else
-        {
-            NegaPos.x += enemyRadius;
-            PosiPos.x -= enemyRadius;
-        }
-        if (frustum[j].normal.y > 0.0f)
-        {
-            NegaPos.y -= enemyRadius;
-            PosiPos.y += enemyRadius;
-        }
-        else
-        {
-            NegaPos.y += enemyRadius;
-            PosiPos.y -= enemyRadius;
-        }
-        if (frustum[j].normal.z > 0.0f)
-        {
-            NegaPos.z -= enemyRadius;
-            PosiPos.z += enemyRadius;
-        }
-        else
-        {
-            NegaPos.z += enemyRadius;
-            PosiPos.z -= enemyRadius;
-        }
-
-        // 各平面との内積を計算し、交差・内外判定を行う
-        // 外部と分かれば処理をbreakし確定させる
-        // 交差状態であれば、ステータスを変更してから次の平面とのチェックに続ける
-        // 内部であれば、そのまま次の平面とのチェックに続ける
-        float dotNegative = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[j].normal), DirectX::XMLoadFloat3(&NegaPos)));
-        float dotPositive = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMLoadFloat3(&frustum[j].normal), DirectX::XMLoadFloat3(&PosiPos)));
-
-        if (dotNegative < frustum[j].distance && dotPositive < frustum[j].distance)
-        {
-            collisionState = 2;
-            break;
-        }
-        else if ((dotNegative - frustum[j].distance) * (dotPositive - frustum[j].distance) < 0.0f)
-        {
-            collisionState = 1;
-        }
-    }
-
-    if (collisionState == 0 || collisionState == 1)
-    {
-        // 敵の方向にレイを飛ばす
-        DirectX::XMFLOAT3 toEnemy = { 0, 0, 0 };
-        DirectX::XMStoreFloat3(&toEnemy, DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&position), DirectX::XMLoadFloat3(&Camera::Instance().GetEye())));
-
-        // レイの開始位置と終点位置
-        DirectX::XMFLOAT3 start = { Camera::Instance().GetEye().x, Camera::Instance().GetEye().y + 0.5f, Camera::Instance().GetEye().z };
-        DirectX::XMFLOAT3 end = { Camera::Instance().GetEye().x + toEnemy.x, Camera::Instance().GetEye().y + toEnemy.y + 0.5f, Camera::Instance().GetEye().z + toEnemy.z };
-
-        return true;
-    }
-
-    return false;
-}
-
 bool CameraController::GetTargetPerspective()
 {
     if (targets.size() <= 0)
@@ -582,7 +404,7 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 
     if (lerpTimer > 1.0f)
     {
-        state = CameraContorollerState::LockOnTargetState;
+        state = CameraMode::LockOnCamera;
         lerpTimer = 0.0f;
         lerpFlag = false;
     }

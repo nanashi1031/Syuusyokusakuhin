@@ -30,8 +30,8 @@ private:
 
     enum class CameraContorollerState
     {
-        NormalTargetState,  // カメラ通常状態
-        LockOnTargetState,  // ロックオン
+        NormalCamera,  // カメラ通常状態
+        LockOnCamera,  // ロックオンカメラ
     };
 
 public:
@@ -41,8 +41,6 @@ public:
     void Update(float elapsedTime);
     void DrawDebugPrimitive();
     void DrawDebugGUI();
-
-    void CalculateFrustum(Plane* frustum);
 
     void SetTarget(const DirectX::XMFLOAT3& target) { this->target = target; }
 
@@ -55,12 +53,14 @@ private:
 
     void CameraRotationAxisLimit();
 
+    void UpdateNormalCamera(float elapsedTime);
+    void UpdateLockOnCamera(float elapsedTime);
+
     DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
     void LockOn(float elapsedTime);
     bool LockOnSwitching();
     DirectX::XMFLOAT3 ResetCamera(float elapsedTime);
-    bool frustumCulling(DirectX::XMFLOAT3 position, float radius);
 
     void ShakeCamera(DirectX::XMFLOAT3 shakePower);
 
@@ -90,9 +90,6 @@ private:
     float interpolationPosition;
 
     int	collisionState = 0;
-    Plane				frustum[6] = {};
-    DirectX::XMFLOAT3	nearPoint[4] = {};	// Nearの四角形の４頂点の座標
-    DirectX::XMFLOAT3	farPoint[4] = {};	// Farの四角形の４頂点の座標
     float nearCamera = 0.0f;
     float farCamera = 0.0f;
     float lerpTimer = 0.0f;
