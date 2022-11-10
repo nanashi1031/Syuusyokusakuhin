@@ -14,6 +14,8 @@ public:
         Battle,
         Dash,
         Avoid,
+        Damage,
+        Death,
     };
 
     enum class Action
@@ -39,6 +41,16 @@ public:
     enum class Avoid
     {
         Avoidance,
+    };
+
+    enum class Damage
+    {
+        Damage,
+    };
+
+    enum class Death
+    {
+        Death,
     };
 
     enum class PlayerAnimation
