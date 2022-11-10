@@ -4,7 +4,7 @@ StageMain::StageMain()
 {
     model = new Model("Data/Model/Stage/Stage.mdl");
 
-    scale.x = scale.y = scale.z = 0.07f;
+    scale.x = scale.y = scale.z = 0.05f;
 }
 
 StageMain::~StageMain()

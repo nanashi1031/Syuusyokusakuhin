@@ -158,7 +158,11 @@
     <ClInclude Include="Source\Input\Mouse.h" />
     <ClInclude Include="Source\Logger.h" />
     <ClInclude Include="Source\Misc.h" />
+    <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Scene\SceneGame.h" />
+    <ClInclude Include="Source\Scene\SceneLoading.h" />
+    <ClInclude Include="Source\Scene\SceneManager.h" />
+    <ClInclude Include="Source\Scene\SceneTitle.h" />
     <ClInclude Include="Source\Stage\Stage.h" />
     <ClInclude Include="Source\Stage\StageMain.h" />
     <ClInclude Include="Source\Stage\StageManager.h" />
@@ -211,6 +215,9 @@
     <ClCompile Include="Source\Logger.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
+    <ClCompile Include="Source\Scene\SceneLoading.cpp" />
+    <ClCompile Include="Source\Scene\SceneManager.cpp" />
+    <ClCompile Include="Source\Scene\SceneTitle.cpp" />
     <ClCompile Include="Source\Stage\StageMain.cpp" />
     <ClCompile Include="Source\Stage\StageManager.cpp" />
     <ClCompile Include="Source\System\Mathf.cpp" />
