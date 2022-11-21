@@ -62,6 +62,35 @@ public:
 	void Exit();
 };
 
+// ダメージステート
+class DamageState : public HierarchicalState
+{
+public:
+	DamageState(Player* actor) :HierarchicalState(actor) {};
+	~DamageState() {};
+
+	// ステートに入った時のメソッド
+	void Enter();
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime);
+	// ステートから出ていくときのメソッド
+	void Exit();
+};
+
+// 死亡ステート
+class DeathState : public HierarchicalState
+{
+public:
+	DeathState(Player* actor) :HierarchicalState(actor) {};
+	~DeathState() {};
+
+	// ステートに入った時のメソッド
+	void Enter();
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime);
+	// ステートから出ていくときのメソッド
+	void Exit();
+};
 
 // 待機ステート
 class IdleState : public State
@@ -205,6 +234,36 @@ class AvoiDanceState : public State
 public:
 	AvoiDanceState(Player* actor) :State(actor) {};
 	~AvoiDanceState() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+// ダメージステート
+class DamagesState : public State
+{
+public:
+	DamagesState(Player* actor) :State(actor) {};
+	~DamagesState() {}
+
+	// ステートに入った時のメソッド
+	void Enter()override;
+	// ステートで実行するメソッド
+	void Execute(float elapsedTime)override;
+	// ステートから出ていくときのメソッド
+	void Exit()override;
+};
+
+//死亡ステート
+class DieState : public State
+{
+public:
+	DieState(Player* actor) :State(actor) {};
+	~DieState() {}
 
 	// ステートに入った時のメソッド
 	void Enter()override;

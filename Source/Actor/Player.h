@@ -45,12 +45,12 @@ public:
 
     enum class Damage
     {
-        Damage,
+        Damages,
     };
 
     enum class Death
     {
-        Death,
+        Die,
     };
 
     enum class PlayerAnimation
@@ -123,6 +123,9 @@ public:
 protected:
      // ƒ_ƒ[ƒW‚ğó‚¯‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
      void OnDamaged() override;
+
+     // €–S‚µ‚½‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+     void OnDead() override;
 
 private:
     void InputMove(float elapsedTime);

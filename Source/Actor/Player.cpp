@@ -243,12 +243,21 @@ void Player::DrawDebugGUI()
             ImGui::DragFloat("Radius", &radius, 0.0005f, 0, 5);
             ImGui::DragFloat("Height", &height, 0.0005f, 0, 5);
         }
+        if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+
+        }
         //ImGui::EndChild();
     }
     ImGui::End();
 }
 
 void Player::OnDamaged()
+{
+
+}
+
+void Player::OnDead()
 {
 
 }
