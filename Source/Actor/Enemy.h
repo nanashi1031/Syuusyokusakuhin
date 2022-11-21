@@ -43,7 +43,7 @@ public:
     // UŒ‚”ÍˆÍæ“¾
     float GetAttackRange() { return attackRange; }
 
-private:
+protected:
     DirectX::XMFLOAT3	territoryOrigin = { 0.0f,0.0f,0.0f };
     float territoryRange = 10.0f;
     float searchRange = 5.0f;

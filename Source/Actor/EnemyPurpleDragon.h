@@ -1,6 +1,7 @@
 #pragma once
 #include "Graphics/Model.h"
 #include "Enemy.h"
+#include "Audio\Audio.h"
 
 class BehaviorTree;
 class BehaviorData;
@@ -46,6 +47,8 @@ public:
 
 	void DrawDebugGUI() override;
 
+	void OnDamaged() override;
+
 	// ìÍí£ÇËê›íË
 	void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 
@@ -56,5 +59,7 @@ private:
 	DirectX::XMFLOAT3	targetPosition = { 0.0f,0.0f,0.0f };
 	DirectX::XMFLOAT3	territoryOrigin = { 0.0f,0.0f,0.0f };
 	float				territoryRange = 10.0f;
-	float				searchRange = 5.0f;
+	float				searchRange = 10.0f;
+
+	std::unique_ptr<AudioSource> SE_Attack;
 };

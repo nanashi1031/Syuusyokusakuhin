@@ -57,3 +57,19 @@ public:
 	RecoverAction(EnemyPurpleDragon* actor) :ActionBase(actor) {}
 	ActionBase::State Run(float elapsedTime);
 };
+
+// ダメージ行動
+class DamageAction : public ActionBase
+{
+public:
+	DamageAction(EnemyPurpleDragon* actor) :ActionBase(actor) {}
+	ActionBase::State Run(float elapsedTime);
+};
+
+// 死亡行動
+class DeathAction : public ActionBase
+{
+public:
+	DeathAction(EnemyPurpleDragon* actor) :ActionBase(actor) {}
+	ActionBase::State Run(float elapsedTime);
+};

@@ -62,7 +62,7 @@ ActionBase::State WanderAction::Run(float elapsedTime)
 	{
 	case 0:
 		// 徘徊モーション設定
-		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::FryTakeOf, true);
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::IdleNormal, true);
 		step++;
 		break;
 	case 1:
@@ -118,7 +118,7 @@ ActionBase::State PursuitAction::Run(float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		owner->SetTargetPosition(owner->GetPlayerPosition());
 		// 目的地点へ移動
-		owner->MoveToTarget(elapsedTime, 1.0);
+		owner->MoveToTarget(elapsedTime, 10.0);
 
 		// プレイヤーとの距離を計算
 		DirectX::XMFLOAT3 position = owner->GetPosition();
@@ -254,4 +254,36 @@ ActionBase::State RecoverAction::Run(float elapsedTime)
 
 	return ActionBase::State::Run;
 
+}
+
+// ダメージ行動
+ActionBase::State DamageAction::Run(float elapsedTime)
+{
+	return ActionBase::State::Run;
+}
+
+// 死亡行動
+ActionBase::State DeathAction::Run(float elapsedTime)
+{
+	switch (step)
+	{
+	case 0:
+		// アニメーション再生
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Die, false);
+		step++;
+		break;
+	case 1:
+
+		// アニメーションが終了しているとき
+		if (!owner->GetModel()->IsPlayAnimation())
+		{
+			step = 0;
+			owner->Destroy();
+			// 攻撃成功
+			return ActionBase::State::Complete;
+		}
+		break;
+	}
+	// 実行中
+	return ActionBase::State::Run;
 }

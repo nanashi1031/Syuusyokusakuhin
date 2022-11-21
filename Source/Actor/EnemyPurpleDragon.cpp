@@ -10,7 +10,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 
 	scale.x = scale.y = scale.z = 0.01f;
 
-	radius = 3.5f;
+	radius = 3.0f;
 	height = 1.5f;
 
 	health = 100.0f;
@@ -36,12 +36,16 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	aiTree->AddNode("Attack", "Skill", 8, BehaviorTree::SelectRule::Non, new SkillShotJudgment(this), new SkillAction(this));
 	aiTree->AddNode("Battle", "Pursuit", 10, BehaviorTree::SelectRule::Non, nullptr, new PursuitAction(this));
 
+	aiTree->AddNode("Battle", "Death", 11, BehaviorTree::SelectRule::Non, nullptr, new DeathAction(this));
+
 	model->PlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
+
+	SE_Attack = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
 }
 
 EnemyPurpleDragon::~EnemyPurpleDragon()
 {
-
+	delete model;
 }
 
 void EnemyPurpleDragon::Update(float elapsedTime)
@@ -138,4 +142,9 @@ void EnemyPurpleDragon::SetTerritory(const DirectX::XMFLOAT3& origin, float rang
 {
 	territoryOrigin = origin;
 	territoryRange = range;
+}
+
+void EnemyPurpleDragon::OnDamaged()
+{
+	SE_Attack->Play(false);
 }
