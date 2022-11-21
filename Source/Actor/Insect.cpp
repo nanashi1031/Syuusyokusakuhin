@@ -5,8 +5,8 @@
 
 Insect::Insect()
 {
-    model = new Model("Data/Model/SpikeBall/SpikeBall.mdl");
-    scale.x = scale.y = scale.z = size;
+    model = new Model("Data/Model/SkyDome/SkyBox.mdl");
+    scale.x = scale.y = scale.z = 1.0f;
 
     radius = 0.5f;
     height = 2.0f;
