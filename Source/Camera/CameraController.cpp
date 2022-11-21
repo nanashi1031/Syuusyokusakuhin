@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include "PlayerManager.h"
 #include "EnemyManager.h"
+#include "StageManager.h"
 #include "Mathf.h"
 #include <algorithm>
 
@@ -40,15 +41,15 @@ void CameraController::Update(float elapsedTime)
 
     CameraRotationAxisLimit();
 
-    switch (state)
+    switch (cameraMode)
     {
     case CameraMode::NormalCamera:
         //perspective = GetPerspective();
         UpdateNormalCamera(elapsedTime);
         break;
     case CameraMode::LockOnCamera:
-        //GetTargetPerspective();
-        UpdateLockOnCamera(elapsedTime);
+        GetTargetPerspective();
+        //UpdateLockOnCamera(elapsedTime);
         break;
     }
 
@@ -67,11 +68,19 @@ void CameraController::Update(float elapsedTime)
         if (lockOnFlag)
             LockOn(elapsedTime);
         else if (!lockOnFlag)
-            state = CameraMode::NormalCamera;
+            cameraMode = CameraMode::NormalCamera;
     }
     lockOnTimer += elapsedTime;
 
     ShakeCamera(shakePower);
+
+    // 壁や床とのレイキャスト
+    HitResult	hitResult;
+    StageManager& stageManager = StageManager::Instance();
+    if (stageManager.GetStage(stageManager.GetNowStage())->RayCast(perspective, perspectiveq, hitResult))
+    {
+
+    }
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
@@ -124,7 +133,7 @@ void CameraController::DrawDebugGUI()
             ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
             {
                 char* str = {};
-                switch (state)
+                switch (cameraMode)
                 {
                 case CameraMode::NormalCamera:
                     str = "NormalCamera";
@@ -133,7 +142,7 @@ void CameraController::DrawDebugGUI()
                     str = "LockOnCamera";
                     break;
                 }
-                ImGui::Text("state %s", str);
+                ImGui::Text("cameraMode %s", str);
             }
             ImGui::SliderFloat("lockOnPossitionY", &lockOnPositionY, -10.0f, 10.0f);
             Mouse& mouse = Input::Instance().GetMouse();
@@ -234,6 +243,37 @@ void CameraController::CameraRotationAxisLimit()
     {
         angle.y -= DirectX::XM_2PI;
     }
+}
+
+void CameraController::UpdateNormalCamera(float elapsedTime)
+{
+    perspective = GetPerspective();
+}
+
+void CameraController::UpdateLockOnCamera(float elapsedTime)
+{
+    ////	後方斜に移動させる
+    //DirectX::XMVECTOR	t0 = DirectX::XMVectorSet(targetWork[0].x, 0.5f, targetWork[0].z, 0);
+    //DirectX::XMVECTOR	t1 = DirectX::XMVectorSet(targetWork[1].x, 0.5f, targetWork[1].z, 0);
+    //DirectX::XMVECTOR	crv = DirectX::XMLoadFloat3(&Camera::Instance().GetRight());
+    //DirectX::XMVECTOR	cuv = DirectX::XMVectorSet(0, 1, 0, 0);
+    //DirectX::XMVECTOR	v = DirectX::XMVectorSubtract(t1, t0);
+    //DirectX::XMVECTOR	l = DirectX::XMVector3Length(v);
+
+    //t0 = DirectX::XMLoadFloat3(&targetWork[0]);
+    //t1 = DirectX::XMLoadFloat3(&targetWork[1]);
+
+    ////	新しい注視点を算出
+    //DirectX::XMStoreFloat3(&newTarget, DirectX::XMVectorMultiplyAdd(v, DirectX::XMVectorReplicate(0.5f), t0));
+
+    ////	新しい座標を算出
+    //l = DirectX::XMVectorClamp(l
+    //    , DirectX::XMVectorReplicate(lengthLimit[0])
+    //    , DirectX::XMVectorReplicate(lengthLimit[1]));
+    //t0 = DirectX::XMVectorMultiplyAdd(l, DirectX::XMVector3Normalize(DirectX::XMVectorNegate(v)), t0);
+    //t0 = DirectX::XMVectorMultiplyAdd(crv, DirectX::XMVectorReplicate(sideValue * 3.0f), t0);
+    //t0 = DirectX::XMVectorMultiplyAdd(cuv, DirectX::XMVectorReplicate(3.0f), t0);
+    //DirectX::XMStoreFloat3(&newPosition, t0);
 }
 
 void CameraController::LockOn(float elapsedTime)
@@ -404,7 +444,7 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 
     if (lerpTimer > 1.0f)
     {
-        state = CameraMode::LockOnCamera;
+        cameraMode = CameraMode::LockOnCamera;
         lerpTimer = 0.0f;
         lerpFlag = false;
     }
@@ -414,8 +454,6 @@ DirectX::XMFLOAT3 CameraController::UpdateTransitionState(float elapsedTime)
 DirectX::XMFLOAT3 CameraController::GetPerspective()
 {
     DirectX::XMFLOAT3 perspective;
-
-    //nowTargetIndex = -1;
 
     // カメラ回転値を回転行列に変換
     DirectX::XMMATRIX Transform = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
@@ -446,4 +484,13 @@ void CameraController::ShakeCamera(DirectX::XMFLOAT3 shakePower)
     perspective.x += shakePower.x;
     perspective.y += shakePower.y;
     perspective.z += shakePower.z;
+}
+
+void CameraController::SetCamerarShake(DirectX::XMFLOAT3 shakePower, float shakeTime)
+{
+    shakeTimer += 1.0f;
+    if (shakeTime < shakeTimer)
+    {
+        ShakeCamera(shakePower);
+    }
 }

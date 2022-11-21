@@ -28,7 +28,7 @@ private:
         float distance;   // 法線からの最短距離
     };
 
-    enum class CameraContorollerState
+    enum class CameraMode
     {
         NormalCamera,  // カメラ通常状態
         LockOnCamera,  // ロックオンカメラ
@@ -42,9 +42,12 @@ public:
     void DrawDebugPrimitive();
     void DrawDebugGUI();
 
+    // ゲッター　セッター
     void SetTarget(const DirectX::XMFLOAT3& target) { this->target = target; }
 
     int GetTagetIndex() const { return this->nowTargetIndex; }
+
+    void SetCamerarShake(DirectX::XMFLOAT3 shakePower, float shakeTime);
 
 private:
     void UpdateMouse(float elapsedTime);
@@ -68,10 +71,11 @@ private:
     DirectX::XMFLOAT3 GetPerspective();
 
 private:
-    CameraContorollerState state = CameraContorollerState::NormalTargetState;
+    CameraMode cameraMode = CameraMode::NormalCamera;
 
+    DirectX::XMFLOAT3 perspective = { 0, 0, 0 };
     DirectX::XMFLOAT3 target = { 0, 0, 0 };
-    DirectX::XMFLOAT3 angle = { 0, 0, 0 };
+    DirectX::XMFLOAT3 angle = { DirectX::XMConvertToRadians(20), 0, 0 };
     float rollSpeed = DirectX::XMConvertToRadians(90);
     float mouseRollSpeed = 0.11f;
     float playerRange = 10.0f;
@@ -79,9 +83,10 @@ private:
     const float maxAngleX = DirectX::XMConvertToRadians(45);
     const float minAngleX = DirectX::XMConvertToRadians(-45);
 
-    DirectX::XMFLOAT3 perspective;
+    DirectX::XMFLOAT3 afterPerspective = { 0, 0, 0 };
     DirectX::XMFLOAT3 perspectiveq;
-    float lockOnRange = 0;
+
+    float lockOnRange = 5.0f;
     int nowTargetIndex = -1;
     bool lockOnFlag = false;
     float lockOnPositionY = 5.0f;
@@ -94,11 +99,12 @@ private:
     float farCamera = 0.0f;
     float lerpTimer = 0.0f;
     // 線形補間速度
-    float lerpSpeed = 1.0f;
+    float lerpSpeed = 4.0f;
 
     // 線形補間フラグ
     bool lerpFlag;
 
     DirectX::XMFLOAT3 shakePower = {1.0f, 1.0f, 1.0f};
-    float shakesuppress = 0;
+    float shakesuppress = 0.01f;
+    float shakeTimer = 0.0f;
 };
