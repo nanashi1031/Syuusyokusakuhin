@@ -135,6 +135,7 @@ void SceneGame::Render()
 
 	// 3Dデバッグ描画
 	{
+#ifdef _DEBUG
 		// ラインレンダラ描画実行
 		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
 
@@ -144,6 +145,7 @@ void SceneGame::Render()
 		PlayerManager::Instance().DrawDebugPrimitive();
 
 		EnemyManager::Instance().DrawDebugPrimitive();
+#endif
 	}
 
 	// 2Dスプライト描画
@@ -154,7 +156,7 @@ void SceneGame::Render()
 
 	// 2DデバッグGUI描画
 	{
-#if !DEBUG
+#ifdef _DEBUG
 		float alpha = 0.35f;
 		ImGui::SetNextWindowBgAlpha(alpha);
 
