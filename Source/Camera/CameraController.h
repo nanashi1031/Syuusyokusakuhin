@@ -49,6 +49,8 @@ public:
 
     void SetCamerarShake(DirectX::XMFLOAT3 shakePower, float shakeTime);
 
+    bool GetLockOnFlag() const { return this->lockOnFlag; }
+
 private:
     void UpdateMouse(float elapsedTime);
     void UpdatePad(float elapsedTime);

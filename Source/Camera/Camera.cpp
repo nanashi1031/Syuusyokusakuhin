@@ -37,3 +37,27 @@ void Camera::SetPerspectiveFov(float fovY, float aspect, float nearZ, float farZ
 	DirectX::XMMATRIX Projection = DirectX::XMMatrixPerspectiveFovLH(fovY, aspect, nearZ, farZ);
 	DirectX::XMStoreFloat4x4(&projection, Projection);
 }
+
+const DirectX::XMFLOAT3& Camera::GetCameraDirection()
+{
+    const DirectX::XMFLOAT3& cameraFront = front;
+    // 移動ベクトルはXZ平面に水平なベクトルになるようにする
+    // カメラ右方向ベクトルをXZ単位ベクトルに変換
+
+    // カメラ前方向ベクトルをXZ単位ベクトルに変換
+    float cameraFrontX = cameraFront.x;
+    float cameraFrontZ = cameraFront.z;
+    float cameraFrontLength = sqrtf(cameraFrontX * cameraFrontX + cameraFrontZ * cameraFrontZ);
+    if (cameraFrontLength > 0.0f)
+    {
+        // 単位ベクトル化
+        cameraFrontX /= cameraFrontLength;
+        cameraFrontZ /= cameraFrontLength;
+    }
+    // 進行ベクトルを計算する
+    DirectX::XMFLOAT3 vec;
+    vec.x = cameraFrontX;
+    vec.z = cameraFrontZ;
+
+    return vec;
+}

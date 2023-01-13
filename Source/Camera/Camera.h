@@ -38,6 +38,9 @@ public:
 	// ‰E•ûŒüæ“¾
 	const DirectX::XMFLOAT3& GetRight() const { return right; }
 
+	// ‘O•ûŒüæ“¾(³‹K‰»)
+	const DirectX::XMFLOAT3& GetCameraDirection();
+
 private:
 	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT4X4 projection;

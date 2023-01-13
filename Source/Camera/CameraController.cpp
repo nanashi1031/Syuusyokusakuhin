@@ -338,12 +338,12 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
 
     //TODO 前方向とれてるかテスト、絶対消すこと
     {
-        EnemyManager& enemyManager = EnemyManager::Instance();
+        //EnemyManager& enemyManager = EnemyManager::Instance();
 
-        EnemyBoss* boss = new EnemyBoss();
-        boss->SetPosition(DirectX::XMFLOAT3(target));
-        boss->SetScale(DirectX::XMFLOAT3(1, 1000, 1));
-        enemyManager.Register(boss);
+        //EnemyBoss* boss = new EnemyBoss();
+        //boss->SetPosition(DirectX::XMFLOAT3(target));
+        //boss->SetScale(DirectX::XMFLOAT3(1, 1000, 1));
+        //enemyManager.Register(boss);
     }
 
     return target;
