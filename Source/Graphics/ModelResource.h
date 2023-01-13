@@ -35,6 +35,8 @@ public:
 		DirectX::XMFLOAT4	color = { 0.8f, 0.8f, 0.8f, 1.0f };
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuse_map;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normal_map;
 
 		template<class Archive>
 		void serialize(Archive& archive, int version);
@@ -104,6 +106,7 @@ public:
 		template<class Archive>
 		void serialize(Archive& archive, int version);
 	};
+
 	struct Animation
 	{
 		std::string					name;
@@ -114,26 +117,26 @@ public:
 		void serialize(Archive& archive, int version);
 	};
 
-	// 各種データ取得
+	// ゲッター
 	const std::vector<Mesh>& GetMeshes() const { return meshes; }
 	const std::vector<Node>& GetNodes() const { return nodes; }
 	const std::vector<Animation>& GetAnimations() const { return animations; }
 	const std::vector<Material>& GetMaterials() const { return materials; }
 
-	// 読み込み
 	void Load(ID3D11Device* device, const char* filename);
 
 protected:
-	// モデルセットアップ
 	void BuildModel(ID3D11Device* device, const char* dirname);
 
-	// シリアライズ
+	HRESULT LoadTexture(
+		ID3D11Device* device, const char* filename, const char* suffix,
+		bool dummy, ID3D11ShaderResourceView** srv, UINT dummy_color = 0xFFFFFFFF
+	);
+
 	void Serialize(const char* filename);
 
-	// デシリアライズ
 	void Deserialize(const char* filename);
 
-	// ノードインデックスを取得する
 	int FindNodeIndex(NodeId nodeId) const;
 
 protected:

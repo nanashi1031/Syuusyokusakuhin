@@ -1,6 +1,12 @@
 #include "Misc.h"
 #include "Graphics/LambertShader.h"
 #include "Graphics/Graphics.h"
+#include "Graphics/PhongShader.h"
+#include "Graphics/PhongShader.h"
+#include "Graphics/GaussianBlurShader.h"
+#include "Graphics/LuminanceExtractionShader.h"
+#include "Graphics/ShadowmapCasterShader.h"
+#include "Graphics/SkyboxShader.h"
 
 Graphics* Graphics::instance = nullptr;
 
@@ -128,9 +134,24 @@ Graphics::Graphics(HWND hWnd)
 		immediateContext->RSSetViewports(1, &viewport);
 	}
 
-	// シェーダー
+
+	// モデルシェーダー
 	{
-		shader = std::make_unique<LambertShader>(device.Get());
+		//modelShaders = std::make_unique<LambertShader>(device.Get());
+		modelShaders[static_cast<int>(ModelShaderId::Phong)] =
+			std::make_unique<PhongShader>(device.Get());
+		modelShaders[static_cast<int>(ModelShaderId::ShadowmapCaster)] =
+			std::make_unique<ShadowmapCasterShader>(device.Get());
+	}
+
+	// スプライトシェーダー
+	{
+		spriteShaders[static_cast<int>(SpriteShaderId::Skybox)] =
+			std::make_unique<SkyboxShader>(device.Get());
+		spriteShaders[static_cast<int>(SpriteShaderId::GaussianBlur)] =
+			std::make_unique<GaussianBlurShader>(device.Get());
+		spriteShaders[static_cast<int>(SpriteShaderId::LuminanceExtraction)] =
+			std::make_unique<LuminanceExtractionShader>(device.Get());
 	}
 
 	// レンダラ

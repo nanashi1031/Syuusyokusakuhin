@@ -1,9 +1,13 @@
 #pragma once
 #include"Graphics.h"
+#include "Sprite.h"
+#include "Texture.h"
 #include "Graphics/Sprite.h"
 #include "Scene.h"
 #include "StageManager.h"
 #include "CameraController.h"
+#include "DepthStencil.h"
+#include "Light.h"
 
 // ゲームシーン
 class SceneGame : public Scene
@@ -31,7 +35,35 @@ public:
 		const DirectX::XMFLOAT4X4& projection);
 
 private:
+	// 3D空間の描画
+	void Render3DScene();
+
+	void RenderShadowmap();
+
+private:
+	std::unique_ptr<Texture> texture;
+	std::unique_ptr<Sprite>	sprite;
+
 	CameraController* cameraController = nullptr;
 
 	std::unique_ptr<Sprite> targetRing = nullptr;
+
+	// 平行光源データ
+	std::unique_ptr<Light>		directional_light;
+	DirectX::XMFLOAT4			ambientLightColor;
+
+	// ガウスフィルターデータ
+	GaussianFilterData			gaussianFilterData;
+	std::unique_ptr<Sprite>		gaussianBlurSprite;
+
+	// ブルームデータ
+	LuminanceExtractionData		luminanceExtractionData;
+
+	//	シャドウマップ用情報
+	Light* mainDirectionalLight = nullptr;
+	std::unique_ptr<DepthStencil> shadowmapDepthStencil; //	シャドウマップ用深度ステンシルバッファ
+	float	shadowDrawRect = 500.0f; //	シャドウマップに描画する範囲
+
+	//	パノラマスカイボックス画像
+	std::unique_ptr<Texture>	skyboxTexture;
 };
