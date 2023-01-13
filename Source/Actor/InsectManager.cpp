@@ -39,11 +39,11 @@ void InsectManager::Update(float elapsedTime)
     removes.clear();
 }
 
-void InsectManager::Render(ID3D11DeviceContext* context, Shader* shader)
+void InsectManager::Render(RenderContext rc, ModelShader* shader)
 {
     for (Insect* insect : insects)
     {
-        insect->Render(context, shader);
+        insect->Render(rc, shader);
     }
 }
 

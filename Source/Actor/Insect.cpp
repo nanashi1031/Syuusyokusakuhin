@@ -1,15 +1,25 @@
 #include "Insect.h"
 #include "PlayerManager.h"
 #include "Mathf.h"
+#include "InsectDerived.h"
 #include <imgui.h>
 
 Insect::Insect()
 {
-    model = new Model("Data/Model/SkyDome/SkyBox.mdl");
+    model = new Model("Data/Model/SpikeBall/SpikeBall.mdl");
     scale.x = scale.y = scale.z = 1.0f;
 
     radius = 0.5f;
     height = 2.0f;
+    moveSpeed = 5.0f;
+
+    stateMachine = new StateMachine();
+#pragma region ステート登録
+    stateMachine->RegisterState(new InsectState::IdleState(this));
+    stateMachine->RegisterState(new InsectState::FlyingState(this));
+    stateMachine->RegisterState(new InsectState::ReturnState(this));
+#pragma endregion
+    stateMachine->SetState(State::Idle);
 }
 
 Insect::~Insect()
@@ -28,12 +38,16 @@ void Insect::Update(float elapsedTime)
 
     model->UpdateTransform(transform);
 
-    PlayerWeaponTracking(elapsedTime);
+    // 速力処理更新
+    UpdateVelocity(elapsedTime);
+
+    stateMachine->Update(elapsedTime);
+    //PlayerWeaponTracking(elapsedTime);
 }
 
-void Insect::Render(ID3D11DeviceContext* dc, Shader* shader)
+void Insect::Render(RenderContext rc, ModelShader* shader)
 {
-    shader->Draw(dc, model);
+    shader->Draw(rc, model);
 }
 
 void Insect::DrawDebugPrimitive()
@@ -57,7 +71,7 @@ void Insect::DrawDebugGUI()
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::DragFloat3("Postion", &position.x, 0.1f);
-
+            ImGui::DragFloat("moveSpeed", &moveSpeed, 0.1f);
             ImGui::DragFloat3("SwordPostion", &weaponPosition.x, 0.1f);
         }
     }

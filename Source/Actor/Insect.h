@@ -4,12 +4,20 @@
 class Insect : public Character
 {
 public:
+    enum class State
+    {
+        Idle,
+        Flying,
+        Return,
+    };
+
+public:
     Insect();
     ~Insect();
 
     void Initialize();
     void Update(float elapsedTime);
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
+    void Render(RenderContext rc, ModelShader* shader);
     void DrawDebugPrimitive();
     void DrawDebugGUI();
 
@@ -23,8 +31,6 @@ private:
     Model* model = nullptr;
 
     const float size = 1.0f;
-    const float moveSpeed = 5.0f;
-
     float turnSpeed = DirectX::XMConvertToRadians(720);
 
     DirectX::XMFLOAT3 weaponPosition;
