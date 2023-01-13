@@ -1,119 +1,28 @@
 #include "Input\Input.h"
 #include "PlayerDerived.h"
-#include "Player.h"
 #include "Mathf.h"
 #include "Collision.h"
 #include "EnemyManager.h"
 
-void ActionState::Enter()
-{
-	SetSubState(static_cast<int>(Player::Action::Idle));
-}
-
-void ActionState::Execute(float elapsedTime)
-{
-	subState->Execute(elapsedTime);
-}
-
-void ActionState::Exit()
-{
-
-}
-
-void BattleState::Enter()
-{
-	SetSubState(static_cast<int>(Player::Battle::AttackCombo1));
-}
-
-void BattleState::Execute(float elapsedTime)
-{
-	subState->Execute(elapsedTime);
-}
-
-void BattleState::Exit()
-{
-
-}
-
-void DashState::Enter()
-{
-	SetSubState(static_cast<int>(Player::Dash::AttackDashu));
-}
-
-void DashState::Execute(float elapsedTime)
-{
-	subState->Execute(elapsedTime);
-}
-
-void DashState::Exit()
-{
-
-}
-
-void AvoidState::Enter()
-{
-	SetSubState(static_cast<int>(Player::Avoid::Avoidance));
-}
-
-void AvoidState::Execute(float elapsedTime)
-{
-	subState->Execute(elapsedTime);
-}
-
-void AvoidState::Exit()
-{
-
-}
-
-void DamageState::Enter()
-{
-	SetSubState(static_cast<int>(Player::Damage::Damages));
-}
-
-void DamageState::Execute(float elapsedTime)
-{
-	subState->Execute(elapsedTime);
-}
-
-void DamageState::Exit()
-{
-
-}
-
-void DeathState::Enter()
-{
-	SetSubState(static_cast<int>(Player::Death::Die));
-}
-
-void DeathState::Execute(float elapsedTime)
-{
-	subState->Execute(elapsedTime);
-}
-
-void DeathState::Exit()
-{
-
-}
-
-void IdleState::Enter()
+void PlayerState::IdleState::Enter()
 {
 	owner->GetModel()->PlayAnimation(Player::PlayerAnimation::Idle, true);
 	stateTimer = 0;
 }
 
-void IdleState::Execute(float elapsedTime)
+void PlayerState::IdleState::Execute(float elapsedTime)
 {
 	// スティックorキーボードでの移動があった場合歩きステートへ移動
 	if (owner->GetMoveFlag() > 0.0f)
 	{
-		owner->GetStateMachine()->ChangeSubState(Player::Action::Walk);
+		owner->GetStateMachine()->ChangeState(Player::State::Walk);
 	}
 	// スティックorキーボードでの移動が10以上無い場合放置ステートへ移動
 	else if(owner->GetMoveFlag() == 0.0f)
 	{
 		if (stateTimer > 10)
 		{
-			owner->GetStateMachine()->ChangeSubState(Player::Action::Neglect);
+			owner->GetStateMachine()->ChangeState(Player::State::Neglect);
 		}
 		stateTimer += elapsedTime;
 	}
@@ -122,22 +31,22 @@ void IdleState::Execute(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Battle);
+		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
 
 	// 右クリック押されたら回避ステートへ遷移
 	if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Avoid);
+		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
 	}
 }
 
-void IdleState::Exit()
+void PlayerState::IdleState::Exit()
 {
 
 }
 
-void NeglectState::Enter()
+void PlayerState::NeglectState::Enter()
 {
 	// ランダムで放置アニメーションを再生
 	int neglectIndex = static_cast<int>(Mathf::RandomRange(0, 2));
@@ -155,110 +64,110 @@ void NeglectState::Enter()
 	}
 }
 
-void NeglectState::Execute(float elapsedTime)
+void PlayerState::NeglectState::Execute(float elapsedTime)
 {
 	// スティックorキーボードでの移動があった場合歩きステートへ移動
 	if (owner->GetMoveFlag() > 0.0f)
 	{
-		owner->GetStateMachine()->ChangeSubState(Player::Action::Walk);
+		owner->GetStateMachine()->ChangeState(Player::State::Walk);
 	}
 
 	// アニメーション再生が終わったら待機ステートへ移動
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
-		owner->GetStateMachine()->ChangeSubState(Player::Action::Idle);
+		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 
 	// 左クリック押されたら攻撃ステートへ遷移
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Battle);
+		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
 
 	// 右クリック押されたら回避ステートへ遷移
 	if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Avoid);
+		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
 	}
 }
 
-void NeglectState::Exit()
+void PlayerState::NeglectState::Exit()
 {
 
 }
 
-void WalkState::Enter()
+void PlayerState::WalkState::Enter()
 {
 	owner->GetModel()->PlayAnimation(Player::PlayerAnimation::WalkFront, true);
 }
 
-void WalkState::Execute(float elapsedTime)
+void PlayerState::WalkState::Execute(float elapsedTime)
 {
 	// スティックorキーボードでの移動をしてない場合待機ステートへ移動
 	if (owner->GetMoveFlag() == 0.0f)
 	{
-		owner->GetStateMachine()->ChangeSubState(Player::Action::Idle);
+		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 
 	// スティックorキーボードでの移動量が走り規定値以上なら
 	if (owner->GetMoveFlag() >= 0.5f)
 	{
-		owner->GetStateMachine()->ChangeSubState(Player::Action::Run);
+		owner->GetStateMachine()->ChangeState(Player::State::Run);
 	}
 
 	// 左クリック押されたら攻撃ステートへ遷移
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Battle);
+		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
 
 	// 右クリック押されたら回避ステートへ遷移
 	if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Avoid);
+		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
 	}
 }
 
-void WalkState::Exit()
+void PlayerState::WalkState::Exit()
 {
 
 }
 
-void RunState::Enter()
+void PlayerState::RunState::Enter()
 {
 	owner->GetModel()->PlayAnimation(Player::PlayerAnimation::RunFront, true);
 }
 
-void RunState::Execute(float elapsedTime)
+void PlayerState::RunState::Execute(float elapsedTime)
 {
 	// スティックorキーボードでの移動量が走り規定値より小さいなら
 	if (owner->GetMoveFlag() < 0.5f)
 	{
-		owner->GetStateMachine()->ChangeSubState(Player::Action::Walk);
+		owner->GetStateMachine()->ChangeState(Player::State::Walk);
 	}
 
 	// 左クリック押されたらダッシュ攻撃ステートへ遷移
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Dash);
+		owner->GetStateMachine()->ChangeState(Player::State::AttackDashu);
 	}
 
 	// 右クリック押されたら回避ステートへ遷移
 	if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Avoid);
+		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
 	}
 }
 
-void RunState::Exit()
+void PlayerState::RunState::Exit()
 {
 
 }
 
-void AttackCombo1State::Enter()
+void PlayerState::AttackCombo1State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::SlashKesakiri, false, 1.2f, 2.0f);
@@ -266,7 +175,7 @@ void AttackCombo1State::Enter()
 	nextAttackFlag = false;
 }
 
-void AttackCombo1State::Execute(float elapsedTime)
+void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
@@ -290,24 +199,24 @@ void AttackCombo1State::Execute(float elapsedTime)
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
 		{
-			owner->GetStateMachine()->ChangeSubState(Player::Battle::AttackCombo2);
+			owner->GetStateMachine()->ChangeState(Player::State::AttackCombo2);
 		}
 		else if (!nextAttackFlag)
 		{
 			// 0秒経ったら待機ステートへ移動
 			if (stateTimer >= 0.0f)
-				owner->GetStateMachine()->ChangeState(Player::State::Action);
+				owner->GetStateMachine()->ChangeState(Player::State::Idle);
 			stateTimer += elapsedTime;
 		}
 	}
 }
 
-void AttackCombo1State::Exit()
+void PlayerState::AttackCombo1State::Exit()
 {
 
 }
 
-void AttackCombo2State::Enter()
+void PlayerState::AttackCombo2State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::SlashLeftRoundUp, false, 1.2f, 2.0f);
@@ -315,7 +224,7 @@ void AttackCombo2State::Enter()
 	nextAttackFlag = false;
 }
 
-void AttackCombo2State::Execute(float elapsedTime)
+void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
@@ -339,30 +248,30 @@ void AttackCombo2State::Execute(float elapsedTime)
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
 		{
-			owner->GetStateMachine()->ChangeSubState(Player::Battle::AttackCombo3);
+			owner->GetStateMachine()->ChangeState(Player::State::AttackCombo3);
 		}
 		else if (!nextAttackFlag)
 		{
 			// 1秒経ったら待機ステートへ移動
 			if (stateTimer >= 1)
-				owner->GetStateMachine()->ChangeState(Player::State::Action);
+				owner->GetStateMachine()->ChangeState(Player::State::Idle);
 			stateTimer += elapsedTime;
 		}
 	}
 }
 
-void AttackCombo2State::Exit()
+void PlayerState::AttackCombo2State::Exit()
 {
 
 }
 
-void AttackCombo3State::Enter()
+void PlayerState::AttackCombo3State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::SlashKaratake, false, 1.2f, 2.0f);
 }
 
-void AttackCombo3State::Execute(float elapsedTime)
+void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
@@ -376,16 +285,16 @@ void AttackCombo3State::Execute(float elapsedTime)
 	// アニメーション再生が終わったら
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Action);
+		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 }
 
-void AttackCombo3State::Exit()
+void PlayerState::AttackCombo3State::Exit()
 {
 
 }
 
-void AttackDashuState::Enter()
+void PlayerState::AttackDashuState::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::SlashRotary, false, 0.0f, 1.5f);
@@ -393,7 +302,7 @@ void AttackDashuState::Enter()
 	nextAttackFlag = false;
 }
 
-void AttackDashuState::Execute(float elapsedTime)
+void PlayerState::AttackDashuState::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
@@ -417,80 +326,80 @@ void AttackDashuState::Execute(float elapsedTime)
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
 		{
-			owner->GetStateMachine()->ChangeState(Player::State::Battle);
+			owner->GetStateMachine()->ChangeState(Player::State::AttackCombo2);
 		}
 		else if (!nextAttackFlag)
 		{
 			// 1秒経ったら待機ステートへ移動
-			owner->GetStateMachine()->ChangeState(Player::State::Action);
+			owner->GetStateMachine()->ChangeState(Player::State::Idle);
 			stateTimer += elapsedTime;
 		}
 	}
 }
 
-void AttackDashuState::Exit()
+void PlayerState::AttackDashuState::Exit()
 {
 
 }
 
-void AvoiDanceState::Enter()
+void PlayerState::AvoiDanceState::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::Block, true);
 }
 
-void AvoiDanceState::Execute(float elapsedTime)
+void PlayerState::AvoiDanceState::Execute(float elapsedTime)
 {
 	Mouse& mouse = Input::Instance().GetMouse();
 
 	// マウスを右クリックしている間は回避、離したらActionステートへ
 	if (mouse.GetButtonUp() & mouse.BTN_RIGHT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Action);
+		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 }
 
-void AvoiDanceState::Exit()
+void PlayerState::AvoiDanceState::Exit()
 {
 
 }
 
-void DamagesState::Enter()
+void PlayerState::DamagesState::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::HitSmall, false);
 }
 
-void DamagesState::Execute(float elapsedTime)
+void PlayerState::DamagesState::Execute(float elapsedTime)
 {
 	// アニメーション再生が終了時
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Action);
+		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 }
 
-void DamagesState::Exit()
+void PlayerState::DamagesState::Exit()
 {
 
 }
 
-void DieState::Enter()
+void PlayerState::DieState::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::DeathFront, false);
 }
 
-void DieState::Execute(float elapsedTime)
+void PlayerState::DieState::Execute(float elapsedTime)
 {
 	// アニメーション再生が終了時
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::Action);
+		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 }
 
-void DieState::Exit()
+void PlayerState::DieState::Exit()
 {
 
 }
