@@ -10,46 +10,16 @@ class Player : public Character
 public:
     enum class State
     {
-        Action,
-        Battle,
-        Dash,
-        Avoid,
-        Damage,
-        Death,
-    };
-
-    enum class Action
-    {
         Idle,
         Neglect,
         Walk,
         Run,
-    };
-
-    enum class Battle
-    {
         AttackCombo1,
         AttackCombo2,
         AttackCombo3,
-    };
-
-    enum class Dash
-    {
         AttackDashu,
-    };
-
-    enum class Avoid
-    {
         Avoidance,
-    };
-
-    enum class Damage
-    {
         Damages,
-    };
-
-    enum class Death
-    {
         Die,
     };
 
@@ -112,7 +82,7 @@ public:
     ~Player() override;
 
     void Update(float elapsedTime);
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
+    void Render(RenderContext rc, ModelShader* shader);
     void DrawDebugPrimitive();
     void DrawDebugGUI();
 

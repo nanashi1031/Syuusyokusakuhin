@@ -20,22 +20,19 @@ Player::Player()
 
     stateMachine = new StateMachine();
 
-    stateMachine->RegisterState(new ActionState(this));
-    stateMachine->RegisterState(new BattleState(this));
-    stateMachine->RegisterState(new DashState(this));
-    stateMachine->RegisterState(new AvoidState(this));
-    // 各親ステートにサブステートを登録(WanderState以外の2層目のステートも同様の方法で各自追加してください。)
-    stateMachine->RegisterSubState(Player::State::Action, new IdleState(this));
-    stateMachine->RegisterSubState(Player::State::Action, new NeglectState(this));
-    stateMachine->RegisterSubState(Player::State::Action, new WalkState(this));
-    stateMachine->RegisterSubState(Player::State::Action, new RunState(this));
-    stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo1State(this));
-    stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo2State(this));
-    stateMachine->RegisterSubState(Player::State::Battle, new AttackCombo3State(this));
-    stateMachine->RegisterSubState(Player::State::Dash, new AttackDashuState(this));
-    stateMachine->RegisterSubState(Player::State::Avoid, new AvoiDanceState(this));
-    // ステートをセット
-    stateMachine->SetState(State::Action);
+#pragma region ステート登録
+    stateMachine->RegisterState(new PlayerState::IdleState(this));
+    stateMachine->RegisterState(new PlayerState::NeglectState(this));
+    stateMachine->RegisterState(new PlayerState::WalkState(this));
+    stateMachine->RegisterState(new PlayerState::RunState(this));
+    stateMachine->RegisterState(new PlayerState::AttackCombo1State(this));
+    stateMachine->RegisterState(new PlayerState::AttackCombo2State(this));
+    stateMachine->RegisterState(new PlayerState::AttackCombo3State(this));
+    stateMachine->RegisterState(new PlayerState::AttackDashuState(this));
+    stateMachine->RegisterState(new PlayerState::AvoiDanceState(this));
+#pragma endregion
+
+    stateMachine->SetState(State::Idle);
 }
 
 Player::~Player()
@@ -192,9 +189,9 @@ void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
     }
 }
 
-void Player::Render(ID3D11DeviceContext* dc, Shader* shader)
+void Player::Render(RenderContext rc, ModelShader* shader)
 {
-    shader->Draw(dc, model);
+    shader->Draw(rc, model);
 }
 
 void Player::DrawDebugPrimitive()
