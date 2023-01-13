@@ -15,6 +15,9 @@ public:
     // 目標地点へ移動
     void MoveToTarget(float elapsedTime, float speedRate);
 
+    // 一定数回転する
+    void Ratate(DirectX::XMFLOAT3 rotateValue, float time);
+
     // ダメージを与える
     bool ApplyDamage(const int damage, const float invincibleTime);
 
@@ -36,14 +39,20 @@ public:
 
     float GetNotStand() const { return notStand; }
 
+    DirectX::XMFLOAT3 GetTargetPosition() const {return this->targetPosition;}
+    void SetTargetPosition(DirectX::XMFLOAT3 f3) { this->targetPosition = f3; }
+
+    float GetMoveSpeed() const { return this->moveSpeed; }
+    void SetMoveSpeed(float f) { this->moveSpeed = f; }
+
+    float GetMoveVecX() const { return this->moveVecX; }
+    void SetMoveVecX(float f) { this->moveVecX = f; }
+
+    float GetMoveVecZ() const { return this->moveVecZ; }
+    void SetMoveVecZ(float f) { this->moveVecZ = f; }
+
     //ステートマシン取得
     StateMachine* GetStateMachine() const { return stateMachine; }
-
-    // ターゲットポジション設定
-    void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
-
-    // ターゲットポジション取得
-    DirectX::XMFLOAT3 GetTargetPosition() const { return targetPosition; }
 
     // モデル取得
     Model* GetModel() const { return model; }

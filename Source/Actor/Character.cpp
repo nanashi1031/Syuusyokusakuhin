@@ -279,7 +279,6 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 	}
 }
 
-// 目的地点へ移動
 void Character::MoveToTarget(float elapsedTime, float speedRate)
 {
 	// ターゲット方向への進行ベクトルを算出
@@ -292,6 +291,13 @@ void Character::MoveToTarget(float elapsedTime, float speedRate)
 	// 移動処理
 	Move(vx, vz, moveSpeed * speedRate);
 	Turn(elapsedTime, vx, vz, turnSpeed * speedRate);
+}
+
+void Character::Ratate(DirectX::XMFLOAT3 rotateValue, float time)
+{
+	angle.x += rotateValue.x;
+	angle.y += rotateValue.y;
+	angle.z += rotateValue.z;
 }
 
 bool Character::ApplyDamage(const int damage, const float invincibleTime)
@@ -334,7 +340,6 @@ void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 	velocity.z += impulse.z;
 }
 
-//無敵時間更新
 void Character::UpdateInvincibleTime(float elapsedTime)
 {
 	if (invincibleTimer > 0.0f)
