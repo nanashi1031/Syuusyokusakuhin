@@ -118,7 +118,7 @@ ActionBase::State PursuitAction::Run(float elapsedTime)
 		// 目標地点をプレイヤー位置に設定
 		owner->SetTargetPosition(owner->GetPlayerPosition());
 		// 目的地点へ移動
-		owner->MoveToTarget(elapsedTime, 10.0);
+		owner->MoveToTarget(elapsedTime, 20.0);
 
 		// プレイヤーとの距離を計算
 		DirectX::XMFLOAT3 position = owner->GetPosition();
