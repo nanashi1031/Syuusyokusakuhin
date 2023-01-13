@@ -21,6 +21,9 @@ public:
 	// FLOAT3ÇÃç∑ A-B
 	static DirectX::XMFLOAT3 SubtractFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
 
+	// FLOAT3Ç∆floatÇÃèÊ
+	static DirectX::XMFLOAT3 MultiplyFloat3Float(DirectX::XMFLOAT3 float3A, float floatB);
+
 	// FLOAT3ÇÃèÊ
 	static DirectX::XMFLOAT3 MultiplyFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
 

@@ -81,6 +81,16 @@ DirectX::XMFLOAT3 Mathf::SubtractFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFL
 	return outFloat3;
 }
 
+DirectX::XMFLOAT3 Mathf::MultiplyFloat3Float(DirectX::XMFLOAT3 float3A, float floatB)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x * floatB;
+	outFloat3.y = float3A.y * floatB;
+	outFloat3.z = float3A.z * floatB;
+
+	return outFloat3;
+}
+
 DirectX::XMFLOAT3 Mathf::MultiplyFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
 {
 	DirectX::XMFLOAT3 outFloat3;
