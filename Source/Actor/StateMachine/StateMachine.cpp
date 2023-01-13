@@ -2,14 +2,12 @@
 
 StateMachine::~StateMachine()
 {
-	//登録したステートを削除する
 	for (State* state : statePool)
 	{
 		delete state;
 	}
 	statePool.clear();
 }
-
 // 更新処理
 void StateMachine::Update(float elapsedTime)
 {
@@ -17,7 +15,7 @@ void StateMachine::Update(float elapsedTime)
 }
 
 // ステート登録
-void StateMachine::RegisterState(HierarchicalState* state)
+void StateMachine::RegisterState(State* state)
 {
 	// 親ステート登録
 	statePool.emplace_back(state);

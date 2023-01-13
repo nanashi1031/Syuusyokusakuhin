@@ -23,18 +23,15 @@ public:
 
 	// ステート変更
 	template<typename T>
-	void ChangeState(T newState)
+	void ChangeState(T tNewState)
 	{
 		if (currentState != nullptr)
 		{
 			//現在のステートのExit関数を実行
 			currentState->Exit();
 
-			// 現在実行されているサブステートのExit関数を実行
-			currentState->GetSubState()->Exit();
-
 			//新しいステートをセット
-			SetState(newState);
+			SetState(tNewState);
 
 			//新しいステートのEnter関数を呼び出す。
 			currentState->Enter();
@@ -42,34 +39,14 @@ public:
 	}
 
 	// ステート登録
-	void RegisterState(HierarchicalState* state);
+	void RegisterState(State* state);
 
 	// 現在のステート番号取得
 	int GetStateIndex();
 
-	// ２層目ステート変更
-	template<typename T>
-	void ChangeSubState(T newState)
-	{
-		int state = static_cast<int>(newState);
-		currentState->ChangeSubState(state);
-	}
-
-	// ２層目ステート登録
-	template<typename T>
-	void RegisterSubState(T tIndex, State* subState)
-	{
-		int index = static_cast<int>(tIndex);
-		statePool.at(index)->RegisterSubState(subState);
-	}
-
-	// ステート取得
-	HierarchicalState* GetState() { return currentState; }
-
 private:
 	// 現在のステート
-	HierarchicalState* currentState = nullptr;
-
+	State* currentState = nullptr;
 	// 各ステートを保持する配列
-	std::vector<HierarchicalState*> statePool;
+	std::vector<State*> statePool;
 };
