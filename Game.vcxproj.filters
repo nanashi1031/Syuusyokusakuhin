@@ -55,6 +55,12 @@
     <Filter Include="Source\Actor\StateMachine">
       <UniqueIdentifier>{cfc9b25e-d149-4617-9e2a-359028fb35c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Light">
+      <UniqueIdentifier>{186fd263-e9e3-4cfe-9d16-42d7a46e995d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Actor\Insect">
+      <UniqueIdentifier>{18434381-4535-4bf5-8702-2781d8230ac7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -186,12 +192,6 @@
     <ClInclude Include="Source\Actor\EnemyManager.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\Insect.h">
-      <Filter>Source\Actor\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\InsectManager.h">
-      <Filter>Source\Actor\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\BehaviorTree\ActionBase.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
@@ -219,15 +219,6 @@
     <ClInclude Include="Source\Actor\EnemyPurpleDragonActionDerived.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\StateMachine\StateBase.h">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Scene\SceneLoading.h">
       <Filter>Source\Scene</Filter>
     </ClInclude>
@@ -239,6 +230,51 @@
     </ClInclude>
     <ClInclude Include="Source\Scene\Scene.h">
       <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Texture.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\DepthStencil.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\StateBase.h">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Insect.h">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\InsectManager.h">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\InsectDerived.h">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Light\Light.h">
+      <Filter>Source\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Light\LightManager.h">
+      <Filter>Source\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\GaussianBlurShader.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\PhongShader.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\ShadowmapCasterShader.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\SkyboxShader.h">
+      <Filter>Source\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -353,12 +389,6 @@
     <ClCompile Include="Source\Actor\EnemyManager.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Insect.cpp">
-      <Filter>Source\Actor\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\InsectManager.cpp">
-      <Filter>Source\Actor\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\BehaviorTree\ActionDerived.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
@@ -380,15 +410,6 @@
     <ClCompile Include="Source\Actor\EnemyPurpleDragonActionDerived.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine\StateBase.cpp">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
-      <Filter>Source\Actor\StateMachine</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Scene\SceneLoading.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
@@ -397,6 +418,48 @@
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneTitle.cpp">
       <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Texture.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\DepthStencil.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
+      <Filter>Source\Actor\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Insect.cpp">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\InsectManager.cpp">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\InsectDerived.cpp">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Light\Light.cpp">
+      <Filter>Source\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Light\LightManager.cpp">
+      <Filter>Source\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\PhongShader.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\ShadowmapCasterShader.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\SkyboxShader.cpp">
+      <Filter>Source\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,6 +476,30 @@
       <Filter>HLSL</Filter>
     </None>
     <None Include="HLSL\Sprite.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\Skybox.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\Constants.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\FilterFunctions.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\GaussianBlur.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\Light.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\LuminanceExtraction.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\Phong.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\ShadowmapCaster.hlsli">
       <Filter>HLSL</Filter>
     </None>
   </ItemGroup>
@@ -445,6 +532,33 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\SpritePS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SkyboxVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SkyboxPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\GaussianBlurPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\GaussianBlurVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\LuminanceExtractionPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\LuminanceExtractionVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\PhongPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\PhongVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowmapCasterVS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
