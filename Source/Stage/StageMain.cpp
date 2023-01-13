@@ -18,7 +18,7 @@ void StageMain::Update(float elapsedTime)
     model->UpdateTransform(transform);
 }
 
-void StageMain::Render(ID3D11DeviceContext* dc, Shader* shader)
+void StageMain::Render(RenderContext rc, ModelShader* shader)
 {
-    shader->Draw(dc, model);
+    shader->Draw(rc, model);
 }

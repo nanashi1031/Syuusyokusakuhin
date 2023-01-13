@@ -30,9 +30,9 @@ void EnemyBoss::Update(float elapsedTime)
     model->UpdateTransform(transform);
 }
 
-void EnemyBoss::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyBoss::Render(RenderContext rc, ModelShader* shader)
 {
-    shader->Draw(dc, model);
+    shader->Draw(rc, model);
 }
 
 void EnemyBoss::DrawDebugPrimitive()

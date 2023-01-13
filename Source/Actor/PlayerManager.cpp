@@ -31,11 +31,11 @@ void PlayerManager::Update(float elapsedTime)
     removes.clear();
 }
 
-void PlayerManager::Render(ID3D11DeviceContext* context, Shader* shader)
+void PlayerManager::Render(RenderContext rc, ModelShader* shader)
 {
     for (Player* player : players)
     {
-        player->Render(context, shader);
+        player->Render(rc, shader);
     }
 }
 

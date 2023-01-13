@@ -24,7 +24,7 @@ public:
     void Clear();
 
     void Update(float elapsedTime);
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
+    void Render(RenderContext rc, ModelShader* shader);
 
     //エネミー登録
     void Register(Enemy* enemy);

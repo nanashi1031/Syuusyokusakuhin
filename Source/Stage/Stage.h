@@ -14,7 +14,7 @@ public:
 
     virtual void Update(float elapsedTime) = 0;
 
-    virtual void Render(ID3D11DeviceContext* dc, Shader* shader) = 0;
+    virtual void Render(RenderContext rc, ModelShader* shader) = 0;
 
     bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
     {

@@ -11,7 +11,7 @@ public:
     ~StageMain() override;
 
     void Update(float elapsedTime) override;
-    void Render(ID3D11DeviceContext* dc, Shader* shader) override;
+    void Render(RenderContext rc, ModelShader* shader) override;
 
 private:
 };

@@ -79,9 +79,9 @@ void EnemyPurpleDragon::Update(float elapsedTime)
 	model->UpdateTransform(transform);
 }
 
-void EnemyPurpleDragon::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyPurpleDragon::Render(RenderContext rc, ModelShader* shader)
 {
-	shader->Draw(dc, model);
+	shader->Draw(rc, model);
 }
 
 void EnemyPurpleDragon::DrawDebugPrimitive()

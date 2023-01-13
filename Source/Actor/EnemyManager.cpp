@@ -70,11 +70,11 @@ void EnemyManager::CollisionEnemyVsEnemies()
 }
 
 //•`‰æˆ—
-void EnemyManager::Render(ID3D11DeviceContext* context, Shader* shader)
+void EnemyManager::Render(RenderContext rc, ModelShader* shader)
 {
     for (Enemy* enemy : enemies)
     {
-        enemy->Render(context, shader);
+        enemy->Render(rc, shader);
     }
 }
 

@@ -20,7 +20,7 @@ public:
     void Clear();
 
     void Update(float elapsedTime);
-    void Render(ID3D11DeviceContext* dc, Shader* shader);
+    void Render(RenderContext rc, ModelShader* shader);
 
     void Register(Player* enemy);
 
