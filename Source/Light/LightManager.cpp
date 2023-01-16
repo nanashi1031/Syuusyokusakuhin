@@ -44,6 +44,8 @@ void LightManager::PushRenderContext(RenderContext& rc)
 
 void LightManager::DrawDebugGUI()
 {
+	float alpha = 0.35f;
+	ImGui::SetNextWindowBgAlpha(alpha);
 	if (ImGui::TreeNode("Lights"))
 	{
 		ImGui::ColorEdit3("AmbientColor", &ambientColor.x);
