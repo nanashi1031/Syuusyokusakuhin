@@ -7,6 +7,7 @@ public:
     enum class State
     {
         Idle,
+        Pursuit,
         Flying,
         Return,
     };
@@ -20,6 +21,15 @@ public:
     void Render(RenderContext rc, ModelShader* shader);
     void DrawDebugPrimitive();
     void DrawDebugGUI();
+
+    // 垂直速力処理更新
+    void UpdateVerticalVelocity(float elapsedFrame);
+    // 垂直移動更新処理
+    void UpdateVerticalMove(float elapsedTime);
+    // 水平速力処理更新
+    void UpdateHorizontalVelocity(float elapsedFrame);
+    // 水平移動更新処理
+    void UpdateHorizontalMove(float elapsedTime);
 
     // ゲッター セッター
 
