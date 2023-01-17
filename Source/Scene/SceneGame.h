@@ -4,8 +4,6 @@
 #include "Texture.h"
 #include "Graphics/Sprite.h"
 #include "Scene.h"
-#include "StageManager.h"
-#include "CameraController.h"
 #include "DepthStencil.h"
 #include "Light.h"
 
@@ -43,8 +41,6 @@ private:
 private:
 	std::unique_ptr<Texture> texture;
 	std::unique_ptr<Sprite>	sprite;
-
-	CameraController* cameraController = nullptr;
 
 	std::unique_ptr<Sprite> targetRing = nullptr;
 

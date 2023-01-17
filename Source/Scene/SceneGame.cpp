@@ -1,13 +1,15 @@
 #include "Graphics/Graphics.h"
 #include "Camera.h"
+#include "CameraController.h"
 #include "EnemyManager.h""
 #include "EnemyBoss.h"
 #include "EnemyPurpleDragon.h"
 #include "PlayerManager.h"
 #include "InsectManager.h"
+#include "StageMain.h"
+#include "StageManager.h"
 #include "LightManager.h"
 #include "SceneGame.h"
-#include "StageMain.h"
 
 //	シャドウマップのサイズ
 static	const	UINT	SHADOWMAP_SIZE = 2048;
@@ -58,7 +60,6 @@ void SceneGame::Initialize()
 			graphics.GetScreenWidth() / graphics.GetScreenHeight(),
 			0.1f, 1000.0f
 		);
-		cameraController = new CameraController();
 	}
 
 	// スプライト
@@ -123,20 +124,10 @@ void SceneGame::Finalize()
 
 	StageManager::Instance().Clear();
 
-	//カメラコントローラー
-	if (cameraController != nullptr)
-	{
-		delete cameraController;
-		cameraController = nullptr;
-	}
-
-	//プレイヤー
 	PlayerManager::Instance().Clear();
 
-	// 虫
 	InsectManager::Instance().Clear();
 
-	//エネミー
 	EnemyManager::Instance().Clear();
 }
 
@@ -147,8 +138,8 @@ void SceneGame::Update(float elapsedTime)
 	DirectX::XMFLOAT3 target = PlayerManager::Instance().GetPlayer(PlayerManager::Instance().GetplayerOneIndex())->GetPosition();
 	// 腰当たりに設定
 	target.y += 0.5f;
-	cameraController->SetTarget(target);
-	cameraController->Update(elapsedTime);
+	CameraController::Instance().SetTarget(target);
+	CameraController::Instance().Update(elapsedTime);
 
 	PlayerManager::Instance().Update(elapsedTime);
 
@@ -228,7 +219,7 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
-		if (cameraController->GetLockOnFlag())
+		if (CameraController::Instance().GetLockOnFlag())
 			RenderLockOn(dc, rc.view, rc.projection);
 
 		SpriteShader* shader = graphics.GetShader(SpriteShaderId::GaussianBlur);
@@ -250,7 +241,7 @@ void SceneGame::Render()
 #ifdef _DEBUG
 		PlayerManager::Instance().DrawDebugGUI();
 		InsectManager::Instance().DrawDebugGUI();
-		cameraController->DrawDebugGUI();
+		CameraController::Instance().DrawDebugGUI();
 		EnemyManager::Instance().DrawDebugGUI();
 		LightManager::Instane().DrawDebugGUI();
 		ImGui::Separator();
@@ -279,7 +270,7 @@ void SceneGame::RenderLockOn(
 	const DirectX::XMFLOAT4X4& view,
 	const DirectX::XMFLOAT4X4& projection)
 {
-	Enemy* enemy = EnemyManager::Instance().GetEnemy(cameraController->GetTagetIndex());
+	Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
 
 	//ビューポート
 	D3D11_VIEWPORT viewport;
@@ -291,8 +282,11 @@ void SceneGame::RenderLockOn(
 	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
 
 	// エネミーの頭上のワールド座標
-	DirectX::XMFLOAT3 worldPosition = enemy->GetPosition();
-	worldPosition.y += enemy->GetHeight();
+	//DirectX::XMFLOAT3 worldPosition = enemy->GetPosition();
+	//worldPosition.y += enemy->GetHeight();
+	Model::Node* node = enemy->GetModel()->FindNode(
+		enemy->GetCollisionNodes()[CameraController::Instance().GetTagetIndex()].name);
+	DirectX::XMFLOAT3 worldPosition = enemy->GetNodePosition(node);
 	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
 	// ワールド座標からスクリーン座標へ変換
 	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
