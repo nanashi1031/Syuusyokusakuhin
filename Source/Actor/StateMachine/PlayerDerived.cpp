@@ -180,7 +180,7 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::IntersectNodeVsNode(
+		Collision::AttackNodeVsNode(
 			owner, "mixamorig:Sword_joint", 1.0f,
 			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
 			5.0f);
@@ -229,7 +229,7 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::IntersectNodeVsNode(
+		Collision::AttackNodeVsNode(
 			owner, "mixamorig:Sword_joint", 1.0f,
 			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
 			5.0f);
@@ -276,7 +276,7 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::IntersectNodeVsNode(
+		Collision::AttackNodeVsNode(
 			owner, "mixamorig:Sword_joint", 1.0f,
 			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
 			10.0f);
@@ -307,7 +307,7 @@ void PlayerState::AttackDashuState::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::IntersectNodeVsNode(
+		Collision::AttackNodeVsNode(
 			owner, "mixamorig:Sword_joint", 1.0f,
 			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
 			5.0f);
