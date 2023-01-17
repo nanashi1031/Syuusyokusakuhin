@@ -58,6 +58,8 @@ public:
 
     bool GetLockOnFlag() const { return this->lockOnFlag; }
 
+    std::vector<Target> GetTargets() { return this->targets; }
+
 private:
     void UpdateMouse(float elapsedTime);
     void UpdatePad(float elapsedTime);

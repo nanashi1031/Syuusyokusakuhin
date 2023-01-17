@@ -188,7 +188,7 @@ void EnemyPurpleDragon::PartsRegister()
 	SetParts("WingDetail9_L_1", 0.7f);
 	SetParts("WingDetail10_L_1", 0.7f);
 	SetParts("WingDetail11_L_1", 0.7f);
-	SetParts("Tail1", 0.7f);
+	SetParts("Tail1", 0.7f, true);
 	SetParts("Tail2", 0.7f);
 	SetParts("Tail3", 0.7f);
 	SetParts("Tail4", 0.7f);

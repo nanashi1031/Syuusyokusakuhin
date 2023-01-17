@@ -305,7 +305,7 @@ void CameraController::LockOn(float elapsedTime)
         Enemy* enemy = enemyManager.GetEnemy(i);
         for (int j = 0; j < enemy->GetParts().size(); j++)
         {
-            if (enemy->GetParts()[j].cameraTargetFlag == true)
+            if (enemy->GetParts()[j].cameraTargetFlag)
             {
                 Model::Node* node = enemy->GetModel()->FindNode(enemy->GetParts()[j].name);
                 DirectX::XMFLOAT3 playerEnemyLength =
