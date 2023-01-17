@@ -22,7 +22,7 @@ public:
     void Update(float elapsedTime);
     void Render(RenderContext rc, ModelShader* shader);
 
-    void Register(Player* enemy);
+    void Register(Player* player);
 
     void DrawDebugPrimitive();
 
@@ -34,7 +34,7 @@ public:
 
     int GetplayerOneIndex() const { return playerOneIndex; }
 
-    void Remove(Player* enemy);
+    void Remove(Player* player);
 
 private:
     std::vector<Player*> players;
