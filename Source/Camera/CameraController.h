@@ -12,6 +12,7 @@ private:
     {
         float enemyLengthTotal;     // 敵との距離
         int index;                  // 敵のインデックス番号
+        DirectX::XMFLOAT3 position;
 
         // これをしないとソートできない
         // 最後のconstを忘れると"instantiated from here"というエラーが出てコンパイルできないので注意
@@ -35,6 +36,12 @@ private:
     };
 
 public:
+    static CameraController& Instance()
+    {
+        static CameraController cameraController;
+        return cameraController;
+    }
+
     CameraController() {}
     ~CameraController() {}
 
@@ -80,7 +87,7 @@ private:
     DirectX::XMFLOAT3 angle = { DirectX::XMConvertToRadians(20), 0, 0 };
     float rollSpeed = DirectX::XMConvertToRadians(90);
     float mouseRollSpeed = 0.11f;
-    float playerRange = 10.0f;
+    float playerRange = 14.0f;
 
     const float maxAngleX = DirectX::XMConvertToRadians(45);
     const float minAngleX = DirectX::XMConvertToRadians(-45);

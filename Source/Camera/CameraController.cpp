@@ -148,6 +148,12 @@ void CameraController::DrawDebugGUI()
             Mouse& mouse = Input::Instance().GetMouse();
             ImGui::Text("holdDown %d", mouse.GetHoldDown());
             ImGui::SliderFloat("lockOnTimer", &lockOnTimer, 0, 1000);
+            for (int i = 0; i < targets.size(); i++)
+            {
+                ImGui::Text("targetsX %d", targets[i].position.x);
+                ImGui::Text("targetsY %d", targets[i].position.y);
+                ImGui::Text("targetsZ %d", targets[i].position.z);
+            }
         }
         ImGui::SliderFloat("near", &nearCamera, 0.0f, 10.0f);
         ImGui::SliderFloat("far", &farCamera, 0.0f, 10.0f);
@@ -296,15 +302,29 @@ void CameraController::LockOn(float elapsedTime)
     Target target;
     for (int i = 0; i < enemyCount; i++)
     {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        for (int j = 0; j < enemy->GetCollisionNodes().size(); j++)
+        {
+            if (enemy->GetCollisionNodes()[j].cameraTargetFlag == true)
+            {
+                Model::Node* node = enemy->GetModel()->FindNode(enemy->GetCollisionNodes()[j].name);
+                DirectX::XMFLOAT3 playerEnemyLength =
+                    Mathf::CalculateLength(enemy->GetNodePosition(node), player->GetPosition());
+                float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
+
+                if (playerEnemyLengthTotal > lockOnRange) continue;
+
+                target.enemyLengthTotal = playerEnemyLengthTotal;
+                target.index = j;
+                target.position = enemy->GetNodePosition(node);
+                targets.emplace_back(target);
+            }
+        }
         DirectX::XMFLOAT3 playerEnemyLength =
             Mathf::CalculateLength(enemyManager.GetEnemy(i)->GetPosition(), player->GetPosition());
         float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
 
-        if (playerEnemyLengthTotal > lockOnRange) continue;
 
-        target.enemyLengthTotal = playerEnemyLengthTotal;
-        target.index = i;
-        targets.emplace_back(target);
     }
 
     // 対象がいなかった場合
@@ -317,6 +337,7 @@ void CameraController::LockOn(float elapsedTime)
 
     // 小さい順に並べ替え
     std::sort(targets.begin(), targets.end());
+    targets;
 
     // 遷移ステートへ移動
     lerpFlag = true;
@@ -376,8 +397,9 @@ bool CameraController::LockOnSwitching()
         // マウスの位置がスクリーンの真ん中から左に移動したら
         if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
         {
+            Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
             // targets.indexの末尾じゃなければ対象を変更
-            if (nowTargetIndex != targets.back().index)
+            if (nowTargetIndex < /*!= targets.back().index*/ enemy->GetCollisionNodesCameraTargetFlagTotal() - 1)
             {
                 // 遷移ステートへ移動
                 lerpFlag = true;
@@ -389,7 +411,7 @@ bool CameraController::LockOnSwitching()
         else if (mousePos < mouse.GetScreenWidth() * 0.5 - 50)
         {
             // targets.indexの先頭じゃなければ対象を変更
-            if (nowTargetIndex != targets.front().index)
+            if (nowTargetIndex  > /*!= targets.front().index*/ 0)
             {
                 // 遷移ステートへ移動
                 lerpFlag = true;
@@ -416,13 +438,15 @@ bool CameraController::GetTargetPerspective()
     {
         if (LockOnSwitching()) {};
     }
-    DirectX::XMFLOAT3 enemyPosition =
+  /*  DirectX::XMFLOAT3 targetposition =
         enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetPosition();
-    enemyPosition.y +=
-        enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetHeight() / 2;
+    targetposition.y +=
+        enemyManager.GetEnemy(targets[nowTargetIndex].index)->GetHeight() / 2;*/
+
+    DirectX::XMFLOAT3 targetposition = targets[nowTargetIndex].position;
 
     DirectX::XMFLOAT3 playerEnemyLength =
-        Mathf::CalculateLength(enemyPosition, player->GetPosition());
+        Mathf::CalculateLength(targetposition, player->GetPosition());
 
     perspectiveq = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
