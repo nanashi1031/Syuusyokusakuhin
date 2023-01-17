@@ -111,6 +111,16 @@ DirectX::XMFLOAT3 Mathf::DivideFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOA
 	return outFloat3;
 }
 
+DirectX::XMFLOAT3 Mathf::DivideFloat3Float(DirectX::XMFLOAT3 float3A, float floatB)
+{
+	DirectX::XMFLOAT3 outFloat3;
+	outFloat3.x = float3A.x / floatB;
+	outFloat3.y = float3A.y / floatB;
+	outFloat3.z = float3A.z / floatB;
+
+	return outFloat3;
+}
+
 DirectX::XMFLOAT3 Mathf::SqFloat3(DirectX::XMFLOAT3 float3A)
 {
 	DirectX::XMFLOAT3 outFloat3;
@@ -121,12 +131,30 @@ DirectX::XMFLOAT3 Mathf::SqFloat3(DirectX::XMFLOAT3 float3A)
 	return outFloat3;
 }
 
-DirectX::XMFLOAT3 Mathf::CalculateLength(DirectX::XMFLOAT3 objectA, DirectX::XMFLOAT3 objectB)
+DirectX::XMFLOAT3 Mathf::CalculateLength(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
 {
-	DirectX::XMFLOAT3 length =
-		SubtractFloat3(objectA, objectB);
+	DirectX::XMFLOAT3 length = SubtractFloat3(float3A, float3B);
 	float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
-	DirectX::XMFLOAT3 objectLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+	DirectX::XMFLOAT3 outObjectLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
 
-	return objectLength;
+	return outObjectLength;
+}
+
+DirectX::XMFLOAT3 Mathf::CalculateNormalize(DirectX::XMFLOAT3 float3A)
+{
+	DirectX::XMFLOAT3 length = SqFloat3(float3A);
+	float dist = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+	DirectX::XMFLOAT3 out = DivideFloat3Float(length, dist);
+
+	return out;
+}
+
+DirectX::XMFLOAT3 Mathf::MakePlusFloat3(DirectX::XMFLOAT3 float3A)
+{
+	DirectX::XMFLOAT3 outFloat3 = float3A;
+	if (float3A.x < 0) outFloat3.x = -outFloat3.x;
+	if (float3A.y < 0) outFloat3.y = -outFloat3.y;
+	if (float3A.z < 0) outFloat3.z = -outFloat3.z;
+
+	return outFloat3;
 }
