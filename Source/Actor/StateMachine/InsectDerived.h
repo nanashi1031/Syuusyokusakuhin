@@ -20,6 +20,21 @@ namespace InsectState
 		void Exit()override;
 	};
 
+	// 追跡ステート
+	class PursuitState : public State
+	{
+	public:
+		PursuitState(Insect* actor) : State(actor) {};
+		~PursuitState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	};
+
 	// 飛翔ステート
 	class FlyingState : public State
 	{
