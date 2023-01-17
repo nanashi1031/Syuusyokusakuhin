@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Mathf.h"
 
 // 指定方向に向く
 void Camera::SetLookAt(const DirectX::XMFLOAT3& eye, const DirectX::XMFLOAT3& focus,
@@ -59,5 +60,8 @@ const DirectX::XMFLOAT3& Camera::GetCameraDirection()
     vec.x = cameraFrontX;
     vec.z = cameraFrontZ;
 
-    return vec;
+    // カメラ前方向ベクトルをXZ単位ベクトルに変換
+	//const DirectX::XMFLOAT3& vec = Mathf::CalculateNormalize({ front.x, up.y, front.z });
+
+	return vec;
 }
