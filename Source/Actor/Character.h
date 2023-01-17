@@ -8,6 +8,17 @@
 // キャラクター
 class Character : public Object
 {
+private:
+    struct CollisionNodes
+    {
+        char* name = nullptr;
+        float radius = 0.0f;
+        bool cameraTargetFlag = 0;
+        float defensePower = 0.0f;
+        int extractColor = 0;
+    };
+    std::vector<CollisionNodes> collisionNodes;
+
 public:
     Character() {}
     virtual ~Character() override {}
@@ -50,6 +61,33 @@ public:
 
     float GetMoveVecZ() const { return this->moveVecZ; }
     void SetMoveVecZ(float f) { this->moveVecZ = f; }
+
+    void SetVerocity(DirectX::XMFLOAT3 f3) { this->velocity = f3; }
+    void SetClearVerocity() { this->velocity.x = 0, this->velocity.y = 0, this->velocity.z = 0; }
+
+    DirectX::XMFLOAT3 GetBeforePosition() const { return this->beforPosition; }
+
+    std::vector<CollisionNodes> GetCollisionNodes() const { return this->collisionNodes; }
+    void SetCollisionNodes(char* name, float radius, bool cameraTargetFlag = false)
+    {
+        CollisionNodes collisionNode;
+        collisionNode.name = name;
+        collisionNode.radius = radius;
+        collisionNode.cameraTargetFlag = cameraTargetFlag;
+        collisionNodes.emplace_back(collisionNode);
+    }
+    int GetCollisionNodesCameraTargetFlagTotal()
+    {
+        int total = 0;
+        for (int i = 0; i < this->collisionNodes.size(); i++)
+        {
+            if (this->collisionNodes[i].cameraTargetFlag)
+            {
+                total++;
+            }
+        }
+        return total;
+    }
 
     //ステートマシン取得
     StateMachine* GetStateMachine() const { return stateMachine; }
@@ -133,6 +171,8 @@ protected:
 
     float moveSpeed = 0.3f;
     float turnSpeed = DirectX::XMConvertToRadians(360);
+
+    DirectX::XMFLOAT3 beforPosition = { 0, 0, 0 };
 
     float moveFlag = 0.0f;
 
