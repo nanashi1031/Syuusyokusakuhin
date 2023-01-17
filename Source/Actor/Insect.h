@@ -43,5 +43,7 @@ private:
     const float size = 1.0f;
     float turnSpeed = DirectX::XMConvertToRadians(720);
 
+    float extractColor = 0;
+
     DirectX::XMFLOAT3 weaponPosition;
 };
