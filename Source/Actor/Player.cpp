@@ -148,17 +148,21 @@ void Player::CollisionPlayerVsEnemies()
 {
     EnemyManager& enemyManager = EnemyManager::Instance();
 
-    int enemyCount = enemyManager.GetEnemyCount();
-    for (int i = 0; i < enemyCount; i++)
+    for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
-        Enemy* enemy = enemyManager.GetEnemy(i);
-        DirectX::XMFLOAT3 outPosition;
-        if (Collision::IntersectSphereVsSpherer(
-            position, radius, enemy->GetPosition(),
-            enemy->GetRadius(),
-            outPosition))
+        for (int j = 0; j < enemyManager.GetEnemy(i)->GetCollisionNodes().size(); j++)
         {
-            enemy->SetPosition(outPosition);
+            Enemy* enemy = enemyManager.GetEnemy(i);
+
+
+            DirectX::XMFLOAT3 outPosition;
+            if (Collision::IntersectSphereVsNode(
+                position, radius,
+                enemy, enemy->GetCollisionNodes()[j].name, enemy->GetCollisionNodes()[j].radius,
+                outPosition))
+            {
+                position = outPosition;
+            }
         }
     }
 }
