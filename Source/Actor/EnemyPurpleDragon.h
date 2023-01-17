@@ -49,6 +49,9 @@ public:
 
 	void OnDamaged() override;
 
+	void CollisionNodesRegister();
+
+	// セッターゲッター
 	// 縄張り設定
 	void SetTerritory(const DirectX::XMFLOAT3& origin, float range);
 

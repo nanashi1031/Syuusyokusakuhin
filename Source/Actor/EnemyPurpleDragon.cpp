@@ -15,6 +15,8 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 
 	health = 100.0f;
 
+	CollisionNodesRegister();
+
 	// ビヘイビアツリー設定
 	behaviorData = new BehaviorData();
 	aiTree = new BehaviorTree(this);
@@ -147,4 +149,48 @@ void EnemyPurpleDragon::SetTerritory(const DirectX::XMFLOAT3& origin, float rang
 void EnemyPurpleDragon::OnDamaged()
 {
 	SE_Attack->Play(false);
+}
+
+void EnemyPurpleDragon::CollisionNodesRegister()
+{
+	SetCollisionNodes("Jaw1", 0.7f, true);
+	SetCollisionNodes("Neck3", 0.7f);
+	SetCollisionNodes("Neck1", 0.7f);
+	SetCollisionNodes("Hand_L", 0.7f, true);
+	SetCollisionNodes("LowerArm_L", 0.7f, true);
+	SetCollisionNodes("Hand_L_1", 0.7f, true);
+	SetCollisionNodes("LowerArm_L_1", 0.7f);
+	SetCollisionNodes("Feet_L", 0.7f);
+	SetCollisionNodes("LowerLeg_L", 0.7f, true);
+	SetCollisionNodes("Feet_L_1", 0.7f);
+	SetCollisionNodes("LowerLeg_L_1", 0.7f);
+	SetCollisionNodes("Wing1_L", 0.7f);
+	SetCollisionNodes("Wing2_L", 0.7f);
+	SetCollisionNodes("Wing3_L", 0.7f);
+	SetCollisionNodes("WingDetail12_L", 0.7f);
+	SetCollisionNodes("WingDetail2_L", 0.7f);
+	SetCollisionNodes("WingDetail3_L", 0.7f);
+	SetCollisionNodes("WingDetail5_L", 0.7f);
+	SetCollisionNodes("WingDetail6_L", 0.7f);
+	SetCollisionNodes("WingDetail7_L", 0.7f);
+	SetCollisionNodes("WingDetail9_L", 0.7f);
+	SetCollisionNodes("WingDetail10_L", 0.7f);
+	SetCollisionNodes("WingDetail11_L", 0.7f);
+	SetCollisionNodes("Wing1_L1", 0.7f);
+	SetCollisionNodes("Wing2_L_1", 0.7f);
+	SetCollisionNodes("Wing3_L_1", 0.7f);
+	SetCollisionNodes("WingDetail12_L_1", 0.7f);
+	SetCollisionNodes("WingDetail2_L_1", 0.7f);
+	SetCollisionNodes("WingDetail3_L_1", 0.7f);
+	SetCollisionNodes("WingDetail5_L_1", 0.7f);
+	SetCollisionNodes("WingDetail6_L_1", 0.7f);
+	SetCollisionNodes("WingDetail7_L_1", 0.7f);
+	SetCollisionNodes("WingDetail9_L_1", 0.7f);
+	SetCollisionNodes("WingDetail10_L_1", 0.7f);
+	SetCollisionNodes("WingDetail11_L_1", 0.7f);
+	SetCollisionNodes("Tail1", 0.7f);
+	SetCollisionNodes("Tail2", 0.7f);
+	SetCollisionNodes("Tail3", 0.7f);
+	SetCollisionNodes("Tail4", 0.7f);
+	SetCollisionNodes("Tail5", 0.7f);
 }
