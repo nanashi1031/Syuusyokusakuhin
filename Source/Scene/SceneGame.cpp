@@ -285,7 +285,7 @@ void SceneGame::RenderLockOn(
 	//DirectX::XMFLOAT3 worldPosition = enemy->GetPosition();
 	//worldPosition.y += enemy->GetHeight();
 	Model::Node* node = enemy->GetModel()->FindNode(
-		enemy->GetCollisionNodes()[CameraController::Instance().GetTagetIndex()].name);
+		enemy->GetParts()[CameraController::Instance().GetTagetIndex()].name);
 	DirectX::XMFLOAT3 worldPosition = enemy->GetNodePosition(node);
 	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
 	// ワールド座標からスクリーン座標へ変換

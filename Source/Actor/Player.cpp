@@ -150,7 +150,7 @@ void Player::CollisionPlayerVsEnemies()
 
     for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
-        for (int j = 0; j < enemyManager.GetEnemy(i)->GetCollisionNodes().size(); j++)
+        for (int j = 0; j < enemyManager.GetEnemy(i)->GetParts().size(); j++)
         {
             Enemy* enemy = enemyManager.GetEnemy(i);
 
@@ -158,7 +158,7 @@ void Player::CollisionPlayerVsEnemies()
             DirectX::XMFLOAT3 outPosition;
             if (Collision::IntersectSphereVsNode(
                 position, radius,
-                enemy, enemy->GetCollisionNodes()[j].name, enemy->GetCollisionNodes()[j].radius,
+                enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
                 outPosition))
             {
                 position = outPosition;

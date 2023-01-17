@@ -9,7 +9,7 @@
 class Character : public Object
 {
 private:
-    struct CollisionNodes
+    struct Part
     {
         char* name = nullptr;
         float radius = 0.0f;
@@ -17,7 +17,7 @@ private:
         float defensePower = 0.0f;
         int extractColor = 0;
     };
-    std::vector<CollisionNodes> collisionNodes;
+    std::vector<Part> parts;
 
 public:
     Character() {}
@@ -67,21 +67,21 @@ public:
 
     DirectX::XMFLOAT3 GetBeforePosition() const { return this->beforPosition; }
 
-    std::vector<CollisionNodes> GetCollisionNodes() const { return this->collisionNodes; }
-    void SetCollisionNodes(char* name, float radius, bool cameraTargetFlag = false)
+    std::vector<Part> GetParts() const { return this->parts; }
+    void SetParts(char* name, float radius, bool cameraTargetFlag = false)
     {
-        CollisionNodes collisionNode;
-        collisionNode.name = name;
-        collisionNode.radius = radius;
-        collisionNode.cameraTargetFlag = cameraTargetFlag;
-        collisionNodes.emplace_back(collisionNode);
+        Part part;
+        part.name = name;
+        part.radius = radius;
+        part.cameraTargetFlag = cameraTargetFlag;
+        parts.emplace_back(part);
     }
-    int GetCollisionNodesCameraTargetFlagTotal()
+    int GetPartsCameraTargetFlagTotal()
     {
         int total = 0;
-        for (int i = 0; i < this->collisionNodes.size(); i++)
+        for (int i = 0; i < this->parts.size(); i++)
         {
-            if (this->collisionNodes[i].cameraTargetFlag)
+            if (this->parts[i].cameraTargetFlag)
             {
                 total++;
             }

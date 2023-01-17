@@ -49,7 +49,7 @@ public:
 
 	void OnDamaged() override;
 
-	void CollisionNodesRegister();
+	void PartsRegister();
 
 	// セッターゲッター
 	// 縄張り設定

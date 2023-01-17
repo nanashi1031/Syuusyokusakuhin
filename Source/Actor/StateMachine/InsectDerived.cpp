@@ -68,7 +68,10 @@ void InsectState::FlyingState::Enter()
     {
         Enemy* enemy = enemyManager.GetEnemy(0);
         // ターゲット箇所へ飛ぶように
-        DirectX::XMFLOAT3 lenght = Mathf::CalculateLength(enemy->GetPosition(), owner->GetPosition());
+        Model::Node* node = enemy->GetModel()->FindNode(
+            enemy->GetParts()[CameraController::Instance().GetTagetIndex()].name);
+        DirectX::XMFLOAT3 lenght = Mathf::CalculateLength(
+            enemy->GetNodePosition(node), owner->GetPosition());
         owner->SetMoveVecX(lenght.x * 1000.0f);
         owner->SetMoveVecZ(lenght.z * 1000.0f);
         owner->SetVerocity(lenght);
@@ -98,12 +101,12 @@ void InsectState::FlyingState::Execute(float elapsedTime)
     EnemyManager& enemyManager = EnemyManager::Instance();
     for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
     {
-        for (int j = 0; j < enemyManager.GetEnemy(i)->GetCollisionNodes().size(); j++)
+        for (int j = 0; j < enemyManager.GetEnemy(i)->GetParts().size(); j++)
         {
             Enemy* enemy = enemyManager.GetEnemy(i);
             if (Collision::AttackNodeVsNode(
                 owner, "NotFound", 1.0f,
-                enemy, enemy->GetCollisionNodes()[j].name, enemy->GetCollisionNodes()[j].radius,
+                enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
                 1.0f))
             {
                 owner->SetClearVerocity();

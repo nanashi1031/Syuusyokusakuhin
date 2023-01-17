@@ -303,11 +303,11 @@ void CameraController::LockOn(float elapsedTime)
     for (int i = 0; i < enemyCount; i++)
     {
         Enemy* enemy = enemyManager.GetEnemy(i);
-        for (int j = 0; j < enemy->GetCollisionNodes().size(); j++)
+        for (int j = 0; j < enemy->GetParts().size(); j++)
         {
-            if (enemy->GetCollisionNodes()[j].cameraTargetFlag == true)
+            if (enemy->GetParts()[j].cameraTargetFlag == true)
             {
-                Model::Node* node = enemy->GetModel()->FindNode(enemy->GetCollisionNodes()[j].name);
+                Model::Node* node = enemy->GetModel()->FindNode(enemy->GetParts()[j].name);
                 DirectX::XMFLOAT3 playerEnemyLength =
                     Mathf::CalculateLength(enemy->GetNodePosition(node), player->GetPosition());
                 float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
@@ -399,7 +399,7 @@ bool CameraController::LockOnSwitching()
         {
             Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
             // targets.indexの末尾じゃなければ対象を変更
-            if (nowTargetIndex < /*!= targets.back().index*/ enemy->GetCollisionNodesCameraTargetFlagTotal() - 1)
+            if (nowTargetIndex < /*!= targets.back().index*/ enemy->GetPartsCameraTargetFlagTotal() - 1)
             {
                 // 遷移ステートへ移動
                 lerpFlag = true;
