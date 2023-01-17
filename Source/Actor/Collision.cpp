@@ -59,8 +59,54 @@ bool Collision::IntersectSphereVsSphererEst(
 	return true;
 }
 
+// 球とノードAの当たり判定
+bool Collision::IntersectSphereVsNode(
+	const DirectX::XMFLOAT3 positionA,
+	const float radiusA,
+	const Character* characterB,
+	const char* nodeNameB,
+	const float nodeRadiusB,
+	DirectX::XMFLOAT3& outPosition)
+{
+	Model::Node* nodeB = characterB->GetNode(nodeNameB);
+	if (nodeB != nullptr)
+	{
+		Graphics::Instance().GetDebugRenderer()->DrawSphere(
+				positionA, radiusA, DirectX::XMFLOAT4(0, 1, 0, 1)
+		);
+
+		DirectX::XMFLOAT3 nodePositionB = characterB->GetNodePosition(nodeB);
+
+		Graphics::Instance().GetDebugRenderer()->DrawSphere(
+				nodePositionB, nodeRadiusB, DirectX::XMFLOAT4(0, 1, 0, 1)
+			);
+
+		DirectX::XMVECTOR positionAVec = DirectX::XMLoadFloat3(&positionA);
+		DirectX::XMVECTOR positionBVec = DirectX::XMLoadFloat3(&nodePositionB);
+		DirectX::XMVECTOR vec = DirectX::XMVectorSubtract(positionBVec, positionAVec);
+		DirectX::XMVECTOR lengthSqVec = DirectX::XMVector3LengthSq(vec);
+		float lengthSqf;
+		DirectX::XMStoreFloat(&lengthSqf, lengthSqVec);
+
+		float range = nodeRadiusB + radiusA;
+		if (lengthSqf > range * range)
+		{
+			return false;
+		}
+
+		vec = DirectX::XMVector3Normalize(vec);
+		vec = DirectX::XMVectorScale(vec, range);
+		positionBVec = DirectX::XMVectorAdd(positionAVec, vec);
+		DirectX::XMStoreFloat3(&outPosition, positionBVec);
+
+		return true;
+	}
+
+	return false;
+}
+
 // ノードAからノードBへの攻撃判定
-void Collision::IntersectNodeVsNode(
+bool Collision::AttackNodeVsNode(
 	const Character* characterA,
 	const char* nodeNameA,
 	const float nodeRadiusA,
@@ -70,10 +116,26 @@ void Collision::IntersectNodeVsNode(
 	float damage,
 	float power)
 {
-	Model::Node* nodeA = characterA->GetNode(nodeNameA);
+	Model::Node* nodeA;
+	if (nodeNameA == "NotFound")
+	{
+		nodeA = characterB->GetNode(nodeNameB);
+	}
+	else
+	{
+		nodeA = characterA->GetNode(nodeNameA);
+	}
 	if (nodeA != nullptr)
 	{
-		DirectX::XMFLOAT3 nodePositionA = characterA->GetNodePosition(nodeA);
+		DirectX::XMFLOAT3 nodePositionA;
+		if (nodeNameA == "NotFound")
+		{
+			nodePositionA = characterA->GetPosition();
+		}
+		else
+		{
+			nodePositionA = characterA->GetNodePosition(nodeA);
+		}
 
 		Graphics::Instance().GetDebugRenderer()
 			->DrawSphere(
@@ -120,11 +182,12 @@ void Collision::IntersectNodeVsNode(
 						characterB->AddImpulse(vec);
 					}
 				}
+				return true;
 			}
 		}
 	}
 
-	return;
+	return false;
 }
 
 // レイとモデルの交差判定

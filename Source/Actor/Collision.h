@@ -32,8 +32,17 @@ public:
         const float radiusB,
         DirectX::XMFLOAT3& outPosition);
 
+    // 球とノードBの当たり判定
+    static bool IntersectSphereVsNode(
+        const DirectX::XMFLOAT3 positionA,
+        const float radiusA,
+        const Character* characterB,
+        const char* nodeNameB,
+        const float nodeRadiusB,
+        DirectX::XMFLOAT3& outPosition);
+
     // ノードAからノードBへの攻撃判定
-    static void IntersectNodeVsNode(
+    static bool AttackNodeVsNode(
         const Character* characterA,
         const char* nodeNameA,
         const float nodeRadiusA,
