@@ -8,9 +8,6 @@
 #include "Mathf.h"
 #include <algorithm>
 
-
-#include "EnemyBoss.h"
-
 void CameraController::Update(float elapsedTime)
 {
     Mouse& mouse = Input::Instance().GetMouse();
@@ -356,16 +353,6 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
     DirectX::XMVECTOR targetVec = DirectX::XMVectorScale(playerFrontVec, 10);
     DirectX::XMFLOAT3 target;
     DirectX::XMStoreFloat3(&target, targetVec);
-
-    //TODO 前方向とれてるかテスト、絶対消すこと
-    {
-        //EnemyManager& enemyManager = EnemyManager::Instance();
-
-        //EnemyBoss* boss = new EnemyBoss();
-        //boss->SetPosition(DirectX::XMFLOAT3(target));
-        //boss->SetScale(DirectX::XMFLOAT3(1, 1000, 1));
-        //enemyManager.Register(boss);
-    }
 
     return target;
 

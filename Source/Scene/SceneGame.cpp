@@ -284,9 +284,8 @@ void SceneGame::RenderLockOn(
 	// エネミーの頭上のワールド座標
 	//DirectX::XMFLOAT3 worldPosition = enemy->GetPosition();
 	//worldPosition.y += enemy->GetHeight();
-	DirectX::XMFLOAT3 worldPosition;
 	CameraController& cameraController = CameraController::Instance();
-	worldPosition =
+	DirectX::XMFLOAT3 worldPosition =
 		cameraController.GetTargets()[cameraController.GetTagetIndex()].position;
 	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
 	// ワールド座標からスクリーン座標へ変換
