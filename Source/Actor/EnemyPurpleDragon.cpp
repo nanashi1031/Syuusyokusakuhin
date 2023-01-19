@@ -8,7 +8,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 {
 	model = new Model("Data/Model/Enemy/PurpleDragon/PurpleDragon.mdl");
 
-	scale.x = scale.y = scale.z = 0.01f;
+	scale.x = scale.y = scale.z = 0.02f;
 
 	radius = 3.0f;
 	height = 1.5f;
@@ -188,9 +188,9 @@ void EnemyPurpleDragon::PartsRegister()
 	SetParts("WingDetail9_L_1", 0.7f);
 	SetParts("WingDetail10_L_1", 0.7f);
 	SetParts("WingDetail11_L_1", 0.7f);
-	SetParts("Tail1", 0.7f, true);
+	SetParts("Tail1", 0.7f);
 	SetParts("Tail2", 0.7f);
 	SetParts("Tail3", 0.7f);
-	SetParts("Tail4", 0.7f);
+	SetParts("Tail4", 0.7f, true);
 	SetParts("Tail5", 0.7f);
 }
