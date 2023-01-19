@@ -99,13 +99,26 @@ void EnemyPurpleDragon::DrawDebugPrimitive()
 	debugRenderer->DrawSphere(position, radius, DirectX::XMFLOAT4(0, 0, 1, 1));
 
 	// 縄張り範囲をデバッグ円柱描画
-	debugRenderer->DrawCylinder(territoryOrigin, territoryRange, 1.0f, DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+	debugRenderer->DrawCylinder(territoryOrigin, territoryRange, 1.0f,
+		DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	// ターゲット位置をデバッグ球描画
-	debugRenderer->DrawSphere(targetPosition, radius, DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
+	debugRenderer->DrawSphere(targetPosition, radius,
+		DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
 
 	// 索敵範囲をデバッグ円柱描画
-	debugRenderer->DrawCylinder(position, searchRange, 1.0f, DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	debugRenderer->DrawCylinder(position, searchRange, 1.0f,
+		DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+
+	// 部位情報をデバック球描画
+	if (partsIndex > 0)
+	{
+		DirectX::XMFLOAT3 partsPosition =
+			GetNodePosition(model->FindNode(GetParts()[partsIndex - 1].name));
+		//
+		debugRenderer->DrawSphere(partsPosition, GetParts()[partsIndex - 1].radius + 0.01f,
+			DirectX::XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f));
+	}
 }
 
 void EnemyPurpleDragon::DrawDebugGUI()
@@ -137,6 +150,26 @@ void EnemyPurpleDragon::DrawDebugGUI()
 		}
 		ImGui::DragFloat("Health", &health);
 		//ImGui::EndChild();
+		if (ImGui::CollapsingHeader("parts", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Combo("combo", &partsIndex, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+			if (partsIndex > 0)
+			{
+				int index = partsIndex - 1;
+				ImGui::Text("name %s", GetParts()[index].name);
+				float radius  = GetParts()[index].radius;
+				ImGui::DragFloat("radius", &radius, 0.01f);
+				int cameraTargetFlag = GetParts()[index].cameraTargetFlag;
+				ImGui::Combo("combo", &cameraTargetFlag, "fales\0true\0\0");
+				float defensePower = GetParts()[index].defensePower;
+				ImGui::DragFloat("defensePower", &defensePower, 0.1f);
+				int extractColor = GetParts()[index].extractColor;
+				ImGui::InputInt("extractColor", &extractColor);
+				SetPartsSpecify(
+					index, GetParts()[index].name, radius,
+					cameraTargetFlag, defensePower, extractColor);
+			}
+		}
 	}
 	ImGui::End();
 }
