@@ -340,6 +340,15 @@ void Character::AddImpulse(const DirectX::XMFLOAT3& impulse)
 	velocity.z += impulse.z;
 }
 
+float Character::DamageCalculation(float attackPower, float defensePower)
+{
+	float outResult = attackPower - defensePower;
+	if (outResult < 0.0f)
+		outResult = 0.0f;
+
+	return outResult;
+}
+
 void Character::UpdateInvincibleTime(float elapsedTime)
 {
 	if (invincibleTimer > 0.0f)
