@@ -169,12 +169,7 @@ void Player::CollisionPlayerVsEnemies()
 
 void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
 {
-    Model::Node* node = model->FindNode(nodeName);
-
-    DirectX::XMFLOAT3 nodePosition;
-    nodePosition.x = node->worldTransform._41;
-    nodePosition.y = node->worldTransform._42;
-    nodePosition.z = node->worldTransform._43;
+    DirectX::XMFLOAT3 nodePosition = GetNodePosition(model->FindNode(nodeName));
 
     EnemyManager& enemyManager = EnemyManager::Instance();
 
