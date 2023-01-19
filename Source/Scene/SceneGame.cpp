@@ -1,7 +1,9 @@
+#include "SceneGame.h"
+#include "Input\Input.h"
 #include "Graphics/Graphics.h"
 #include "Camera.h"
 #include "CameraController.h"
-#include "EnemyManager.h""
+#include "EnemyManager.h"
 #include "EnemyBoss.h"
 #include "EnemyPurpleDragon.h"
 #include "PlayerManager.h"
@@ -9,7 +11,6 @@
 #include "StageMain.h"
 #include "StageManager.h"
 #include "LightManager.h"
-#include "SceneGame.h"
 
 //	シャドウマップのサイズ
 static	const	UINT	SHADOWMAP_SIZE = 2048;
@@ -153,6 +154,12 @@ void SceneGame::Update(float elapsedTime)
 		static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()),
 		0.0f,
 		1.0f, 1.0f, 1.0f, 1.0f);
+
+	// Debug 本番では常にマウスを真ん中に固定する
+	// TODO ポーズ中はマウス操作できるようにする
+	Mouse& mouse = Input::Instance().GetMouse();
+	if (CameraController::Instance().GetCameraMouseOperationFlag())
+		mouse.SetMiddlePosition();
 }
 
 void SceneGame::Render()
@@ -227,8 +234,8 @@ void SceneGame::Render()
 		RenderContext rc;
 		rc.deviceContext = dc;
 		rc.gaussianFilterData = gaussianFilterData;
-		rc.gaussianFilterData.textureSize.x = texture->GetWidth();
-		rc.gaussianFilterData.textureSize.y = texture->GetHeight();
+		rc.gaussianFilterData.textureSize.x = static_cast<float>(texture->GetWidth());
+		rc.gaussianFilterData.textureSize.y = static_cast<float>(texture->GetHeight());
 		shader->Begin(rc);
 
 		//shader->Draw(rc, gaussianBlurSprite.get());
