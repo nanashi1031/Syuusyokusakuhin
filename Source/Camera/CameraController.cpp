@@ -447,8 +447,10 @@ bool CameraController::GetTargetPerspective()
         if (LockOnSwitching()) {};
     }
 
+    char* targetName =
+        enemyManager.GetEnemy(0)->GetParts()[targets[nowTargetIndex].index].name;
     Model::Node* node =
-        enemyManager.GetEnemy(0)->GetModel()->FindNode(enemyManager.GetEnemy(0)->GetParts()[targets[nowTargetIndex].index].name);
+        enemyManager.GetEnemy(0)->GetModel()->FindNode(targetName);
     DirectX::XMFLOAT3 targetposition = enemyManager.GetEnemy(0)->GetNodePosition(node);
 
     DirectX::XMFLOAT3 playerEnemyLength =
@@ -456,7 +458,7 @@ bool CameraController::GetTargetPerspective()
 
     afterPerspective = DirectX::XMFLOAT3(
         player->GetPosition().x - playerEnemyLength.x * playerRange,
-        player->GetPosition().y - playerEnemyLength.y + lockOnPositionY,
+        player->GetPosition().y - playerEnemyLength.y + 1,
         player->GetPosition().z - playerEnemyLength.z * playerRange);
 
     perspective = afterPerspective;
