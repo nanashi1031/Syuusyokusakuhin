@@ -89,7 +89,7 @@ private:
     DirectX::XMFLOAT3 angle = { DirectX::XMConvertToRadians(20), 0, 0 };
     float rollSpeed = DirectX::XMConvertToRadians(90);
     float mouseRollSpeed = 0.11f;
-    float playerRange = 14.0f;
+    float playerRange = 8.0f;
 
     const float maxAngleX = DirectX::XMConvertToRadians(45);
     const float minAngleX = DirectX::XMConvertToRadians(-45);
