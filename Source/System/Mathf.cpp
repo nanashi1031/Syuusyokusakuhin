@@ -2,19 +2,19 @@
 #include "Mathf.h"
 #include <time.h>
 
-float Mathf::LerpFloat(float a, float b, float t)
+float Mathf::LerpFloat(float start, float end, float time)
 {
-	return a * (1.0f - t) + (b * t);
+	return start * (1.0f - time) + (end * time);
 }
 
-DirectX::XMFLOAT3 Mathf::LerpFloat3(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b, float t)
+DirectX::XMFLOAT3 Mathf::LerpFloat3(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, float time)
 {
-	DirectX::XMFLOAT3 lerp;
-	lerp.x = a.x * (1.0f - t) + (b.x * t);
-	lerp.y = a.y * (1.0f - t) + (b.y * t);
-	lerp.z = a.z * (1.0f - t) + (b.z * t);
+	DirectX::XMFLOAT3 outLerp;
+	outLerp.x = start.x * (1.0f - time) + (end.x * time);
+	outLerp.y = start.y * (1.0f - time) + (end.y * time);
+	outLerp.z = start.z * (1.0f - time) + (end.z * time);
 
-	return lerp;
+	return outLerp;
 }
 
 // ‹…–Ê•âŠÔ

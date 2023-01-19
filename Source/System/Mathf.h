@@ -6,8 +6,8 @@ class Mathf
 {
 public:
 	// ê¸å`ï‚ä‘
-	static float LerpFloat(float a, float b, float t);
-	static DirectX::XMFLOAT3 LerpFloat3(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b, float t);
+	static float LerpFloat(float start, float end, float time);
+	static DirectX::XMFLOAT3 LerpFloat3(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, float time);
 
 	// ãÖñ ï‚ä‘
 	static DirectX::XMFLOAT3* SphereLinear(DirectX::XMFLOAT3* out, DirectX::XMFLOAT3* start, DirectX::XMFLOAT3* end, float t);
