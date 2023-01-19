@@ -289,11 +289,13 @@ void SceneGame::RenderLockOn(
 	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
 
 	// エネミーの頭上のワールド座標
-	//DirectX::XMFLOAT3 worldPosition = enemy->GetPosition();
-	//worldPosition.y += enemy->GetHeight();
 	CameraController& cameraController = CameraController::Instance();
+	int targetIndex =
+		cameraController.GetTargets()[cameraController.GetTagetIndex()].index;;
+	Model::Node* node =
+		enemy->GetModel()->FindNode(enemy->GetParts()[targetIndex].name);
 	DirectX::XMFLOAT3 worldPosition =
-		cameraController.GetTargets()[cameraController.GetTagetIndex()].position;
+		enemy->GetNodePosition(node);
 	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
 	// ワールド座標からスクリーン座標へ変換
 	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
