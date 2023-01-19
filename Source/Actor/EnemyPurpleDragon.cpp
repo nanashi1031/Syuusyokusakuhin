@@ -21,6 +21,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	behaviorData = new BehaviorData();
 	aiTree = new BehaviorTree(this);
 
+#pragma region ƒrƒwƒCƒrƒAƒcƒŠ[“o˜^
 	aiTree->AddNode("", "Root", 0, BehaviorTree::SelectRule::Priority, nullptr, nullptr);
 	aiTree->AddNode("Root", "Escape", 3, BehaviorTree::SelectRule::Sequence, new EscapeJudgment(this), nullptr);
 	aiTree->AddNode("Root", "Battle", 4, BehaviorTree::SelectRule::Priority, new BattleJudgment(this), nullptr);
@@ -39,6 +40,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	aiTree->AddNode("Battle", "Pursuit", 10, BehaviorTree::SelectRule::Non, nullptr, new PursuitAction(this));
 
 	aiTree->AddNode("Battle", "Death", 11, BehaviorTree::SelectRule::Non, nullptr, new DeathAction(this));
+#pragma endregion
 
 	model->PlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
 
