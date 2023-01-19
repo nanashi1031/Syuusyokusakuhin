@@ -26,17 +26,17 @@ public:
 	// 描画処理
 	void Render() override;
 
-	// ロックオンターゲットリング描画
-	void RenderLockOn(
-		ID3D11DeviceContext* dc,
-		const DirectX::XMFLOAT4X4& view,
-		const DirectX::XMFLOAT4X4& projection);
-
 private:
 	// 3D空間の描画
 	void Render3DScene();
 
 	void RenderShadowmap();
+
+	// ロックオンターゲットリング描画
+	void RenderLockOn(
+		ID3D11DeviceContext* dc,
+		const DirectX::XMFLOAT4X4& view,
+		const DirectX::XMFLOAT4X4& projection);
 
 private:
 	std::unique_ptr<Texture> texture;
