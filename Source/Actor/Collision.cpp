@@ -202,7 +202,7 @@ bool Collision::IntersectRayVsModel(
 	DirectX::XMVECTOR WorldRayVec = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
 	DirectX::XMVECTOR WorldRayLength = DirectX::XMVector3Length(WorldRayVec);
 	// ワールド空間のレイの長さ
-	DirectX::XMStoreFloat(&result.collisionDistance, WorldRayLength);
+	DirectX::XMStoreFloat(&result.distance, WorldRayLength);
 	bool hit = false;
 	const ModelResource* resource = model->GetResource();
 	for (const ModelResource::Mesh& mesh : resource->GetMeshes())
@@ -299,14 +299,14 @@ bool Collision::IntersectRayVsModel(
 			float distance;
 			DirectX::XMStoreFloat(&distance, WorldCrossLength);
 			// ヒット情報保存
-			if (result.collisionDistance > distance)
+			if (result.distance > distance)
 			{
 				DirectX::XMVECTOR WorldNormal = DirectX::XMVector3TransformNormal(HitNormal,
 					WorldTransform);
-				result.collisionDistance = distance;
-				result.collisionMaterialIndex = materialIndex;
-				DirectX::XMStoreFloat3(&result.collisionPosition, WorldPosition);
-				DirectX::XMStoreFloat3(&result.collisionNormal, DirectX::XMVector3Normalize(WorldNormal));
+				result.distance = distance;
+				result.materialIndex = materialIndex;
+				DirectX::XMStoreFloat3(&result.position, WorldPosition);
+				DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(WorldNormal));
 				hit = true;
 			}
 		}
