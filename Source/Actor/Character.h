@@ -79,6 +79,16 @@ public:
         part.cameraTargetFlag = cameraTargetFlag;
         parts.emplace_back(part);
     }
+    void SetPartsSpecify(
+        int index, char* name, float radius,
+        bool cameraTargetFlag, float defensePower, float extractColor)
+    {
+        parts[index].name = name;
+        parts[index].radius = radius;
+        parts[index].cameraTargetFlag = cameraTargetFlag;
+        parts[index].defensePower = defensePower;
+        parts[index].extractColor = extractColor;
+    }
     int GetPartsCameraTargetFlagTotal()
     {
         int total = 0;
@@ -178,6 +188,8 @@ protected:
     DirectX::XMFLOAT3 beforPosition = { 0, 0, 0 };
 
     float moveFlag = 0.0f;
+
+    int partsIndex = 0;
 
     BehaviorTree* aiTree = nullptr;
     BehaviorData* behaviorData = nullptr;
