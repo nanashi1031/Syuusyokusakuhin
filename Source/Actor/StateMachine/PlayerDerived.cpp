@@ -180,10 +180,16 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::AttackNodeVsNode(
-			owner, "mixamorig:Sword_joint", 1.0f,
-			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
-			5.0f);
+		Enemy* enemy = enemyManager.GetEnemy(i);
+		for (int j = 0; j < enemy->GetParts().size(); j++)
+		{
+			float attackPower =
+				owner->DamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
+			Collision::AttackNodeVsNode(
+				owner, "mixamorig:Sword_joint", 1.0f,
+				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+				attackPower);
+		}
 	}
 
 	// 左クリックしたら攻撃フラグが建つ
@@ -229,10 +235,19 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::AttackNodeVsNode(
-			owner, "mixamorig:Sword_joint", 1.0f,
-			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
-			5.0f);
+		for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+		{
+			Enemy* enemy = enemyManager.GetEnemy(i);
+			for (int j = 0; j < enemy->GetParts().size(); j++)
+			{
+				float attackPower =
+					owner->DamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
+				Collision::AttackNodeVsNode(
+					owner, "mixamorig:Sword_joint", 1.0f,
+					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+					attackPower);
+			}
+		}
 	}
 
 	// 左クリックしたら攻撃フラグが建つ
@@ -276,10 +291,16 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 	EnemyManager& enemyManager = EnemyManager::Instance();
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::AttackNodeVsNode(
-			owner, "mixamorig:Sword_joint", 1.0f,
-			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
-			10.0f);
+		Enemy* enemy = enemyManager.GetEnemy(i);
+		for (int j = 0; j < enemy->GetParts().size(); j++)
+		{
+			float attackPower =
+				owner->DamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
+			Collision::AttackNodeVsNode(
+				owner, "mixamorig:Sword_joint", 1.0f,
+				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+				attackPower);
+		}
 	}
 
 	// アニメーション再生が終わったら
@@ -305,12 +326,18 @@ void PlayerState::AttackDashuState::Enter()
 void PlayerState::AttackDashuState::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
-		Collision::AttackNodeVsNode(
-			owner, "mixamorig:Sword_joint", 1.0f,
-			enemyManager.GetEnemy(i), "Hand_L", 3.0f,
-			5.0f);
+		Enemy* enemy = enemyManager.GetEnemy(i);
+		for (int j = 0; j < enemy->GetParts().size(); j++)
+		{
+			float attackPower =
+				owner->DamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
+			Collision::AttackNodeVsNode(
+				owner, "mixamorig:Sword_joint", 1.0f,
+				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+				attackPower);
+		}
 	}
 
 	// 左クリックしたら攻撃フラグが建つ
