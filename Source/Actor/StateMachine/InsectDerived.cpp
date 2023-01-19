@@ -67,9 +67,11 @@ void InsectState::FlyingState::Enter()
     if (cameraController.GetLockOnFlag())
     {
         Enemy* enemy = enemyManager.GetEnemy(0);
+        int targetIndex =
+            cameraController.GetTargets()[cameraController.GetTagetIndex()].index;
         // ターゲット箇所へ飛ぶように
         Model::Node* node = enemy->GetModel()->FindNode(
-            enemy->GetParts()[CameraController::Instance().GetTagetIndex()].name);
+            enemy->GetParts()[targetIndex].name);
         DirectX::XMFLOAT3 lenght = Mathf::CalculateLength(
             enemy->GetNodePosition(node), owner->GetPosition());
         owner->SetMoveVecX(lenght.x * 1000.0f);
