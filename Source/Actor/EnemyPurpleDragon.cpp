@@ -159,12 +159,12 @@ void EnemyPurpleDragon::PartsRegister()
 	SetParts("Neck3", 0.7f);
 	SetParts("Neck1", 0.7f);
 	SetParts("Hand_L", 0.7f, true);
-	SetParts("LowerArm_L", 0.7f, true);
+	SetParts("LowerArm_L", 0.7f);
 	SetParts("Hand_L_1", 0.7f, true);
 	SetParts("LowerArm_L_1", 0.7f);
-	SetParts("Feet_L", 0.7f);
-	SetParts("LowerLeg_L", 0.7f, true);
-	SetParts("Feet_L_1", 0.7f);
+	SetParts("Feet_L", 0.7f, true);
+	SetParts("LowerLeg_L", 0.7f);
+	SetParts("Feet_L_1", 0.7f, true);
 	SetParts("LowerLeg_L_1", 0.7f);
 	SetParts("Wing1_L", 0.7f);
 	SetParts("Wing2_L", 0.7f);
