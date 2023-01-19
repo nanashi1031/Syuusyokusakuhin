@@ -6,10 +6,10 @@
 // レイキャストのヒット結果
 struct HitResult
 {
-    DirectX::XMFLOAT3 collisionPosition = { 0, 0, 0 };
-    DirectX::XMFLOAT3 collisionNormal = { 0, 0, 0 };
-    float collisionDistance = 0.0f;
-    int collisionMaterialIndex = -1;
+    DirectX::XMFLOAT3 position = { 0, 0, 0 };
+    DirectX::XMFLOAT3 normal = { 0, 0, 0 };
+    float distance = 0.0f;
+    int materialIndex = -1;
 };
 
 // コリジョン

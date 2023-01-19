@@ -94,11 +94,11 @@ void Character::UpdateVerticalMove(float elapsedTime)
         if (stageManager.GetStage(stageManager.GetNowStage())->RayCast(start, end, hit))
         {
             // 地面に接地している
-            position.y = hit.collisionPosition.y;
+            position.y = hit.position.y;
 
             // 傾斜率の計算
-            float normalLengthXZ = sqrtf(hit.collisionNormal.x * hit.collisionNormal.x + hit.collisionNormal.z * hit.collisionNormal.z);
-            slopeRate = 1.0f - (hit.collisionNormal.y / (normalLengthXZ + hit.collisionNormal.y));
+            float normalLengthXZ = sqrtf(hit.normal.x * hit.normal.x + hit.normal.z * hit.normal.z);
+            slopeRate = 1.0f - (hit.normal.y / (normalLengthXZ + hit.normal.y));
 
             // 着地した
             if (!isGround)
@@ -220,7 +220,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
 
 			// 壁の法線
-			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.collisionNormal);
+			DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
 
 			//入射ベクトルを法線に射影
 			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
@@ -231,24 +231,24 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
 
 			collectPosition.y = position.y;
-			hit.collisionPosition.y = position.y;
+			hit.position.y = position.y;
 
 			// 壁ずり方向へレイキャスト
 			HitResult hit2;
-			if (!stageManager.GetStage(stageManager.GetNowStage())->RayCast(hit.collisionPosition, collectPosition, hit2))
+			if (!stageManager.GetStage(stageManager.GetNowStage())->RayCast(hit.position, collectPosition, hit2))
 			{
-				hit2.collisionPosition.y = position.y;
+				hit2.position.y = position.y;
 				// 壁ずり方向で壁に当たらなかったら補正位置に移動
 #if 0
 				position.x = collectPosition.x;
 				position.z = collectPosition.z;
 #endif
-				hit.collisionNormal.y = 0;
-				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit.collisionNormal));
-				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit.collisionPosition));
+				hit.normal.y = 0;
+				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit.normal));
+				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit.position));
 				Dot = DirectX::XMVector3Dot(Vec, Normal);
 				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&collectPosition), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
-				float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.collisionPosition), DirectX::XMLoadFloat3(&position)), Normal));
+				float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.position), DirectX::XMLoadFloat3(&position)), Normal));
 
 				// positionをスタートにすることでその場から動かない(はずだったのに)
 				//start.y = position.y;
@@ -258,15 +258,15 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			}
 			else
 			{
-				//position.x = hit2.collisionPosition.x;
-				//position.z = hit2.collisionPosition.z;
+				//position.x = hit2.position.x;
+				//position.z = hit2.position.z;
 
-				hit2.collisionPosition.y = position.y;
-				hit2.collisionNormal.y = 0;
-				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit2.collisionNormal));
-				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit2.collisionPosition));
+				hit2.position.y = position.y;
+				hit2.normal.y = 0;
+				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit2.normal));
+				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit2.position));
 				Dot = DirectX::XMVector3Dot(Vec, Normal);
-				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit2.collisionPosition), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
+				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit2.position), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
 			}
 		}
 		else
