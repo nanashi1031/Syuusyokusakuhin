@@ -12,7 +12,6 @@ private:
     {
         float enemyLengthTotal;     // 敵との距離
         int index;                  // 敵のインデックス番号
-        DirectX::XMFLOAT3 position;
 
         // これをしないとソートできない
         // 最後のconstを忘れると"instantiated from here"というエラーが出てコンパイルできないので注意
@@ -58,6 +57,8 @@ public:
 
     bool GetLockOnFlag() const { return this->lockOnFlag; }
 
+    bool GetCameraMouseOperationFlag() const { return this->cameraMouseOperationFlag; }
+
     std::vector<Target> GetTargets() { return this->targets; }
 
 private:
@@ -69,6 +70,8 @@ private:
 
     void UpdateNormalCamera(float elapsedTime);
     void UpdateLockOnCamera(float elapsedTime);
+
+    void UpdateStageRayCast();
 
     DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
@@ -90,12 +93,14 @@ private:
     float rollSpeed = DirectX::XMConvertToRadians(90);
     float mouseRollSpeed = 0.11f;
     float playerRange = 8.0f;
-
     const float maxAngleX = DirectX::XMConvertToRadians(45);
     const float minAngleX = DirectX::XMConvertToRadians(-45);
 
     DirectX::XMFLOAT3 afterPerspective = { 0, 0, 0 };
-    DirectX::XMFLOAT3 perspectiveq;
+    DirectX::XMFLOAT3 afterTarget = { 0, 0, 0 };
+    DirectX::XMFLOAT3 targetWork[2] = { { 0, 0, 0 }, { 0, 0, 0 } };	// 0 : 座標, 1 : 注視点
+    float lengthLimit[2] = { 5, 7 };
+    float sideValue = 1;
 
     float lockOnRange = 5.0f;
     int nowTargetIndex = -1;
@@ -115,7 +120,8 @@ private:
     // 線形補間フラグ
     bool lerpFlag;
 
-    DirectX::XMFLOAT3 shakePower = {1.0f, 1.0f, 1.0f};
+    DirectX::XMFLOAT3 shakePower = { 1.0f, 1.0f, 1.0f };
     float shakesuppress = 0.01f;
     float shakeTimer = 0.0f;
+    bool shakeFlag = true;
 };
