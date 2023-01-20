@@ -142,8 +142,16 @@ void CameraController::DrawDebugGUI()
         {
             ImGui::SliderFloat3("shakePower", &shakePower.x, 1.0f, 10.0f);
             ImGui::SliderFloat("shakesuppress", &shakesuppress, 0.0f, 1.0f);
-            if (ImGui::Button("shakeStart"))
-                shakeFlag = !shakeFlag;
+            if (!shakeFlag)
+            {
+                if (ImGui::Button("shakeStart!"))
+                    shakeFlag = !shakeFlag;
+            }
+            else
+            {
+                if (ImGui::Button("shakeStop!"))
+                    shakeFlag = !shakeFlag;
+            }
         }
         if (ImGui::CollapsingHeader("Learp", ImGuiTreeNodeFlags_DefaultOpen))
         {
