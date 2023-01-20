@@ -30,8 +30,9 @@ private:
 
     enum class CameraMode
     {
-        NormalCamera,  // カメラ通常状態
-        LockOnCamera,  // ロックオンカメラ
+        NormalCamera, // カメラ通常状態
+        LockOnCamera, // ロックオンカメラ
+        TransitionCamera, // 遷移カメラ
     };
 
 public:
@@ -70,10 +71,9 @@ private:
 
     void UpdateNormalCamera(float elapsedTime);
     void UpdateLockOnCamera(float elapsedTime);
+    void UpdateTransitionCamera(float elapsedTime);
 
     void UpdateStageRayCast();
-
-    DirectX::XMFLOAT3 UpdateTransitionState(float elapsedTime);
 
     void LockOn(float elapsedTime);
     bool LockOnSwitching();
@@ -117,8 +117,7 @@ private:
     // 線形補間速度
     float lerpSpeed = 4.0f;
 
-    // 線形補間フラグ
-    bool lerpFlag;
+    bool lerpFlag = false;
 
     DirectX::XMFLOAT3 shakePower = { 1.0f, 1.0f, 1.0f };
     float shakesuppress = 0.01f;
