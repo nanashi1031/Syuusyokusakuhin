@@ -81,7 +81,7 @@ public:
     }
     void SetPartsSpecify(
         int index, char* name, float radius,
-        bool cameraTargetFlag, float defensePower, float extractColor)
+        bool cameraTargetFlag, float defensePower, int extractColor)
     {
         parts[index].name = name;
         parts[index].radius = radius;

@@ -80,7 +80,7 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;
 		::memset(&desc, 0, sizeof(desc));
-
+		desc.DepthEnable = false;
 
 
 
