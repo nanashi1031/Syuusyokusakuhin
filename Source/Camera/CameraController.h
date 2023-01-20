@@ -96,6 +96,7 @@ private:
     const float maxAngleX = DirectX::XMConvertToRadians(45);
     const float minAngleX = DirectX::XMConvertToRadians(-45);
 
+    DirectX::XMFLOAT3 beforePerspective = { 0, 0, 0 };
     DirectX::XMFLOAT3 afterPerspective = { 0, 0, 0 };
     DirectX::XMFLOAT3 afterTarget = { 0, 0, 0 };
     DirectX::XMFLOAT3 targetWork[2] = { { 0, 0, 0 }, { 0, 0, 0 } };	// 0 : ç¿ïW, 1 : íçéãì_

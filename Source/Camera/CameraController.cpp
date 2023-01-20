@@ -20,6 +20,8 @@ void CameraController::Update(float elapsedTime)
         lockOnTimer = 0.0f;
     }
 
+    beforePerspective = perspective;
+
     switch (cameraMode)
     {
     case CameraMode::NormalCamera:
@@ -305,12 +307,13 @@ void CameraController::UpdateStageRayCast()
     HitResult hitResult;
     StageManager& stageManager = StageManager::Instance();
     if (stageManager.GetStage(stageManager.GetNowStage())->
-        RayCast(perspective, afterPerspective, hitResult))
+        RayCast(beforePerspective, afterPerspective, hitResult))
     {
         DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&hitResult.position);
         DirectX::XMVECTOR cuv = DirectX::XMVectorSet(0, 1, 0, 0);
         p = DirectX::XMVectorMultiplyAdd(DirectX::XMVectorReplicate(4), cuv, p);
-        DirectX::XMStoreFloat3(&afterPerspective, p);
+        DirectX::XMStoreFloat3(&perspective, p);
+        perspective = hitResult.position;
     }
 }
 
