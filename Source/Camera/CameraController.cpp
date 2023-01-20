@@ -256,7 +256,6 @@ void CameraController::UpdateNormalCamera(float elapsedTime)
 
     CameraRotationAxisLimit();
 
-    //perspective = GetPerspective();
     afterPerspective = GetPerspective();
 }
 
@@ -414,7 +413,6 @@ bool CameraController::LockOnSwitching()
 
     if (cameraMouseOperationFlag)
     {
-        //float mousePos = static_cast<float>(mouse.GetPositionX() - mouse.GetOldPositionX());
         float mousePos = static_cast<float>(mouse.GetPositionX());
         // マウスの位置がスクリーンの真ん中から左に移動したら
         if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
