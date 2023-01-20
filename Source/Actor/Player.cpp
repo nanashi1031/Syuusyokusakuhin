@@ -161,7 +161,7 @@ void Player::CollisionPlayerVsEnemies()
                 enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
                 outPosition))
             {
-                position = outPosition;
+                enemy->SetPosition(outPosition);
             }
         }
     }
