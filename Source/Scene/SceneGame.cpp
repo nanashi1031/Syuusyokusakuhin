@@ -17,6 +17,9 @@ static	const	UINT	SHADOWMAP_SIZE = 2048;
 
 void SceneGame::Initialize()
 {
+	// TODO 本番では起動
+	//CameraController::Instance().SetCameraMouseOperationFlag(true);
+
 	// ステージ初期化
 	// スマートポインタのほうがいい
 	StageManager& stageManager = StageManager::Instance();
@@ -89,33 +92,49 @@ void SceneGame::Initialize()
 		LightManager::Instane().Register(light);
 	}
 
-	// ガウスブラー
+	// 新しい描画ターゲットの生成
 	{
-		texture = std::make_unique<Texture>("Data/Texture/1920px-Equirectangular-projection.jpg");
-
-		gaussianBlurSprite = std::make_unique<Sprite>();
-		gaussianBlurSprite->SetShaderResourceView(
-			texture->GetShaderResourceView(),
-			texture->GetWidth(), texture->GetHeight());
-
+		Graphics& graphics = Graphics::Instance();
+		renderTarget = std::make_unique<RenderTarget>(static_cast<UINT>(graphics.GetScreenWidth())
+			, static_cast<UINT>(graphics.GetScreenHeight())
+			, DXGI_FORMAT_R8G8B8A8_UNORM);
 	}
 
 	// シャドウマップ用に深度ステンシルの生成
 	{
 		Graphics& graphics = Graphics::Instance();
-		shadowmapDepthStencil = std::make_unique<DepthStencil>(SHADOWMAP_SIZE, SHADOWMAP_SIZE);
+		shadowmapDepthStencil =
+			std::make_unique<DepthStencil>(SHADOWMAP_SIZE, SHADOWMAP_SIZE);
 	}
 
 	// スカイボックス
 	{
 		Graphics& graphics = Graphics::Instance();
-		skyboxTexture = std::make_unique<Texture>("Data/Texture/1920px-Equirectangular-projection.jpg");
+		skyboxTexture = std::make_unique<Texture>(
+			"Data/Texture/1920px-Equirectangular-projection.jpg");
 		sprite = std::make_unique<Sprite>();
-		sprite->SetShaderResourceView(skyboxTexture->GetShaderResourceView(), skyboxTexture->GetWidth(), skyboxTexture->GetHeight());
-		sprite->Update(0, 0, graphics.GetScreenWidth(), graphics.GetScreenHeight(),
-			0, 0, static_cast<float>(skyboxTexture->GetWidth()), static_cast<float>(skyboxTexture->GetHeight()),
+		sprite->SetShaderResourceView(
+			skyboxTexture->GetShaderResourceView(),
+			skyboxTexture->GetWidth(), skyboxTexture->GetHeight());
+		sprite->Update(
+			0, 0,
+			graphics.GetScreenWidth(), graphics.GetScreenHeight(),
+			0, 0,
+			static_cast<float>(skyboxTexture->GetWidth()),
+			static_cast<float>(skyboxTexture->GetHeight()),
 			0,
 			1, 1, 1, 1);
+	}
+
+	// ポストプロセス描画クラス生成
+	{
+		postprocessingRenderer = std::make_unique<PostprocessingRenderer>();
+		// シーンテクスチャを設定しておく
+		ShaderResourceViewData srvData;
+		srvData.srv = renderTarget->GetShaderResourceView();
+		srvData.width = renderTarget->GetWidth();
+		srvData.height = renderTarget->GetHeight();
+		postprocessingRenderer->SetSceneData(srvData);
 	}
 }
 
@@ -148,13 +167,6 @@ void SceneGame::Update(float elapsedTime)
 
 	EnemyManager::Instance().Update(elapsedTime);
 
-	gaussianBlurSprite->Update(0.0f, 0.0f,
-		Graphics::Instance().GetScreenWidth(), Graphics::Instance().GetScreenHeight(),
-		0.0f, 0.0f,
-		static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()),
-		0.0f,
-		1.0f, 1.0f, 1.0f, 1.0f);
-
 	// Debug 本番では常にマウスを真ん中に固定する
 	// TODO ポーズ中はマウス操作できるようにする
 	Mouse& mouse = Input::Instance().GetMouse();
@@ -169,6 +181,10 @@ void SceneGame::Render()
 	ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
 
+	RenderShadowmap();
+	// 3D空間の描画を別のバッファに対して行う
+	Render3DScene();
+
 	// 画面クリア＆レンダーターゲット設定
 	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
 	dc->ClearRenderTargetView(rtv, color);
@@ -182,65 +198,30 @@ void SceneGame::Render()
 	// ライト情報を詰め込む
 	LightManager::Instane().PushRenderContext(rc);
 
-	// カメラ
-	Camera& camera = Camera::Instance();
-	rc.viewPosition.x = camera.GetEye().x;
-	rc.viewPosition.y = camera.GetEye().y;
-	rc.viewPosition.z = camera.GetEye().z;
-	rc.viewPosition.w = 1;
-	rc.view = camera.GetView();
-	rc.projection = camera.GetProjection();
-
-	//RenderShadowmap();
-	Render3DScene();
-
-	// 3Dモデル描画
+	// 書き込み先をバックバッファに変えてオフスクリーンレンダリングの結果を描画する
 	{
-		Shader* shader = graphics.GetShader();
-		ModelShader* modelShader = graphics.GetShader(ModelShaderId::Phong);
-		modelShader->Begin(rc);
+		// 画面クリア＆レンダーターゲット設定
+		FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+		dc->ClearRenderTargetView(rtv, color);
+		dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		dc->OMSetRenderTargets(1, &rtv, dsv);
 
-		StageManager::Instance().Render(rc, modelShader);
+		// ビューポートの設定
+		D3D11_VIEWPORT	vp = {};
+		vp.Width = graphics.GetScreenWidth();
+		vp.Height = graphics.GetScreenHeight();
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		dc->RSSetViewports(1, &vp);
 
-		PlayerManager::Instance().Render(rc, modelShader);
-
-		InsectManager::Instance().Render(rc, modelShader);
-
-		EnemyManager::Instance().Render(rc, modelShader);
-
-		modelShader->End(rc);
-	}
-
-	// 3Dデバッグ描画
-	{
-#ifdef _DEBUG
-		// ラインレンダラ描画実行
-		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
-		// デバッグレンダラ描画実行
-		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
-		PlayerManager::Instance().DrawDebugPrimitive();
-		EnemyManager::Instance().DrawDebugPrimitive();
-		LightManager::Instane().DrawDebugPrimitive();
-#endif
+		//	ポストプロセス処理を行う
+		postprocessingRenderer->Render(dc);
 	}
 
 	// 2Dスプライト描画
 	{
 		if (CameraController::Instance().GetLockOnFlag())
 			RenderLockOn(dc, rc.view, rc.projection);
-
-		SpriteShader* shader = graphics.GetShader(SpriteShaderId::GaussianBlur);
-
-		RenderContext rc;
-		rc.deviceContext = dc;
-		rc.gaussianFilterData = gaussianFilterData;
-		rc.gaussianFilterData.textureSize.x = static_cast<float>(texture->GetWidth());
-		rc.gaussianFilterData.textureSize.y = static_cast<float>(texture->GetHeight());
-		shader->Begin(rc);
-
-		//shader->Draw(rc, gaussianBlurSprite.get());
-
-		shader->End(rc);
 	}
 
 	// 2DデバッグGUI描画
@@ -252,21 +233,21 @@ void SceneGame::Render()
 		EnemyManager::Instance().DrawDebugGUI();
 		LightManager::Instane().DrawDebugGUI();
 		ImGui::Separator();
-		if (ImGui::TreeNode("GaussianFilter"))
-		{
-			ImGui::SliderInt("kernelSize", &gaussianFilterData.kernelSize, 1, MaxKernelSize - 1);
-			ImGui::SliderFloat("deviation", &gaussianFilterData.deviation, 1.0f, 10.0f);
-			ImGui::TreePop();
-		}
-		ImGui::Separator();
+		float alpha = 0.35f;
+		ImGui::SetNextWindowBgAlpha(alpha);
 		if (ImGui::TreeNode("Shadowmap"))
 		{
 			ImGui::SliderFloat("DrawRect", &shadowDrawRect, 1.0f, 2048.0f);
+			ImGui::ColorEdit3("Color", &shadowColor.x);
+			ImGui::SliderFloat("Bias", &shadowBias, 0.0f, 0.1f);
 			ImGui::Text("texture");
 			ImGui::Image(shadowmapDepthStencil->GetShaderResourceView().Get(), { 256, 256 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
 
 			ImGui::TreePop();
 		}
+		ImGui::Separator();
+		ImGui::SetNextWindowBgAlpha(alpha);
+		postprocessingRenderer->DrawDebugGUI();
 		ImGui::Separator();
 #endif
 	}
@@ -327,15 +308,48 @@ void SceneGame::RenderLockOn(
 }
 
 // 3D空間の描画
-void SceneGame:: Render3DScene()
+void SceneGame::Render3DScene()
 {
 	Graphics& graphics = Graphics::Instance();
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
+	ID3D11RenderTargetView* rtv = renderTarget->GetRenderTargetView().Get();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
+
+	// 画面クリア＆レンダーターゲット設定
+	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };
+	dc->ClearRenderTargetView(rtv, color);
+	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	dc->OMSetRenderTargets(1, &rtv, dsv);
+
+	// ビューポートの設定
+	D3D11_VIEWPORT	vp = {};
+	vp.Width = graphics.GetScreenWidth();
+	vp.Height = graphics.GetScreenHeight();
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	dc->RSSetViewports(1, &vp);
 
 	// 描画処理
 	RenderContext rc;
 	rc.deviceContext = dc;
+
+	// ライトの情報を詰め込む
+	LightManager::Instane().PushRenderContext(rc);
+
+	// シャドウマップの設定
+	rc.shadowMapData.shadowMap = shadowmapDepthStencil->GetShaderResourceView().Get();
+	rc.shadowMapData.lightViewProjection = lightViewProjection;
+	rc.shadowMapData.shadowColor = shadowColor;
+	rc.shadowMapData.shadowBias = shadowBias;
+
+	// カメラ
+	Camera& camera = Camera::Instance();
+	rc.viewPosition.x = camera.GetEye().x;
+	rc.viewPosition.y = camera.GetEye().y;
+	rc.viewPosition.z = camera.GetEye().z;
+	rc.viewPosition.w = 1;
+	rc.view = camera.GetView();
+	rc.projection = camera.GetProjection();
 
 	// スカイボックスの描画
 	{
@@ -345,6 +359,35 @@ void SceneGame:: Render3DScene()
 		shader->Draw(rc, sprite.get());
 
 		shader->End(rc);
+	}
+
+	// 3Dモデル描画
+	{
+		ModelShader* modelShader = graphics.GetShader(ModelShaderId::Phong);
+		modelShader->Begin(rc);
+
+		StageManager::Instance().Render(rc, modelShader);
+
+		PlayerManager::Instance().Render(rc, modelShader);
+
+		InsectManager::Instance().Render(rc, modelShader);
+
+		EnemyManager::Instance().Render(rc, modelShader);
+
+		modelShader->End(rc);
+	}
+
+	// 3Dデバッグ描画
+	{
+#ifdef _DEBUG
+		// ラインレンダラ描画実行
+		graphics.GetLineRenderer()->Render(dc, rc.view, rc.projection);
+		// デバッグレンダラ描画実行
+		graphics.GetDebugRenderer()->Render(dc, rc.view, rc.projection);
+		PlayerManager::Instance().DrawDebugPrimitive();
+		EnemyManager::Instance().DrawDebugPrimitive();
+		LightManager::Instane().DrawDebugPrimitive();
+#endif
 	}
 }
 
@@ -389,6 +432,7 @@ void SceneGame::RenderShadowmap()
 		DirectX::XMMATRIX P = DirectX::XMMatrixOrthographicLH(shadowDrawRect, shadowDrawRect, 0.1f, 1000.0f);
 		DirectX::XMStoreFloat4x4(&rc.view, V);
 		DirectX::XMStoreFloat4x4(&rc.projection, P);
+		DirectX::XMStoreFloat4x4(&lightViewProjection, V * P);
 	}
 
 	// 3Dモデル描画
@@ -396,11 +440,22 @@ void SceneGame::RenderShadowmap()
 		ModelShader* shader = graphics.GetShader(ModelShaderId::ShadowmapCaster);
 		shader->Begin(rc);
 
+		StageManager& stageManager = StageManager::Instance();
 		PlayerManager& playerManager = PlayerManager::Instance();
-		//shader->Draw(rc, stage.get());
-		shader->Draw(rc, playerManager.GetPlayer(playerManager.GetplayerOneIndex())->GetModel());
-		//shader->Draw(rc, uncle.get());
+		EnemyManager& enemyManager = EnemyManager::Instance();
+		for (int i = 0; i < stageManager.GetStageCount(); i++)
+		{
+			shader->Draw(rc, stageManager.GetStage(i)->GetModel());
+		}
+		for (int i = 0; i < playerManager.GetPlayerCount(); i++)
+		{
+			shader->Draw(rc, playerManager.GetPlayer(i)->GetModel());
 
+		}
+		for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+		{
+			shader->Draw(rc, enemyManager.GetEnemy(i)->GetModel());
+		}
 		shader->End(rc);
 	}
 }

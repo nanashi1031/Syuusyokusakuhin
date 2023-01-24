@@ -1,5 +1,5 @@
 #include "Misc.h"
-#include "Graphics/SkyboxShader.h"
+#include "SkyboxShader.h"
 
 SkyboxShader::SkyboxShader(ID3D11Device* device)
 {
@@ -80,7 +80,7 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;
 		::memset(&desc, 0, sizeof(desc));
-		desc.DepthEnable = false;
+
 
 
 
@@ -129,6 +129,22 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 		HRESULT hr = device->CreateSamplerState(&desc, samplerState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
+
+	// 定数バッファ
+	{
+		// シーン用バッファ
+		D3D11_BUFFER_DESC desc;
+		::memset(&desc, 0, sizeof(desc));
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		desc.ByteWidth = sizeof(CbScene);
+		desc.StructureByteStride = 0;
+
+		HRESULT hr = device->CreateBuffer(&desc, 0, sceneConstantBuffer.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+	}
 }
 
 // 描画開始
@@ -146,6 +162,22 @@ void SkyboxShader::Begin(const RenderContext& rc)
 	rc.deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 0);
 	rc.deviceContext->RSSetState(rasterizerState.Get());
 	rc.deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
+
+	ID3D11Buffer* constantBuffers[] =
+	{
+		sceneConstantBuffer.Get(),
+	};
+	rc.deviceContext->VSSetConstantBuffers(0, ARRAYSIZE(constantBuffers), constantBuffers);
+	rc.deviceContext->PSSetConstantBuffers(0, ARRAYSIZE(constantBuffers), constantBuffers);
+
+	CbScene cbScene;
+	cbScene.viewPosition = rc.viewPosition;
+	DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&rc.view);
+	DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&rc.projection);
+	// ビュープロジェクションの逆行列を利用する
+	DirectX::XMStoreFloat4x4(&cbScene.inverseView, DirectX::XMMatrixInverse(nullptr, V));
+	DirectX::XMStoreFloat4x4(&cbScene.inverseProjection, DirectX::XMMatrixInverse(nullptr, P));
+	rc.deviceContext->UpdateSubresource(sceneConstantBuffer.Get(), 0, 0, &cbScene, 0, 0);
 }
 
 // 描画
