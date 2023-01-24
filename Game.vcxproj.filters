@@ -61,6 +61,12 @@
     <Filter Include="Source\Actor\Insect">
       <UniqueIdentifier>{18434381-4535-4bf5-8702-2781d8230ac7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Graphics\Renderer">
+      <UniqueIdentifier>{dd9cf6a2-b66c-4412-bc47-7bf827b90c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Graphics\Shader">
+      <UniqueIdentifier>{8b0d6b2d-62dd-461c-abd8-4e1fa06ffe58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -99,16 +105,7 @@
     <ClInclude Include="Source\Misc.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\DebugRenderer.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Graphics\Graphics.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\ImGuiRenderer.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\LambertShader.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Model.h">
@@ -124,9 +121,6 @@
       <Filter>Source\Input</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\RenderContext.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\LineRenderer.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Sprite.h">
@@ -261,20 +255,44 @@
     <ClInclude Include="Source\Light\LightManager.h">
       <Filter>Source\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\GaussianBlurShader.h">
+    <ClInclude Include="Source\Graphics\Renderer\PostprocessingRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\RenderTarget.h">
       <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\FinalpassShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\LambertShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\GaussianBlurShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\DebugRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\ImGuiRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\LineRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\PhongShader.h">
-      <Filter>Source\Graphics</Filter>
+      <Filter>Source\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\ShadowmapCasterShader.h">
-      <Filter>Source\Graphics</Filter>
+      <Filter>Source\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\SkyboxShader.h">
-      <Filter>Source\Graphics</Filter>
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\PhongShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\ColorGradingShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -305,16 +323,7 @@
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\DebugRenderer.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Graphics\Graphics.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\ImGuiRenderer.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\LambertShader.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Model.cpp">
@@ -325,9 +334,6 @@
     </ClCompile>
     <ClCompile Include="Source\Input\Input.cpp">
       <Filter>Source\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\LineRenderer.cpp">
-      <Filter>Source\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Sprite.cpp">
       <Filter>Source\Graphics</Filter>
@@ -446,20 +452,44 @@
     <ClCompile Include="Source\Light\LightManager.cpp">
       <Filter>Source\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp">
+    <ClCompile Include="Source\Graphics\Renderer\PostprocessingRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\RenderTarget.cpp">
       <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\FinalpassShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\LambertShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\DebugRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\ImGuiRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\LineRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\PhongShader.cpp">
-      <Filter>Source\Graphics</Filter>
+      <Filter>Source\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\ShadowmapCasterShader.cpp">
-      <Filter>Source\Graphics</Filter>
+      <Filter>Source\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\SkyboxShader.cpp">
-      <Filter>Source\Graphics</Filter>
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\PhongShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\ColorGradingShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -502,6 +532,15 @@
     <None Include="HLSL\ShadowmapCaster.hlsli">
       <Filter>HLSL</Filter>
     </None>
+    <None Include="HLSL\Finalpass.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\ColorGrading.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\ShadowmapFunctions.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\DebugPS.hlsl">
@@ -526,9 +565,6 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\LinePS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\SpriteVS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\SpritePS.hlsl">
@@ -559,6 +595,21 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\ShadowmapCasterVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\FinalpassPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\FinalpassVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ColorGradingPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ColorGradingVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SpriteVS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
