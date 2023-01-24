@@ -28,5 +28,8 @@ VS_OUT main(
 	vout.binormal = normalize(cross(vout.tangent, vout.normal));
 	vout.color = color * materialColor;
 	vout.texcoord = texcoord;
+
+	// シャドウマップで使用する情報を算出
+	vout.shadowTexcoord = CalcShadowTexcoord(p, lightViewProjection);
 	return vout;
 }

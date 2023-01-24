@@ -1,16 +1,21 @@
 #include "Phong.hlsli"
 
 Texture2D diffuseMap : register(t0);
-SamplerState diffuseMapSamplerState : register(s0);
-
 Texture2D normalMap : register(t1);	// 法線マップ
+Texture2D shadowMap : register(t2);	// シャドウマップ
+
+SamplerState diffuseMapSamplerState : register(s0);
+SamplerState shadowMapSamplerState : register(s1);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-	float4 diffuseColor = diffuseMap.Sample(diffuseMapSamplerState, pin.texcoord) * pin.color;
+	float4 diffuseColor =
+	diffuseMap.Sample(diffuseMapSamplerState, pin.texcoord) * pin.color;
 
-	float3 normal = normalMap.Sample(diffuseMapSamplerState, pin.texcoord).xyz * 2 - 1;
-	float3x3 CM = { normalize(pin.tangent), normalize(pin.binormal), normalize(pin.normal) };
+	float3 normal =
+		normalMap.Sample(diffuseMapSamplerState, pin.texcoord).xyz * 2 - 1;
+	float3x3 CM =
+	{ normalize(pin.tangent), normalize(pin.binormal), normalize(pin.normal) };
 
 	float3 N = normalize(mul(normal, CM));
 	float3 L = normalize(directionalLightData.direction.xyz);
@@ -26,10 +31,17 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float3 ambient = ka * ambientLightColor;
 
 	// 平行光源のライティング計算
-	//float3 directionalDiffuse = CalcLambertDiffuse(N, L, directionalLightData.color.rgb, kd);
-	// ハーフランバートシェーディング
-	float3 directionalDiffuse = ClacHalfLambert(N, L, directionalLightData.color.rgb, kd);
-	float3 directionalSpecular = CalcPhongSpecular(N, L, directionalLightData.color.rgb, E, shiness, ks);
+	float3 directionalDiffuse =
+		CalcLambertDiffuse(N, L, directionalLightData.color.rgb, kd);
+	float3 directionalSpecular =
+		CalcPhongSpecular(N, L, directionalLightData.color.rgb, E, shiness, ks);
+
+	// 平行光源の影なので、平行光源に対して影を適応
+	float3 shadow = CalcShadowColorPCFFilter(
+		shadowMap, shadowMapSamplerState, pin.shadowTexcoord, shadowColor, shadowBias);
+	directionalDiffuse *= shadow;
+	directionalSpecular *= shadow;
+
 
 	// 点光源の処理
 	float3 pointDiffuse = (float3)0;
@@ -92,7 +104,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 	color.rgb += diffuseColor.rgb * (directionalDiffuse + pointDiffuse + spotDiffuse);
 	color.rgb += directionalSpecular + pointSpecular + spotSpecular;
 	//	TODO リムライティング　真っ白になる
-	//color.rgb += CalcRimLight(N, E, L, directionalLightData.color.rgb);
+	color.rgb += CalcRimLight(N, E, L, directionalLightData.color.rgb);
 
 	return color;
 }

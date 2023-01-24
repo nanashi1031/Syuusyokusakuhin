@@ -1,7 +1,7 @@
-#include	"ShadowmapCaster.hlsli"
+#include "ShadowmapCaster.hlsli"
 
 float4 main(
-	float4 position     : POSITION,
+	float4 position : POSITION,
 	float3 normal : NORMAL,
 	float3 tangent : TANGENT,
 	float2 texcoord : TEXCOORD,

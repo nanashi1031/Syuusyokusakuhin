@@ -214,7 +214,7 @@ void GaussianBlurShader::CalcGaussianFilter(CBFilter& cbFilter, const GaussianFi
 		{
 			cbFilter.weights[id].x = (float)x;
 			cbFilter.weights[id].y = (float)y;
-			cbFilter.weights[id].z =
+			cbFilter.weights[id].z = deviationPow2;
 			// ガウシアンフィルター
 
 

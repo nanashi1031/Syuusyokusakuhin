@@ -1,5 +1,5 @@
 #include "Misc.h"
-#include "Graphics/ShadowmapCasterShader.h"
+#include "ShadowmapCasterShader.h"
 
 ShadowmapCasterShader::ShadowmapCasterShader(ID3D11Device* device)
 {

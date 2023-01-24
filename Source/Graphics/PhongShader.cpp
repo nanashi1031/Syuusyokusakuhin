@@ -1,5 +1,5 @@
 #include "Misc.h"
-#include "Graphics/PhongShader.h"
+#include "PhongShader.h"
 
 PhongShader::PhongShader(ID3D11Device* device)
 {
@@ -87,6 +87,12 @@ PhongShader::PhongShader(ID3D11Device* device)
 
 		hr = device->CreateBuffer(&desc, 0, subsetConstantBuffer.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+		// シャドウマップ用バッファ
+		desc.ByteWidth = sizeof(CbShadowMap);
+
+		hr = device->CreateBuffer(&desc, 0, shadowMapConstantBuffer.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
 	// ブレンドステート
@@ -159,6 +165,19 @@ PhongShader::PhongShader(ID3D11Device* device)
 
 		HRESULT hr = device->CreateSamplerState(&desc, samplerState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
+
+		//	シャドウマップ用
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		desc.BorderColor[0] = FLT_MAX;
+		desc.BorderColor[1] = FLT_MAX;
+		desc.BorderColor[2] = FLT_MAX;
+		desc.BorderColor[3] = FLT_MAX;
+
+		hr = device->CreateSamplerState(&desc, shadowMapSamplerState.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 }
 
@@ -173,7 +192,8 @@ void PhongShader::Begin(const RenderContext& rc)
 	{
 		sceneConstantBuffer.Get(),
 		meshConstantBuffer.Get(),
-		subsetConstantBuffer.Get()
+		subsetConstantBuffer.Get(),
+		shadowMapConstantBuffer.Get()
 	};
 	rc.deviceContext->VSSetConstantBuffers(0, ARRAYSIZE(constantBuffers), constantBuffers);
 	rc.deviceContext->PSSetConstantBuffers(0, ARRAYSIZE(constantBuffers), constantBuffers);
@@ -252,9 +272,25 @@ void PhongShader::Draw(const RenderContext& rc, const Model* model)
 			};
 			rc.deviceContext->PSSetShaderResources(0, ARRAYSIZE(srvs), srvs);
 
-			rc.deviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
+			ID3D11SamplerState* samplerStates[] =
+			{
+				samplerState.Get(),
+				shadowMapSamplerState.Get()
+			};
+			rc.deviceContext->PSSetSamplers(0, ARRAYSIZE(samplerStates), samplerStates);
+
 			rc.deviceContext->DrawIndexed(subset.indexCount, subset.startIndex, 0);
 		}
+
+		// シャドウマップ用定数バッファ更新
+		CbShadowMap cbShadowMap;
+		cbShadowMap.shadowColor = rc.shadowMapData.shadowColor;
+		cbShadowMap.shadowBias = rc.shadowMapData.shadowBias;
+		cbShadowMap.lightViewProjection = rc.shadowMapData.lightViewProjection;
+
+		rc.deviceContext->UpdateSubresource(shadowMapConstantBuffer.Get(), 0, 0, &cbShadowMap, 0, 0);
+		//	シャドウマップ設定
+		rc.deviceContext->PSSetShaderResources(2, 1, &rc.shadowMapData.shadowMap);
 	}
 }
 
@@ -265,6 +301,6 @@ void PhongShader::End(const RenderContext& rc)
 	rc.deviceContext->PSSetShader(nullptr, nullptr, 0);
 	rc.deviceContext->IASetInputLayout(nullptr);
 
-	ID3D11ShaderResourceView* srvs[] = { nullptr };
+	ID3D11ShaderResourceView* srvs[] = { nullptr, nullptr, nullptr };
 	rc.deviceContext->PSSetShaderResources(0, ARRAYSIZE(srvs), srvs);
 }
