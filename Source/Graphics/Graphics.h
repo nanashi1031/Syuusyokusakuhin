@@ -3,11 +3,11 @@
 #include <memory>
 #include <d3d11.h>
 #include <wrl.h>
-#include "Graphics/Shader.h"
-#include "Graphics/DebugRenderer.h"
-#include "Graphics/LineRenderer.h"
-#include "Graphics/ImGuiRenderer.h"
-#include "Graphics/PhongShader.h"
+#include "Shader.h"
+#include "DebugRenderer.h"
+#include "LineRenderer.h"
+#include "ImGuiRenderer.h"
+#include "PhongShader.h"
 
 enum class ModelShaderId
 {
@@ -21,8 +21,10 @@ enum class SpriteShaderId
 {
 	Default,
 	Mask,
+	ColorGrading,
 	GaussianBlur,
 	LuminanceExtraction,
+	Finalpass,
 	Skybox,
 	Max
 };

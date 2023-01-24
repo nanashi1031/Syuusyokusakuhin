@@ -3,17 +3,18 @@
 #include <wrl.h>
 #include <d3d11.h>
 
-class DepthStencil
+// 描画ターゲットバッファ
+class RenderTarget
 {
 public:
-	DepthStencil(UINT width, UINT height);
-	~DepthStencil() {}
+	RenderTarget(UINT width, UINT height, DXGI_FORMAT format);
+	~RenderTarget() {}
 
 	// シェーダーリソースビュー取得
 	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetShaderResourceView() { return shaderResourceView; }
 
-	// 深度ステンシルビュー取得
-	const Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& GetDepthStencilView() { return depthStencilView; }
+	// レンダーターゲットビュー取得
+	const Microsoft::WRL::ComPtr<ID3D11RenderTargetView>& GetRenderTargetView() { return renderTargetView; }
 
 	// テクスチャの情報取得
 	D3D11_TEXTURE2D_DESC GetTexture2dDesc() { return texture2dDesc; }
@@ -25,7 +26,7 @@ public:
 	inline int GetHeight() const { return texture2dDesc.Height; }
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
-	D3D11_TEXTURE2D_DESC texture2dDesc;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shaderResourceView;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>		renderTargetView;
+	D3D11_TEXTURE2D_DESC								texture2dDesc;
 };

@@ -1,12 +1,14 @@
 #include "Misc.h"
-#include "Graphics/LambertShader.h"
-#include "Graphics/Graphics.h"
-#include "Graphics/PhongShader.h"
-#include "Graphics/PhongShader.h"
-#include "Graphics/GaussianBlurShader.h"
-#include "Graphics/LuminanceExtractionShader.h"
-#include "Graphics/ShadowmapCasterShader.h"
-#include "Graphics/SkyboxShader.h"
+#include "LambertShader.h"
+#include "Graphics.h"
+#include "PhongShader.h"
+#include "PhongShader.h"
+#include "ColorGradingShader.h"
+#include "GaussianBlurShader.h"
+#include "LuminanceExtractionShader.h"
+#include "FinalpassShader.h"
+#include "ShadowmapCasterShader.h"
+#include "SkyboxShader.h"
 
 Graphics* Graphics::instance = nullptr;
 
@@ -146,12 +148,16 @@ Graphics::Graphics(HWND hWnd)
 
 	// スプライトシェーダー
 	{
-		spriteShaders[static_cast<int>(SpriteShaderId::Skybox)] =
-			std::make_unique<SkyboxShader>(device.Get());
+		spriteShaders[static_cast<int>(SpriteShaderId::ColorGrading)] =
+			std::make_unique<ColorGradingShader>(device.Get());
 		spriteShaders[static_cast<int>(SpriteShaderId::GaussianBlur)] =
 			std::make_unique<GaussianBlurShader>(device.Get());
 		spriteShaders[static_cast<int>(SpriteShaderId::LuminanceExtraction)] =
 			std::make_unique<LuminanceExtractionShader>(device.Get());
+		spriteShaders[static_cast<int>(SpriteShaderId::Finalpass)] =
+			std::make_unique<FinalpassShader>(device.Get());
+		spriteShaders[static_cast<int>(SpriteShaderId::Skybox)] =
+			std::make_unique<SkyboxShader>(device.Get());
 	}
 
 	// レンダラ
