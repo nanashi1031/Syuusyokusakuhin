@@ -59,6 +59,7 @@ public:
     bool GetLockOnFlag() const { return this->lockOnFlag; }
 
     bool GetCameraMouseOperationFlag() const { return this->cameraMouseOperationFlag; }
+    void SetCameraMouseOperationFlag(bool b) { this->cameraMouseOperationFlag = b; }
 
     std::vector<Target> GetTargets() { return this->targets; }
 

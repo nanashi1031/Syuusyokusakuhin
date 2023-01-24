@@ -62,7 +62,7 @@ void CameraController::Update(float elapsedTime)
         lockOnTimer += elapsedTime;
 
     // ステージとのレイキャスト
-    UpdateStageRayCast();
+    //UpdateStageRayCast();
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
