@@ -13,5 +13,6 @@ public:
     void Update(float elapsedTime) override;
     void Render(RenderContext rc, ModelShader* shader) override;
 
+    void DrawDebugGUI() override;
 private:
 };
