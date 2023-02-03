@@ -27,6 +27,8 @@ public:
 
     void Render(RenderContext rc, ModelShader* shader);
 
+    void DrawDebugGUI();
+
     void Register(Stage* stage);
 
     void Clear();

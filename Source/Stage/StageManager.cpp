@@ -16,6 +16,23 @@ void StageManager::Render(RenderContext rc, ModelShader* shader)
     }
 }
 
+void StageManager::DrawDebugGUI()
+{
+    float alpha = 0.35f;
+    ImGui::SetNextWindowBgAlpha(alpha);
+
+    if (ImGui::TreeNode("Stage"))
+    {
+        for (Stage* stage : stages)
+        {
+            int nodeId = 0;
+            ImGui::PushID(nodeId++);
+            stage->DrawDebugGUI();
+            ImGui::PopID();
+        }
+    }
+}
+
 
 void StageManager::Register(Stage* stage)
 {
