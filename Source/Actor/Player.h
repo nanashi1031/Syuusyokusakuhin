@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Graphics\Shader.h"
-#include "Graphics\Model.h"
+#include "Shader.h"
+#include "Model.h"
 #include "Character.h"
+#include "Audio.h"
 
 // ÉvÉåÉCÉÑÅ[
 class Player : public Character
@@ -77,6 +78,17 @@ public:
         WalkFront,
     };
 
+    enum class SE
+    {
+        Walk,
+        Run,
+        Attack1,
+        Attack2,
+        Attack3,
+        DashAttack,
+        Die,
+    };
+
 public:
     Player();
     ~Player() override;
@@ -117,4 +129,12 @@ private:
     const float moveSpeed = 5.0f;
 
     float turnSpeed = DirectX::XMConvertToRadians(720);
+
+    std::unique_ptr<AudioSource> SE_Walk;
+    std::unique_ptr<AudioSource> SE_Run;
+    std::unique_ptr<AudioSource> SE_Attack1;
+    std::unique_ptr<AudioSource> SE_Attack2;
+    std::unique_ptr<AudioSource> SE_Attack3;
+    std::unique_ptr<AudioSource> SE_DashAttack;
+    std::unique_ptr<AudioSource> SE_Die;
 };

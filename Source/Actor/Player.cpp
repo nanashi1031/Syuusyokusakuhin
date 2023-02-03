@@ -16,7 +16,8 @@ Player::Player()
     radius = 0.5f;
     height = 2.0f;
 
-    health = 1000.0f;
+    maxHealth = 100.f;
+    health = maxHealth;
 
     stateMachine = new StateMachine();
 
@@ -32,6 +33,16 @@ Player::Player()
     stateMachine->RegisterState(new PlayerState::AvoiDanceState(this));
 #pragma endregion
 
+#pragma region 音登録
+    SE_Attack1 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
+    //audios.emplace_back(&SE_Attack1);
+    SE_Attack2 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
+    SE_Attack3 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
+    SE_Walk = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Walk.wav");
+    SE_Run = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Run.wav");
+    SE_Die = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Die.wav");
+#pragma endregion
+
     stateMachine->SetState(State::Idle);
 }
 
@@ -42,13 +53,16 @@ Player::~Player()
 
 void Player::Update(float elapsedTime)
 {
-    // 進行ベクトル取得
-    DirectX::XMFLOAT3 moveVec = GetMoveVec();
-    float moveSpeed = this->moveSpeed * elapsedTime;
-    position.x += moveVec.x * moveSpeed;
-    position.z += moveVec.z * moveSpeed;
+    if (movingFlag)
+    {
+        // 進行ベクトル取得
+        DirectX::XMFLOAT3 moveVec = GetMoveVec();
+        float moveSpeed = this->moveSpeed * elapsedTime;
+        position.x += moveVec.x * moveSpeed;
+        position.z += moveVec.z * moveSpeed;
 
-    InputMove(elapsedTime);
+        InputMove(elapsedTime);
+    }
 
     InputAttack(elapsedTime);
 
@@ -64,6 +78,8 @@ void Player::Update(float elapsedTime)
     UpdateTransform();
 
     model->UpdateAnimation(elapsedTime);
+
+    //model->SetupRootMotion("mixamorig:Hips");
 
     model->RootMotion("mixamorig:Hips");
 
@@ -141,7 +157,7 @@ DirectX::XMFLOAT3 Player::GetFront() const
 
 void Player::InputAttack(float elapsedTime)
 {
-    float SwordRadius = 0.5f;
+    float SwordRadius = 0.3f;
 }
 
 void Player::CollisionPlayerVsEnemies()
@@ -154,14 +170,13 @@ void Player::CollisionPlayerVsEnemies()
         {
             Enemy* enemy = enemyManager.GetEnemy(i);
 
-
             DirectX::XMFLOAT3 outPosition;
             if (Collision::IntersectSphereVsNode(
                 position, radius,
                 enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
                 outPosition))
             {
-                enemy->SetPosition(outPosition);
+                position = outPosition;
             }
         }
     }
@@ -239,10 +254,16 @@ void Player::DrawDebugGUI()
             ImGui::DragFloat("Radius", &radius, 0.0005f, 0, 5);
             ImGui::DragFloat("Height", &height, 0.0005f, 0, 5);
         }
-        if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
+        ImGui::SliderFloat("Health", &health, 0.0f, maxHealth);
+        if (ImGui::CollapsingHeader("Animation", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            float animationSeconds = model->GetAnimationSeconds();
+            ImGui::SliderFloat("animationSeconds", &animationSeconds, 0.0f, 3.0f);
 
+            int i = static_cast<int>(movingFlag);
+            ImGui::InputInt("movingFlag", &i);
         }
+        ImGui::InputInt("extractColor", &extractColor);
         //ImGui::EndChild();
     }
     ImGui::End();
