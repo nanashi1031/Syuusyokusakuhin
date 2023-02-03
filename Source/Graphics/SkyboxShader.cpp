@@ -21,17 +21,23 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 		fclose(fp);
 
 		// 頂点シェーダー生成
-		HRESULT hr = device->CreateVertexShader(csoData.get(), csoSize, nullptr, vertexShader.GetAddressOf());
+		HRESULT hr = device->CreateVertexShader(
+			csoData.get(), csoSize, nullptr, vertexShader.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 
 		// 入力レイアウト
 		D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,
+			0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT,
+			0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,
+			0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
-		hr = device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), csoData.get(), csoSize, inputLayout.GetAddressOf());
+		hr = device->CreateInputLayout(
+			inputElementDesc, ARRAYSIZE(inputElementDesc),
+			csoData.get(), csoSize, inputLayout.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -53,7 +59,8 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 		fclose(fp);
 
 		// ピクセルシェーダー生成
-		HRESULT hr = device->CreatePixelShader(csoData.get(), csoSize, nullptr, pixelShader.GetAddressOf());
+		HRESULT hr = device->CreatePixelShader(
+			csoData.get(), csoSize, nullptr, pixelShader.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -80,12 +87,12 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;
 		::memset(&desc, 0, sizeof(desc));
+		desc.DepthEnable = true;
+		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-
-
-
-
-		HRESULT hr = device->CreateDepthStencilState(&desc, depthStencilState.GetAddressOf());
+		HRESULT hr = device->CreateDepthStencilState(
+			&desc, depthStencilState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -104,7 +111,8 @@ SkyboxShader::SkyboxShader(ID3D11Device* device)
 		desc.CullMode = D3D11_CULL_BACK;
 		desc.AntialiasedLineEnable = false;
 
-		HRESULT hr = device->CreateRasterizerState(&desc, rasterizerState.GetAddressOf());
+		HRESULT hr = device->CreateRasterizerState(
+			&desc, rasterizerState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HRTrace(hr));
 	}
 
@@ -176,7 +184,8 @@ void SkyboxShader::Begin(const RenderContext& rc)
 	DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&rc.projection);
 	// ビュープロジェクションの逆行列を利用する
 	DirectX::XMStoreFloat4x4(&cbScene.inverseView, DirectX::XMMatrixInverse(nullptr, V));
-	DirectX::XMStoreFloat4x4(&cbScene.inverseProjection, DirectX::XMMatrixInverse(nullptr, P));
+	DirectX::XMStoreFloat4x4(
+		&cbScene.inverseProjection, DirectX::XMMatrixInverse(nullptr, P));
 	rc.deviceContext->UpdateSubresource(sceneConstantBuffer.Get(), 0, 0, &cbScene, 0, 0);
 }
 
@@ -185,8 +194,10 @@ void SkyboxShader::Draw(const RenderContext& rc, const Sprite* sprite)
 {
 	UINT stride = sizeof(Sprite::Vertex);
 	UINT offset = 0;
-	rc.deviceContext->IASetVertexBuffers(0, 1, sprite->GetVertexBuffer().GetAddressOf(), &stride, &offset);
-	rc.deviceContext->PSSetShaderResources(0, 1, sprite->GetShaderResourceView().GetAddressOf());
+	rc.deviceContext->IASetVertexBuffers(
+		0, 1, sprite->GetVertexBuffer().GetAddressOf(), &stride, &offset);
+	rc.deviceContext->PSSetShaderResources(
+		0, 1, sprite->GetShaderResourceView().GetAddressOf());
 	rc.deviceContext->Draw(4, 0);
 }
 
