@@ -3,20 +3,22 @@
 #include "Mathf.h"
 #include "InsectDerived.h"
 #include "Collision.h"
+#include "Camera.h"
 #include "StageManager.h"
+#include "LightManager.h"
 #include <imgui.h>
 
 Insect::Insect()
 {
-    model = new Model("Data/Model/SpikeBall/SpikeBall.mdl");
-    scale.x = scale.y = scale.z = 1.0f;
-
-	position.x = -30.0f;
-	position.y = 100.0f;
+    model = new Model("Data/Model/Insect/Butterfly.mdl");
+    scale.x = scale.y = scale.z = 0.05f;
 
     radius = 0.5f;
     height = 2.0f;
-    moveSpeed = 5.0f;
+    moveSpeed = 30.0f;
+	turnSpeed = 10.0f;
+
+	model->PlayAnimation(0, true);
 
     stateMachine = new StateMachine();
 #pragma region ステート登録
@@ -25,7 +27,7 @@ Insect::Insect()
     stateMachine->RegisterState(new InsectState::FlyingState(this));
     stateMachine->RegisterState(new InsectState::ReturnState(this));
 #pragma endregion
-    stateMachine->SetState(State::Idle);
+    stateMachine->SetState(State::Pursuit);
 }
 
 Insect::~Insect()
@@ -44,10 +46,14 @@ void Insect::Update(float elapsedTime)
 
     UpdateTransform();
 
+	model->UpdateAnimation(elapsedTime);
     model->UpdateTransform(transform);
 
     // 経過フレーム
     float elapsedFrame = elapsedTime * 60.0f;
+
+	//UpdateVelocitys(elapsedFrame);
+	//UpdateMoves(elapsedFrame);
 
     // 垂直速力更新処理
     UpdateVerticalVelocity(elapsedFrame);
@@ -58,16 +64,17 @@ void Insect::Update(float elapsedTime)
     // 水平移動処理更新
     UpdateHorizontalMove(elapsedTime);
 
-    // 速力処理更新
-    //UpdateVelocity(elapsedTime);
+	Turn(elapsedTime, velocity.x, velocity.z, turnSpeed);
 
     stateMachine->Update(elapsedTime);
-    //PlayerWeaponTracking(elapsedTime);
+
+	UpdateLight();
 }
 
 void Insect::Render(RenderContext rc, ModelShader* shader)
 {
-    shader->Draw(rc, model);
+	if (stateMachine->GetStateIndex() != static_cast<int>(Insect::State::Pursuit))
+		shader->Draw(rc, model);
 }
 
 void Insect::DrawDebugPrimitive()
@@ -91,11 +98,28 @@ void Insect::DrawDebugGUI()
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
             ImGui::DragFloat3("Postion", &position.x, 0.1f);
-            ImGui::DragFloat("moveSpeed", &moveSpeed, 0.1f);
+			DirectX::XMFLOAT3 a;
+			a.x = DirectX::XMConvertToDegrees(angle.x);
+			a.y = DirectX::XMConvertToDegrees(angle.y);
+			a.z = DirectX::XMConvertToDegrees(angle.z);
+			ImGui::DragFloat3("Angle", &a.x, 0.1f, 0, 360);
+			angle.x = DirectX::XMConvertToRadians(a.x);
+			angle.y = DirectX::XMConvertToRadians(a.y);
+			angle.z = DirectX::XMConvertToRadians(a.z);
+
+			ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
+            ImGui::DragFloat("MoveSpeed", &moveSpeed, 0.1f);
+			int color = extractColor;
+			ImGui::InputInt("extractColor", &color);
+			extractColor = color;
             ImGui::DragFloat3("SwordPostion", &weaponPosition.x, 0.1f);
         }
         if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
         {
+			if (ImGui::Button("Pursuit"))
+			{
+				stateMachine->ChangeState(State::Pursuit);
+			}
             std::string str = "";
             int nowState = stateMachine->GetStateIndex();
             if (nowState == static_cast<int>(Insect::State::Idle))
@@ -158,100 +182,146 @@ void Insect::PlayerWeaponTracking(float elapsedTime)
 
 void Insect::UpdateVerticalVelocity(float elapsedFrame)
 {
+	//float length = sqrtf(velocity.y * velocity.y);
+	//if (length != 0.0f)
+	//{
+	//	float friction = this->friction * elapsedFrame;
 
+	//	if (length > friction)
+	//	{
+	//		float vy = velocity.y / length;
+
+	//		velocity.y -= vy * friction;
+	//	}
+	//	else
+	//	{
+	//		velocity.y = 0.0f;
+	//	}
+	//}
+	//if (length <= maxMoveSpeed)
+	//{
+	//	float moveVecLength = sqrtf(moveVecY * moveVecY);
+	//	if (moveVecLength > 0.0f)
+	//	{
+	//		float acceleration = this->acceleration * elapsedFrame;
+
+	//		velocity.y += moveVecY * acceleration;
+
+	//		// 最大速度制限
+	//		float length = sqrtf(velocity.y * velocity.y);
+	//		if (length > maxMoveSpeed)
+	//		{
+	//			float vy = velocity.y / length;
+
+	//			velocity.y = vy * maxMoveSpeed;
+	//		}
+	//		if (isGround && slopeRate > 0.0f)
+	//		{
+	//			velocity.y -= length * slopeRate * elapsedFrame;
+	//		}
+	//	}
+	//}
+	//moveVecY = 0.0f;
 }
 
 void Insect::UpdateVerticalMove(float elapsedTime)
 {
- //   slopeRate = 0.0f;
+	float my = velocity.y * elapsedTime;
+	if (my < 0.0f)
+	{
+		DirectX::XMVECTOR Velocity =
+			DirectX::XMVectorScale(DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&velocity)), radius);
+		Velocity = DirectX::XMVectorSetY(Velocity, 0.0f);
 
- //   // 落下中
- //   if (velocity.y < 0.0f)
- //   {
- //       // レイの開始位置は足元より少し上
- //       DirectX::XMFLOAT3 start = { position.x,position.y + stepOffset , position.z };
- //       // レイの終了位置は移動後の位置
- //       DirectX::XMFLOAT3 end = { position.x,position.y + velocity.y , position.z };
+		DirectX::XMFLOAT3 start = { position.x, position.y, position.z };
+		DirectX::XMFLOAT3 end = {
+			position.x + DirectX::XMVectorGetX(Velocity),
+			position.y + my + DirectX::XMVectorGetZ(Velocity),
+			position.z + DirectX::XMVectorGetZ(Velocity) };
 
- //       // レイキャストによる地面判定
- //       HitResult hit;
- //       StageManager& stageManager = StageManager::Instance();
- //       if (stageManager.GetStage(stageManager.GetNowStage())->RayCast(start, end, hit))
- //       {
- //           // 地面に接地している
- //           position.y = hit.position.y;
-
- //           velocity.y = 0.0f;
- //       }
- //   }
-
-	//position.y += velocity.y;
+		// レイキャストによる床判定
+		HitResult hit;
+		StageManager& stageManager = StageManager::Instance();
+		if (stageManager.GetStage(stageManager.GetNowStage())->RayCast(start, end, hit))
+		{
+			position.y = hit.position.y;
+			velocity.y = 0.0f;
+		}
+		else
+		{
+			position.y += my;
+		}
+	}
+	else
+	{
+		position.y += my;
+	}
 }
 
 void Insect::UpdateHorizontalVelocity(float elapsedFrame)
 {
-	// XZ平面の速力を減速する
-	float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-	if (length > 0.0f)
-	{
-		// 摩擦力
-		float friction = this->friction * elapsedFrame;
+	//// XZ平面の速力を減速する
+	//float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	//if (length > 0.0f)
+	//{
+	//	// 摩擦力
+	//	float friction = this->friction * elapsedFrame;
 
-		// 空中にいるときは摩擦力を減らす
-		if (!isGround) friction *= airControl;
+	//	// 空中にいるときは摩擦力を減らす
+	//	if (!isGround) friction *= airControl;
 
-		// 摩擦による横方向の減速処理
-		if (length > friction)
-		{
-			// 単位ベクトル化
-			float vx = velocity.x / length;
-			float vz = velocity.z / length;
+	//	// 摩擦による横方向の減速処理
+	//	if (length > friction)
+	//	{
+	//		// 単位ベクトル化
+	//		float vx = velocity.x / length;
+	//		float vz = velocity.z / length;
 
-			velocity.x -= vx * friction;
-			velocity.z -= vz * friction;
-		}
-		// 横方向の速度が摩擦力以下になったので速力を無効化
-		else
-		{
-			velocity.x = 0.0f;
-			velocity.z = 0.0f;
-		}
-	}
-	// XZ平面の速力を加速する
-	if (length <= maxMoveSpeed)
-	{
-		// 移動ベクトルがゼロベクトルでないなら加速する
-		float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-		if (moveVecLength > 0.0f)
-		{
-			// 加速力
-			float acceleration = this->acceleration * elapsedFrame;
-			// 空中にいるときは加速力を減らす
-			if (!isGround)acceleration *= airControl;
+	//		velocity.x -= vx * friction;
+	//		velocity.z -= vz * friction;
+	//	}
+	//	// 横方向の速度が摩擦力以下になったので速力を無効化
+	//	else
+	//	{
+	//		velocity.x = 0.0f;
+	//		velocity.z = 0.0f;
+	//	}
+	//}
+	//// XZ平面の速力を加速する
+	//if (length <= maxMoveSpeed)
+	//{
+	//	// 移動ベクトルがゼロベクトルでないなら加速する
+	//	float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
+	//	if (moveVecLength > 0.0f)
+	//	{
+	//		// 加速力
+	//		float acceleration = this->acceleration * elapsedFrame;
+	//		// 空中にいるときは加速力を減らす
+	//		if (!isGround)acceleration *= airControl;
 
-			// 移動ベクトルによる加速処理
-			velocity.x += moveVecX * acceleration;
-			velocity.z += moveVecZ * acceleration;
+	//		// 移動ベクトルによる加速処理
+	//		velocity.x += moveVecX * acceleration;
+	//		velocity.z += moveVecZ * acceleration;
 
-			// 最大速度制限
-			float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-			if (length > maxMoveSpeed)
-			{
-				float vx = velocity.x / length;
-				float vz = velocity.z / length;
+	//		// 最大速度制限
+	//		float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+	//		if (length > maxMoveSpeed)
+	//		{
+	//			float vx = velocity.x / length;
+	//			float vz = velocity.z / length;
 
-				velocity.x = vx * maxMoveSpeed;
-				velocity.z = vz * maxMoveSpeed;
-			}
-			if (isGround && slopeRate > 0.0f)
-			{
-				velocity.y -= length * slopeRate * elapsedFrame;
-			}
-		}
-	}
-	// 移動ベクトルをリセット
-	moveVecX = 0.0f;
-	moveVecZ = 0.0f;
+	//			velocity.x = vx * maxMoveSpeed;
+	//			velocity.z = vz * maxMoveSpeed;
+	//		}
+	//		if (isGround && slopeRate > 0.0f)
+	//		{
+	//			velocity.y -= length * slopeRate * elapsedFrame;
+	//		}
+	//	}
+	//}
+	//// 移動ベクトルをリセット
+	//moveVecX = 0.0f;
+	//moveVecZ = 0.0f;
 }
 
 void Insect::UpdateHorizontalMove(float elapsedTime)
@@ -339,5 +409,18 @@ void Insect::UpdateHorizontalMove(float elapsedTime)
 			position.z += mz;
 		}
 
+	}
+}
+
+void Insect::UpdateLight()
+{
+	if (lightIndex >= 0)
+	{
+		DirectX::XMFLOAT3 length =
+			Mathf::CalculateLength(Camera::Instance().GetEye(), position);
+		length = Mathf::MultiplyFloat3Float(length, radius + radius);
+		DirectX::XMFLOAT3 lightPosition =
+		{ position.x + length.x, position.y + length.y, position.z + length.z };
+		LightManager::Instane().GetLight(lightIndex - 1)->SetPosition(lightPosition);
 	}
 }
