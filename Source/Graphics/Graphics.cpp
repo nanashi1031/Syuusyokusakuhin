@@ -23,7 +23,9 @@ Graphics::Graphics(HWND hWnd)
 	RECT rc;
 	GetClientRect(hWnd, &rc);
 	UINT screenWidth = rc.right - rc.left;
+	//screenWidth = 1920;
 	UINT screenHeight = rc.bottom - rc.top;
+	//screenHeight = 1080;
 
 	this->screenWidth = static_cast<float>(screenWidth);
 	this->screenHeight = static_cast<float>(screenHeight);
@@ -53,8 +55,10 @@ Graphics::Graphics(HWND hWnd)
 			swapchainDesc.BufferDesc.Height = screenHeight;
 			swapchainDesc.BufferDesc.RefreshRate.Numerator = 60;
 			swapchainDesc.BufferDesc.RefreshRate.Denominator = 1;
-			swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// 1ピクセルあたりの各色(RGBA)を8bit(0～255)のテクスチャ(バックバッファ)を作成する。
-			swapchainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+			swapchainDesc.BufferDesc.Format =
+				DXGI_FORMAT_R8G8B8A8_UNORM;	// 1ピクセルあたりの各色(RGBA)を8bit(0～255)のテクスチャ(バックバッファ)を作成する。
+			swapchainDesc.BufferDesc.ScanlineOrdering =
+				DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 			swapchainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 			swapchainDesc.SampleDesc.Count = 1;
