@@ -29,6 +29,7 @@ public:
 	static const GamePadButton KEY_L				= (1 << 19);
 	static const GamePadButton KEY_E				= (1 << 20);
 	static const GamePadButton KEY_R				= (1 << 21);
+	static const GamePadButton KEY_Z				= (1 << 22);
 
 public:
 	GamePad() {}
