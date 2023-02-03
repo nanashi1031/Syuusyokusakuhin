@@ -42,7 +42,7 @@ bool AttackJudgment::Judgment()
 bool SkillShotJudgment::Judgment()
 {
 	// hp‚ª”¼•ªˆÈ‰º‚ÌŽžskill”­“®‰Â”\
-	int health = owner->GetHealth();
+	int health = static_cast<int>(owner->GetHealth());
 	int baseHealth = static_cast<int>(owner->GetMaxHealth() * 0.8);
 	if (health < baseHealth)
 	{
