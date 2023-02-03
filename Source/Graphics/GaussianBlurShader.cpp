@@ -205,7 +205,9 @@ void GaussianBlurShader::CalcGaussianFilter(CBFilter& cbFilter, const GaussianFi
 	cbFilter.texcel.x = 1.0f / gaussianFilterData.textureSize.x;
 	cbFilter.texcel.y = 1.0f / gaussianFilterData.textureSize.y;
 
-	float deviationPow2 = 2.0f * gaussianFilterData.deviation * gaussianFilterData.deviation;
+	float deviationPow2 =
+		2.0f * gaussianFilterData.deviation * gaussianFilterData.deviation;
+	float oneDivPIMulDev2 = 1.0f / (DirectX::XM_PI * deviationPow2);
 	float sum = 0.0f;
 	int id = 0;
 	for (int y = -kernelSize / 2; y <= kernelSize / 2; y++)
@@ -214,9 +216,8 @@ void GaussianBlurShader::CalcGaussianFilter(CBFilter& cbFilter, const GaussianFi
 		{
 			cbFilter.weights[id].x = (float)x;
 			cbFilter.weights[id].y = (float)y;
-			cbFilter.weights[id].z = deviationPow2;
-			// ガウシアンフィルター
-
+			cbFilter.weights[id].z =
+				oneDivPIMulDev2 * expf(-(x * x + y * y) / deviationPow2);
 
 			sum += cbFilter.weights[id].z;
 			id++;
