@@ -55,4 +55,7 @@ private:
 
 	//	高輝度抽出ぼかしテクスチャ
 	std::unique_ptr<RenderTarget> luminanceExtractBokehRenderTarget;
+
+public:
+	void SetColorGradingData(float color) { colorGradingData.saturation = color; }
 };
