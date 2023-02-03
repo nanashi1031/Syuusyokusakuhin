@@ -12,6 +12,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float4 diffuseColor =
 	diffuseMap.Sample(diffuseMapSamplerState, pin.texcoord) * pin.color;
 
+
 	float3 normal =
 		normalMap.Sample(diffuseMapSamplerState, pin.texcoord).xyz * 2 - 1;
 	float3x3 CM =
@@ -28,6 +29,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float shiness = 128;
 
 	// 環境光の計算
+	float4 ambientLightColor2 = float4(0.3, 0.3, 0.3,1);
+
 	float3 ambient = ka * ambientLightColor;
 
 	// 平行光源のライティング計算
@@ -41,6 +44,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 		shadowMap, shadowMapSamplerState, pin.shadowTexcoord, shadowColor, shadowBias);
 	directionalDiffuse *= shadow;
 	directionalSpecular *= shadow;
+
 
 
 	// 点光源の処理
@@ -61,7 +65,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 		// 距離減衰を算出する
 		float attenuate = saturate(1.0f - lightLength / pointLightData[i].range);
-
+		attenuate = 0.6;
 		lightVector = lightVector / lightLength;
 		pointDiffuse += CalcLambertDiffuse(N, lightVector,
 			pointLightData[i].color.rgb, kd.rgb) * attenuate;
@@ -92,8 +96,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 		float3 spotDirection = normalize(spotLightData[i].direction.xyz);
 		float angle = dot(spotDirection, lightVector);
 		float area = spotLightData[i].innerCorn - spotLightData[i].outerCorn;
+		attenuate = 2;
 		attenuate *= saturate(1.0f - (spotLightData[i].innerCorn - angle) / area);
-
 		spotDiffuse += CalcLambertDiffuse(N, lightVector,
 			spotLightData[i].color.rgb, kd.rgb) * attenuate;
 		spotSpecular += CalcPhongSpecular(N, lightVector,
@@ -101,10 +105,19 @@ float4 main(VS_OUT pin) : SV_TARGET
 	}
 
 	float4 color = float4(ambient, diffuseColor.a);
+
 	color.rgb += diffuseColor.rgb * (directionalDiffuse + pointDiffuse + spotDiffuse);
+	color.rgb += diffuseColor.rgb;
 	color.rgb += directionalSpecular + pointSpecular + spotSpecular;
 	//	TODO リムライティング　真っ白になる
 	color.rgb += CalcRimLight(N, E, L, directionalLightData.color.rgb);
+	//if (shadow.x <= 2.0f && shadow.y <= 2.0f && shadow.z <= 2.0f)
+	//{
+	//	shadow.x = 1.0f;
+	//	shadow.y = 1.0f;
+	//	shadow.z = 1.0f;
+	//}
+	color *= float4(shadow,1.0);
 
 	return color;
 }

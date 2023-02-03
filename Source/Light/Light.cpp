@@ -93,7 +93,7 @@ void Light::DrawDebugGUI()
 			{
 				ImGui::DragFloat3("position", &position.x);
 				ImGui::ColorEdit3("color", &color.x);
-				ImGui::DragFloat("range", &range, 0.1f, 0, FLT_MAX);
+				ImGui::DragFloat("range", &range, 0.1f, -FLT_MAX, FLT_MAX);
 				break;
 			}
 			case LightType::Spot:

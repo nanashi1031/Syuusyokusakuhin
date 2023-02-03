@@ -25,6 +25,9 @@ public:
 	// ライトの登録を解除する
 	void Remove(Light* light);
 
+	// 指定した番号のライトを削除する
+	void RemoveIndex(int index);
+
 	// 登録済みのライトを全削除する
 	void Clear();
 

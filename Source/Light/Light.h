@@ -1,6 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
-#include "Graphics/RenderContext.h"
+#include "RenderContext.h"
 
 // ŒõŒ¹ƒ^ƒCƒv
 enum class LightType

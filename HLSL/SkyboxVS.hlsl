@@ -7,7 +7,7 @@ VS_OUT main(float4 position : POSITION, float4 color : COLOR, float2 texcoord : 
 	vout.color = color;
 
 	//	NDCÀ•W‚©‚çƒ[ƒ‹ƒh•ÏŠ·‚É•ÏŠ·
-	float4	p = mul(position, inverseProjection);
+	float4 p = mul(position, inverseProjection);
 	p /= p.w;
 	p = mul(p, inverseView);
 	vout.worldPosition = p.xyz;

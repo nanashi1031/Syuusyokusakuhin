@@ -21,6 +21,11 @@ void LightManager::Remove(Light* light)
 	}
 }
 
+void LightManager::RemoveIndex(int index)
+{
+	lights.erase(lights.begin()+ (index -1 ));
+}
+
 void LightManager::Clear()
 {
 	for (Light* light : lights)
