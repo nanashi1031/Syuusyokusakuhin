@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "Collision.h"
 #include "StageManager.h"
+#include "LightManager.h"
 
 void Character::Move(float vx, float vz, float speed)
 {
@@ -21,7 +22,7 @@ void Character::Turn(float elapsedTime, float vx, float vz, float speed)
         return;
 
     //進行ベクトルを単位ベクトル化
-    float v = sqrt(pow(vx, 2.0f) + pow(vz, 2.0f));
+    float v = static_cast<float>(sqrt(pow(vx, 2.0f) + pow(vz, 2.0f)));
     vx /= v;
     vz /= v;
 
@@ -261,12 +262,12 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				//position.x = hit2.position.x;
 				//position.z = hit2.position.z;
 
-				hit2.position.y = position.y;
-				hit2.normal.y = 0;
-				Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit2.normal));
-				Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit2.position));
-				Dot = DirectX::XMVector3Dot(Vec, Normal);
-				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit2.position), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
+				//hit2.position.y = position.y;
+				//hit2.normal.y = 0;
+				//Normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&hit2.normal));
+				//Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit2.position));
+				//Dot = DirectX::XMVector3Dot(Vec, Normal);
+				//DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit2.position), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
 			}
 		}
 		else
@@ -300,7 +301,7 @@ void Character::Ratate(DirectX::XMFLOAT3 rotateValue, float time)
 	angle.z += rotateValue.z;
 }
 
-bool Character::ApplyDamage(const int damage, const float invincibleTime)
+bool Character::ApplyDamage(const float damage, const float invincibleTime)
 {
 	// ダメージが0未満の場合はダメージ無し
 	if (damage < 0) return false;
