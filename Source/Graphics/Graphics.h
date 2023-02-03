@@ -78,22 +78,22 @@ public:
 	ImGuiRenderer* GetImGuiRenderer() const { return imguiRenderer.get(); }
 
 private:
-	static Graphics*								instance;
+	static Graphics* instance;
 
-	Microsoft::WRL::ComPtr<ID3D11Device>			device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>		immediateContext;
-	Microsoft::WRL::ComPtr<IDXGISwapChain>			swapchain;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	renderTargetView;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D>			depthStencilBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	depthStencilView;
+	Microsoft::WRL::ComPtr<ID3D11Device> device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediateContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 
-	std::unique_ptr<Shader>                         shader;
-	std::unique_ptr<ModelShader>					modelShaders[static_cast<int>(ModelShaderId::Max)];
-	std::unique_ptr<SpriteShader>					spriteShaders[static_cast<int>(SpriteShaderId::Max)];
-	std::unique_ptr<DebugRenderer>					debugRenderer;
-	std::unique_ptr<LineRenderer>					lineRenderer;
-	std::unique_ptr<ImGuiRenderer>					imguiRenderer;
+	std::unique_ptr<Shader> shader;
+	std::unique_ptr<ModelShader> modelShaders[static_cast<int>(ModelShaderId::Max)];
+	std::unique_ptr<SpriteShader> spriteShaders[static_cast<int>(SpriteShaderId::Max)];
+	std::unique_ptr<DebugRenderer> debugRenderer;
+	std::unique_ptr<LineRenderer> lineRenderer;
+	std::unique_ptr<ImGuiRenderer> imguiRenderer;
 
-	float	screenWidth;
-	float	screenHeight;
+	float screenWidth;
+	float screenHeight;
 };
