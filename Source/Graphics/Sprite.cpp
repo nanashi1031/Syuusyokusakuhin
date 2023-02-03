@@ -2,7 +2,7 @@
 #include <WICTextureLoader.h>
 #include "Sprite.h"
 #include "Misc.h"
-#include "Graphics/Graphics.h"
+#include "Graphics.h"
 
 // コンストラクタ
 Sprite::Sprite()
