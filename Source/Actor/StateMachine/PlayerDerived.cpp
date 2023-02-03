@@ -3,6 +3,7 @@
 #include "Mathf.h"
 #include "Collision.h"
 #include "EnemyManager.h"
+#include "LightManager.h"
 
 void PlayerState::IdleState::Enter()
 {
@@ -152,7 +153,8 @@ void PlayerState::RunState::Execute(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (mouse.GetButtonDown() & mouse.BTN_LEFT)
 	{
-		owner->GetStateMachine()->ChangeState(Player::State::AttackDashu);
+		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
+		//owner->GetStateMachine()->ChangeState(Player::State::AttackDashu);
 	}
 
 	// 右クリック押されたら回避ステートへ遷移
@@ -173,6 +175,7 @@ void PlayerState::AttackCombo1State::Enter()
 		Player::PlayerAnimation::SlashKesakiri, false, 1.2f, 2.0f);
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
+	owner->SetMovingFlag(false);
 }
 
 void PlayerState::AttackCombo1State::Execute(float elapsedTime)
@@ -185,10 +188,25 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 		{
 			float attackPower =
 				owner->DamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
-			Collision::AttackNodeVsNode(
+			if (Collision::AttackNodeVsNode(
 				owner, "mixamorig:Sword_joint", 1.0f,
 				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-				attackPower);
+				attackPower))
+			{
+				if (owner->GetLightIndex() < 0)
+				{
+					DirectX::XMFLOAT4 color = Extract::ColorConversion(enemy->GetParts()[j].extractColor);
+					Light* light = new Light(LightType::Point);
+					DirectX::XMFLOAT3 LightPosition =
+						owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
+					light->SetPosition(LightPosition);
+					light->SetColor(DirectX::XMFLOAT4({ color }));
+					light->SetRange(2.0f);
+					LightManager::Instane().Register(light);
+					owner->SetLightIndex(LightManager::Instane().GetLightCount());
+				}
+				//owner->GetAudios(0)->Play(false);
+			}
 		}
 	}
 
@@ -200,7 +218,9 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 	}
 
 	// アニメーション再生が終了時
-	if (!owner->GetModel()->IsPlayAnimation())
+	//if (!owner->GetModel()->IsPlayAnimation())
+	float nextAnimeSeconds = 0.9f;
+	if(owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
 	{
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
@@ -219,7 +239,13 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 
 void PlayerState::AttackCombo1State::Exit()
 {
+	if (owner->GetLightIndex() > 0)
+	{
+		LightManager::Instane().RemoveIndex(owner->GetLightIndex());
+		owner->SetLightIndex(-1);
+	}
 
+	owner->SetMovingFlag(true);
 }
 
 void PlayerState::AttackCombo2State::Enter()
@@ -228,6 +254,7 @@ void PlayerState::AttackCombo2State::Enter()
 		Player::PlayerAnimation::SlashLeftRoundUp, false, 1.2f, 2.0f);
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
+	owner->SetMovingFlag(false);
 }
 
 void PlayerState::AttackCombo2State::Execute(float elapsedTime)
@@ -242,10 +269,24 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 			{
 				float attackPower =
 					owner->DamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
-				Collision::AttackNodeVsNode(
+				if(Collision::AttackNodeVsNode(
 					owner, "mixamorig:Sword_joint", 1.0f,
 					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-					attackPower);
+					attackPower))
+				{
+					if (owner->GetLightIndex() < 0)
+					{
+						DirectX::XMFLOAT4 color = Extract::ColorConversion(enemy->GetParts()[j].extractColor);
+						Light* light = new Light(LightType::Point);
+						DirectX::XMFLOAT3 LightPosition =
+							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
+						light->SetPosition(LightPosition);
+						light->SetColor(DirectX::XMFLOAT4({ color }));
+						light->SetRange(2.0f);
+						LightManager::Instane().Register(light);
+						owner->SetLightIndex(LightManager::Instane().GetLightCount());
+					}
+				}
 			}
 		}
 	}
@@ -258,7 +299,9 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 	}
 
 	// アニメーション再生が終了時
-	if (!owner->GetModel()->IsPlayAnimation())
+	//if (!owner->GetModel()->IsPlayAnimation())
+	float nextAnimeSeconds = 0.9f;
+	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
 	{
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
@@ -277,29 +320,53 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 
 void PlayerState::AttackCombo2State::Exit()
 {
+	if (owner->GetLightIndex() > 0)
+	{
+		LightManager::Instane().RemoveIndex(owner->GetLightIndex());
+		owner->SetLightIndex(-1);
+	}
 
+	owner->SetMovingFlag(true);
 }
 
 void PlayerState::AttackCombo3State::Enter()
 {
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::SlashKaratake, false, 1.2f, 2.0f);
+	owner->SetMovingFlag(false);
 }
 
 void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 {
-	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+	if (owner->GetModel()->GetAnimationSeconds() > 1.0f)
 	{
-		Enemy* enemy = enemyManager.GetEnemy(i);
-		for (int j = 0; j < enemy->GetParts().size(); j++)
+		EnemyManager& enemyManager = EnemyManager::Instance();
+		for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 		{
-			float attackPower =
-				owner->DamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
-			Collision::AttackNodeVsNode(
-				owner, "mixamorig:Sword_joint", 1.0f,
-				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-				attackPower);
+			Enemy* enemy = enemyManager.GetEnemy(i);
+			for (int j = 0; j < enemy->GetParts().size(); j++)
+			{
+				float attackPower =
+					owner->DamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
+				if (Collision::AttackNodeVsNode(
+					owner, "mixamorig:Sword_joint", 1.0f,
+					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+					attackPower))
+				{
+					if (owner->GetLightIndex() < 0)
+					{
+						DirectX::XMFLOAT4 color = Extract::ColorConversion(enemy->GetParts()[j].extractColor);
+						Light* light = new Light(LightType::Point);
+						DirectX::XMFLOAT3 LightPosition =
+							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
+						light->SetPosition(LightPosition);
+						light->SetColor(DirectX::XMFLOAT4({ color }));
+						light->SetRange(2.0f);
+						LightManager::Instane().Register(light);
+						owner->SetLightIndex(LightManager::Instane().GetLightCount());
+					}
+				}
+			}
 		}
 	}
 
@@ -312,7 +379,13 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 
 void PlayerState::AttackCombo3State::Exit()
 {
+	if (owner->GetLightIndex() > 0)
+	{
+		LightManager::Instane().RemoveIndex(owner->GetLightIndex());
+		owner->SetLightIndex(-1);
+	}
 
+	owner->SetMovingFlag(true);
 }
 
 void PlayerState::AttackDashuState::Enter()
@@ -321,6 +394,7 @@ void PlayerState::AttackDashuState::Enter()
 		Player::PlayerAnimation::SlashRotary, false, 0.0f, 1.5f);
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
+	owner->SetMovingFlag(false);
 }
 
 void PlayerState::AttackDashuState::Execute(float elapsedTime)
@@ -332,11 +406,25 @@ for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 		for (int j = 0; j < enemy->GetParts().size(); j++)
 		{
 			float attackPower =
-				owner->DamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
-			Collision::AttackNodeVsNode(
+				owner->DamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
+			if (Collision::AttackNodeVsNode(
 				owner, "mixamorig:Sword_joint", 1.0f,
 				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-				attackPower);
+				attackPower))
+			{
+				if (owner->GetLightIndex() < 0)
+				{
+					DirectX::XMFLOAT4 color = Extract::ColorConversion(enemy->GetParts()[j].extractColor);
+					Light* light = new Light(LightType::Point);
+					DirectX::XMFLOAT3 LightPosition =
+						owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
+					light->SetPosition(LightPosition);
+					light->SetColor(DirectX::XMFLOAT4({ color }));
+					light->SetRange(2.0f);
+					LightManager::Instane().Register(light);
+					owner->SetLightIndex(LightManager::Instane().GetLightCount());
+				}
+			}
 		}
 	}
 
@@ -366,7 +454,13 @@ for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 
 void PlayerState::AttackDashuState::Exit()
 {
+	if (owner->GetLightIndex() > 0)
+	{
+		LightManager::Instane().RemoveIndex(owner->GetLightIndex());
+		owner->SetLightIndex(-1);
+	}
 
+	owner->SetMovingFlag(true);
 }
 
 void PlayerState::AvoiDanceState::Enter()

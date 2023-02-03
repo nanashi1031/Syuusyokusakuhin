@@ -84,8 +84,7 @@ namespace PlayerState
 		float stateTimer = 0.0f;
 		bool nextAttackFlag = false;
 	};
-
-	// コンボ攻撃2ステート
+		// コンボ攻撃2ステート
 	class AttackCombo2State : public State
 	{
 	public:
@@ -103,7 +102,6 @@ namespace PlayerState
 		float stateTimer = 0.0f;
 		bool nextAttackFlag = false;
 	};
-
 	// コンボ攻撃3ステート
 	class AttackCombo3State : public State
 	{
@@ -117,8 +115,6 @@ namespace PlayerState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
-
-	private:
 	};
 
 	// ダッシュ攻撃ステート
