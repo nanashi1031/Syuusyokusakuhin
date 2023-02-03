@@ -10,14 +10,14 @@ class CameraController
 private:
     struct Target
     {
-        float enemyLengthTotal;     // 敵との距離
-        int index;                  // 敵のインデックス番号
+        int index; // 敵のインデックス番号
+        float enemyLengthTotal; // 敵との距離
 
         // これをしないとソートできない
         // 最後のconstを忘れると"instantiated from here"というエラーが出てコンパイルできないので注意
         bool operator<(const Target& right) const
         {
-            return right.enemyLengthTotal == right.enemyLengthTotal ? index < right.index : enemyLengthTotal < right.enemyLengthTotal;
+            return right.enemyLengthTotal == right.enemyLengthTotal ? enemyLengthTotal > right.enemyLengthTotal : enemyLengthTotal > right.enemyLengthTotal;
         }
     };
     std::vector<Target> targets;
@@ -25,7 +25,7 @@ private:
     struct Plane
     {
         DirectX::XMFLOAT3 normal;
-        float distance;   // 法線からの最短距離
+        float distance;  // 法線からの最短距離
     };
 
     enum class CameraMode
@@ -84,6 +84,8 @@ private:
 
     bool GetTargetPerspective();
     DirectX::XMFLOAT3 GetPerspective();
+
+    void CalculationEnemyLenght();
 
 private:
     CameraMode cameraMode = CameraMode::NormalCamera;

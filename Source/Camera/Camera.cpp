@@ -60,8 +60,5 @@ const DirectX::XMFLOAT3& Camera::GetCameraDirection()
     vec.x = cameraFrontX;
     vec.z = cameraFrontZ;
 
-    // カメラ前方向ベクトルをXZ単位ベクトルに変換
-	//const DirectX::XMFLOAT3& vec = Mathf::CalculateNormalize({ front.x, up.y, front.z });
-
 	return vec;
 }

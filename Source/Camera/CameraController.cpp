@@ -113,6 +113,8 @@ void CameraController::DrawDebugGUI()
                 ImGui::Text("lockOnFlag %s", str);
             }
             ImGui::Text("nowTargetIndex  %d", nowTargetIndex);
+            if (targets.size())
+                ImGui::Text("nowTargetsIndex %d", targets[nowTargetIndex].index);
             {
                 char* str = {};
                 switch (cameraMode)
@@ -346,6 +348,8 @@ void CameraController::LockOn(float elapsedTime)
 
                 if (playerEnemyLengthTotal > lockOnRange) continue;
 
+                if (playerEnemyLengthTotal < 0)
+                    playerEnemyLengthTotal = -playerEnemyLengthTotal;
                 target.enemyLengthTotal = playerEnemyLengthTotal;
                 target.index = j;
                 targets.emplace_back(target);
@@ -364,11 +368,15 @@ void CameraController::LockOn(float elapsedTime)
         // カメラをプレイヤーの正面へ向ける
         target.index = 0;
         perspective = ResetCamera(elapsedTime);
+        lerpFlag = true;
+        return;
     }
 
     // 小さい順に並べ替え
-    std::sort(targets.begin(), targets.end());
-
+    for (int i = 0; i < targets.size(); i++)
+    {
+        std::sort(targets.begin(), targets.end());
+    }
     // 遷移ステートへ移動
     cameraMode = CameraMode::LockOnCamera;
     lerpFlag = true;
@@ -417,6 +425,7 @@ bool CameraController::LockOnSwitching()
         // マウスの位置がスクリーンの真ん中から左に移動したら
         if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
         {
+            //CalculationEnemyLenght();
             Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
             // targets.indexの末尾じゃなければ対象を変更
             if (nowTargetIndex < enemy->GetPartsCameraTargetFlagTotal() - 1)
@@ -489,5 +498,48 @@ void CameraController::SetCamerarShake(DirectX::XMFLOAT3 shakePower, float shake
     if (shakeTime < shakeTimer)
     {
         ShakeCamera(shakePower);
+    }
+}
+
+void CameraController::CalculationEnemyLenght()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    Player* player = PlayerManager::Instance().GetPlayer(0);
+
+    Target target = targets[nowTargetIndex];
+    targets.clear();
+    targets.emplace_back(target);
+    for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        for (int j = 0; j < enemy->GetParts().size(); j++)
+        {
+            if (enemy->GetParts()[j].cameraTargetFlag)
+            {
+                Model::Node* node = enemy->GetModel()->FindNode(enemy->GetParts()[j].name);
+                DirectX::XMFLOAT3 playerEnemyLength =
+                    Mathf::CalculateLength(enemy->GetNodePosition(node), player->GetPosition());
+                float playerEnemyLengthTotal = playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
+
+                if (playerEnemyLengthTotal > lockOnRange) continue;
+
+                target.enemyLengthTotal = playerEnemyLengthTotal;
+                target.index = j;
+                if (targets[0].index == target.index) continue;
+                targets.emplace_back(target);
+            }
+        }
+        DirectX::XMFLOAT3 playerEnemyLength =
+            Mathf::CalculateLength(
+                enemyManager.GetEnemy(i)->GetPosition(), player->GetPosition());
+        float playerEnemyLengthTotal =
+            playerEnemyLength.x + playerEnemyLength.y + playerEnemyLength.z;
+
+        // 小さい順に並べ替え
+        for (int i = 0; i < targets.size(); i++)
+        {
+            std::sort(targets.begin(), targets.end());
+        }
+        lerpFlag = true;
     }
 }
