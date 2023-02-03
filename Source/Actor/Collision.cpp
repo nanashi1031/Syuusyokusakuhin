@@ -105,6 +105,50 @@ bool Collision::IntersectSphereVsNode(
 	return false;
 }
 
+static bool IntersectSphereVsNode(
+	const Character* characterA,
+	const char* nodeNameA,
+	const float nodeRadiusA,
+	const DirectX::XMFLOAT3 positionB,
+	const float radiusB,
+	DirectX::XMFLOAT3& outPosition)
+{
+	Model::Node* nodeA = characterA->GetNode(nodeNameA);
+	if (nodeA != nullptr)
+	{
+		DirectX::XMFLOAT3 nodePositionA = characterA->GetNodePosition(nodeA);
+		Graphics::Instance().GetDebugRenderer()->DrawSphere(
+			nodePositionA, nodeRadiusA, DirectX::XMFLOAT4(0, 1, 0, 1)
+		);
+
+		Graphics::Instance().GetDebugRenderer()->DrawSphere(
+			positionB, radiusB, DirectX::XMFLOAT4(0, 1, 0, 1)
+		);
+
+		DirectX::XMVECTOR positionAVec = DirectX::XMLoadFloat3(&nodePositionA);
+		DirectX::XMVECTOR positionBVec = DirectX::XMLoadFloat3(&positionB);
+		DirectX::XMVECTOR vec = DirectX::XMVectorSubtract(positionBVec, positionAVec);
+		DirectX::XMVECTOR lengthSqVec = DirectX::XMVector3LengthSq(vec);
+		float lengthSqf;
+		DirectX::XMStoreFloat(&lengthSqf, lengthSqVec);
+
+		float range = nodeRadiusA + radiusB;
+		if (lengthSqf > range * range)
+		{
+			return false;
+		}
+
+		vec = DirectX::XMVector3Normalize(vec);
+		vec = DirectX::XMVectorScale(vec, range);
+		positionBVec = DirectX::XMVectorAdd(positionAVec, vec);
+		DirectX::XMStoreFloat3(&outPosition, positionBVec);
+
+		return true;
+	}
+
+	return false;
+}
+
 // ƒm[ƒhA‚©‚çƒm[ƒhB‚Ö‚ÌUŒ‚”»’è
 bool Collision::AttackNodeVsNode(
 	const Character* characterA,
@@ -159,7 +203,7 @@ bool Collision::AttackNodeVsNode(
 				outPosition))
 			{
 				// ƒ_ƒ[ƒW‚ğ—^‚¦‚é
-				if (characterB->ApplyDamage(damage, 1.0f))
+				if (characterB->ApplyDamage(damage, 0.5f))
 				{
 					//@power‚ª“¥‚ñ’£‚é—Í‚æ‚è‹­‚¢‚È‚ç
 					if (power > characterB->GetNotStand())
@@ -181,8 +225,8 @@ bool Collision::AttackNodeVsNode(
 						// ‚Á”ò‚Î‚·
 						characterB->AddImpulse(vec);
 					}
+					return true;
 				}
-				return true;
 			}
 		}
 	}
