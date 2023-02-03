@@ -67,6 +67,9 @@
     <Filter Include="Source\Graphics\Shader">
       <UniqueIdentifier>{8b0d6b2d-62dd-461c-abd8-4e1fa06ffe58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\System\Extract">
+      <UniqueIdentifier>{f2372b5c-ec73-4937-b22c-15b88158086b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -294,6 +297,9 @@
     <ClInclude Include="Source\Graphics\Shader\ColorGradingShader.h">
       <Filter>Source\Graphics\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="Source\System\Extract\Extract.h">
+      <Filter>Source\System\Extract</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -490,6 +496,9 @@
     </ClCompile>
     <ClCompile Include="Source\Graphics\Shader\ColorGradingShader.cpp">
       <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Extract\Extract.cpp">
+      <Filter>Source\System\Extract</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
