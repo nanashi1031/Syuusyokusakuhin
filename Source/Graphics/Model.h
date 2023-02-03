@@ -30,6 +30,8 @@ public:
 
 	void UpdateAnimation(float elapsedTime);
 
+	void UpdateRootMotion(DirectX::XMFLOAT3& transform);
+
 	template<typename T>
 	void PlayAnimation(T tIndex, bool loop, float blendSeconds = 0.2f, float playSpeed = 1.0f, float seconds = 0.0f, float speed = 1.0f)
 	{
@@ -46,10 +48,13 @@ public:
 	}
 
 	// アニメーションが動いているか
-	bool IsPlayAnimation() const;
+	bool IsPlayAnimation();
 
 	// ノードを探す
 	Node* FindNode(const char* name);
+
+	// ルートモーションセットアップ
+	void SetupRootMotion(const char* rootMotionNodeName);
 
 	// ノードの番号を探す
 	int FindNodeIndex(const char* name);
@@ -63,9 +68,15 @@ public:
 
 	const ModelResource* GetResource() const { return resource.get(); }
 
+	float GetAnimationSeconds() { return this->currentAnimationSeconds; }
+
 private:
-	std::shared_ptr<ModelResource>	resource;
-	std::vector<Node>				nodes;
+	// ルートモーション計算
+	void ComputeRootMotion();
+
+private:
+	std::shared_ptr<ModelResource> resource;
+	std::vector<Node> nodes;
 
 	// 現在のアニメーション番号
 	int currentAnimationIndex = -1;
@@ -77,7 +88,12 @@ private:
 	bool animationEndFlag = false;
 	float animationBlendTime = 0.0f;
 	float animationBlendSeconds = 0.0f;
-	float	animationPlaySpeed = 1.0f;
-	float	animationSeconds = 0.0f;
-	float	animationSpeed = 0.0f;
+	float animationPlaySpeed = 1.0f;
+	float animationSeconds = 0.0f;
+	float animationSpeed = 0.0f;
+
+	int rootMotionNodeIndex = -1;
+	DirectX::XMFLOAT3 cacheRootMotionTranslation = { 0, 0, 0 };
+	DirectX::XMFLOAT3 rootMotionTranslation = { 0, 0, 0 };
+	bool rootMotionFlag = false;
 };

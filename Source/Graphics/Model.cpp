@@ -1,5 +1,5 @@
-#include "Graphics/Graphics.h"
-#include "Graphics/Model.h"
+#include "Graphics.h"
+#include "Model.h"
 #include "Mathf.h"
 
 Model::Model(const char* filename)
@@ -104,6 +104,7 @@ void Model::UpdateAnimation(float elapsedTime)
 					DirectX::XMStoreFloat3(&node.translate, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&node.translate), DirectX::XMLoadFloat3(&key1.translate), blendRate));
 					DirectX::XMStoreFloat3(&node.scale, DirectX::XMVectorLerp(DirectX::XMLoadFloat3(&node.scale), DirectX::XMLoadFloat3(&key1.scale), blendRate));
 					DirectX::XMStoreFloat4(&node.rotate, DirectX::XMQuaternionSlerp(DirectX::XMLoadFloat4(&node.rotate), DirectX::XMLoadFloat4(&key1.rotate), blendRate));
+					rootMotionFlag = true;
 				}
 				// 通常の計算
 				else
@@ -117,6 +118,8 @@ void Model::UpdateAnimation(float elapsedTime)
 			break;
 		}
 	}
+
+	ComputeRootMotion();
 
 	// 最終フレーム処理
 	if (animationEndFlag)
@@ -150,10 +153,29 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 }
 
-bool Model::IsPlayAnimation() const
+void Model::UpdateRootMotion(DirectX::XMFLOAT3& position)
+{
+	if (rootMotionNodeIndex < 0)
+	{
+		return;
+	}
+	const Node& rootMotionNode = nodes.at(rootMotionNodeIndex);
+	//DirectX::XMVECTOR Translation = ;
+	//DirectX::XMMATRIX Transform =
+	//	DirectX::XMMatrixScaling(rootMotionNode.translate.x, rootMotionNode.scale.y, rootMotionNode.scale.z);
+	//DirectX::XMVECTOR Position = ;
+	//DirectX::XMStoreFloat3(&position, Position);
+	rootMotionTranslation = { 0, 0, 0 };
+}
+
+bool Model::IsPlayAnimation()
 {
 	if (currentAnimationIndex < 0) return false;
 	if (currentAnimationIndex >= resource->GetAnimations().size()) return false;
+
+	rootMotionTranslation = { 0, 0, 0 };
+	cacheRootMotionTranslation = { 0, 0, 0 };
+
 	return true;
 }
 
@@ -185,6 +207,11 @@ int Model::FindNodeIndex(const char* name)
 	}
 
 	return index;
+}
+
+void Model::SetupRootMotion(const char* rootMotionNodeName)
+{
+	rootMotionNodeIndex = FindNodeIndex(rootMotionNodeName);
 }
 
 DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
@@ -222,4 +249,27 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 	node->translate = {0, node->translate.y, 0};
 
 	return { 0, node->translate.y, 0 };
+}
+
+void Model::ComputeRootMotion()
+{
+	if (!rootMotionFlag)
+	{
+		return;
+	}
+	if (rootMotionNodeIndex < 0)
+	{
+		return;
+	}
+	Node& rootMotionNode = nodes.at(rootMotionNodeIndex);
+	// 前のフレームと今回のフレームの移動値データの差分量を求める
+	rootMotionTranslation.x = rootMotionNode.translate.x - cacheRootMotionTranslation.x;
+	rootMotionTranslation.y = rootMotionNode.translate.y - cacheRootMotionTranslation.y;
+	rootMotionTranslation.z = rootMotionNode.translate.z - cacheRootMotionTranslation.z;
+	// 次回に差分量を求めるために今回の移動値をキャッシュする
+	cacheRootMotionTranslation = rootMotionTranslation;
+	// アニメーション内で移動してほしくないのでルートモーション移動値をリセット
+	rootMotionNode.translate = { 0, 0, 0 };
+	// ルートモーションフラグをオフにする
+	rootMotionFlag = false;
 }
