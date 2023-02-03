@@ -75,7 +75,7 @@ void SceneGame::Initialize()
 	{
 		mainDirectionalLight = new Light(LightType::Directional);
 		mainDirectionalLight->SetPosition({ 0.70f, 0.60f, 0.30f });
-		mainDirectionalLight->SetDirection({ 1, -1, -1 });
+		mainDirectionalLight->SetDirection({ -0.286f, -0.775f, 0.564f });
 		mainDirectionalLight->SetColor({0, 0, 0, 1});
 		LightManager::Instane().Register(mainDirectionalLight);
 	}
@@ -100,7 +100,8 @@ void SceneGame::Initialize()
 	// 新しい描画ターゲットの生成
 	{
 		Graphics& graphics = Graphics::Instance();
-		renderTarget = std::make_unique<RenderTarget>(static_cast<UINT>(graphics.GetScreenWidth())
+		renderTarget =
+			std::make_unique<RenderTarget>(static_cast<UINT>(graphics.GetScreenWidth())
 			, static_cast<UINT>(graphics.GetScreenHeight())
 			, DXGI_FORMAT_R8G8B8A8_UNORM);
 	}
@@ -116,7 +117,7 @@ void SceneGame::Initialize()
 	{
 		Graphics& graphics = Graphics::Instance();
 		skyboxTexture = std::make_unique<Texture>(
-			"Data/Sprite/SkyTexture.jpg");
+			"Data/Sprite/FluffballDay4k.png");
 		sprite = std::make_unique<Sprite>();
 		sprite->SetShaderResourceView(
 			skyboxTexture->GetShaderResourceView(),
