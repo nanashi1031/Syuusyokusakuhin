@@ -158,3 +158,9 @@ DirectX::XMFLOAT3 Mathf::MakePlusFloat3(DirectX::XMFLOAT3 float3A)
 
 	return outFloat3;
 }
+
+float Mathf::Percentage(float floatA, float floatB)
+{
+	float outfloat = floatA / floatB;
+	return outfloat;
+}

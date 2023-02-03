@@ -44,4 +44,7 @@ public:
 
 	// マイナスならプラスにする
 	static DirectX::XMFLOAT3 MakePlusFloat3(DirectX::XMFLOAT3 float3A);
+
+	// 割合を求める floatA ÷ floatB
+	static float Percentage(float floatA, float floatB);
 };
