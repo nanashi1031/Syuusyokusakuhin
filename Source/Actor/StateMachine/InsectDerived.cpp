@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "LightManager.h"
+#include "Extract.h"
 
 void InsectState::IdleState::Enter()
 {
@@ -28,11 +29,13 @@ void InsectState::IdleState::Execute(float elapsedTime)
     }
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::KEY_E)
+    if (gamePad.GetButton() & GamePad::KEY_E ||
+        gamePad.GetButton() & GamePad::BTN_PAD_LB)
         if (CameraController::Instance().GetLockOnFlag())
             owner->GetStateMachine()->ChangeState(Insect::State::Flying);
 
-    if (gamePad.GetButton() & GamePad::KEY_R)
+    if (gamePad.GetButton() & GamePad::KEY_R ||
+        gamePad.GetButton() & GamePad::BTN_PAD_LT)
         owner->GetStateMachine()->ChangeState(Insect::State::Return);
 }
 
@@ -43,25 +46,26 @@ void InsectState::IdleState::Exit()
 
 void InsectState::PursuitState::Enter()
 {
+    PlayerManager& playerManager = PlayerManager::Instance();
+    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+    if (owner->GetExtractColor() == ExtractColor::Heal)
+    {
+        int he = player->GetHealth() + 30;
+        if (he > player->GetMaxHealth()) he = player->GetMaxHealth();
+        player->SetHealth(he);
+    }
+    else if (owner->GetExtractColor() != ExtractColor::None)
+    {
+        Extract::Instance().SetExtract(owner->GetExtractColor());
+        player->SetExtractColor(owner->GetExtractColor());
+    }
+
     if (owner->GetLightIndex() >= 0)
     {
         LightManager::Instane().RemoveIndex(owner->GetLightIndex());
         owner->SetLightIndex(-1);
         owner->SetExtractColor(-1);
     }
-
-    PlayerManager& playerManager = PlayerManager::Instance();
-    Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
-    if (owner->GetExtractColor() == ExtractColor::Heal)
-    {
-        player->SetHealth(player->GetHealth() + 30);
-    }
-    else if (owner->GetExtractColor() != ExtractColor::None)
-    {
-
-        player->SetExtractColor(owner->GetExtractColor());
-    }
-
 }
 
 void InsectState::PursuitState::Execute(float elapsedTime)
@@ -71,7 +75,8 @@ void InsectState::PursuitState::Execute(float elapsedTime)
     owner->SetPosition(player->GetPosition());
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::KEY_E)
+    if (gamePad.GetButton() & GamePad::KEY_E ||
+        gamePad.GetButton() & GamePad::BTN_PAD_LB)
         if (CameraController::Instance().GetLockOnFlag())
             owner->GetStateMachine()->ChangeState(Insect::State::Flying);
 }
@@ -133,7 +138,8 @@ void InsectState::FlyingState::Execute(float elapsedTime)
                 1.0f))
             {
                 owner->SetExtractColor(enemy->GetParts()[j].extractColor);
-                DirectX::XMFLOAT4 color = Extract::ColorConversion(owner->GetExtractColor());
+                DirectX::XMFLOAT4 color =
+                    Extract::Instance().ColorConversion(owner->GetExtractColor());
 
                 if (owner->GetLightIndex() >= 0)
                 {
@@ -154,12 +160,14 @@ void InsectState::FlyingState::Execute(float elapsedTime)
     }
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::KEY_R)
+    if (gamePad.GetButton() & GamePad::KEY_R ||
+        gamePad.GetButton() & GamePad::BTN_PAD_LT)
         owner->GetStateMachine()->ChangeState(Insect::State::Return);
 
     if (timer > 3.0f)
     {
-        if (gamePad.GetButton() & GamePad::KEY_E)
+        if (gamePad.GetButton() & GamePad::KEY_E ||
+            gamePad.GetButton() & GamePad::BTN_PAD_LB)
             if (CameraController::Instance().GetLockOnFlag())
                 owner->GetStateMachine()->ChangeState(Insect::State::Flying);
     }
@@ -205,7 +213,8 @@ void InsectState::ReturnState::Execute(float elapsedTime)
     }
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::KEY_E)
+    if (gamePad.GetButton() & GamePad::KEY_E ||
+        gamePad.GetButton() & GamePad::BTN_PAD_LB)
         if (CameraController::Instance().GetLockOnFlag())
             owner->GetStateMachine()->ChangeState(Insect::State::Flying);
 }
