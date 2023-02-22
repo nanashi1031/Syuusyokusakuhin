@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "StateMachine.h"
+#include "Effect.h"
 
 namespace PlayerState
 {
@@ -83,6 +84,8 @@ namespace PlayerState
 	private:
 		float stateTimer = 0.0f;
 		bool nextAttackFlag = false;
+		std::unique_ptr<AudioSource> SE_Attack1;
+		Effect* hitEffect1 = nullptr;
 	};
 		// コンボ攻撃2ステート
 	class AttackCombo2State : public State
@@ -101,6 +104,8 @@ namespace PlayerState
 	private:
 		float stateTimer = 0.0f;
 		bool nextAttackFlag = false;
+		std::unique_ptr<AudioSource> SE_Attack2;
+		Effect* hitEffect2 = nullptr;
 	};
 	// コンボ攻撃3ステート
 	class AttackCombo3State : public State
@@ -115,6 +120,9 @@ namespace PlayerState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
+	private:
+		std::unique_ptr<AudioSource> SE_Attack3;
+		Effect* hitEffect3 = nullptr;
 	};
 
 	// ダッシュ攻撃ステート
