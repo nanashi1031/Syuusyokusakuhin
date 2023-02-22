@@ -4,6 +4,7 @@
 #include "Collision.h"
 #include "EnemyManager.h"
 #include "LightManager.h"
+#include "Camera.h"
 
 void PlayerState::IdleState::Enter()
 {
@@ -183,6 +184,8 @@ void PlayerState::AttackCombo1State::Enter()
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
 	owner->SetMovingFlag(false);
+	DirectX::XMFLOAT3 vec = PlayerState::Versatility::Direction();
+	PlayerState::Versatility::Rotate(vec);
 }
 
 void PlayerState::AttackCombo1State::Execute(float elapsedTime)
@@ -272,6 +275,8 @@ void PlayerState::AttackCombo2State::Enter()
 	stateTimer = 0.0f;
 	nextAttackFlag = false;
 	owner->SetMovingFlag(false);
+	DirectX::XMFLOAT3 vec = PlayerState::Versatility::Direction();
+	PlayerState::Versatility::Rotate(vec);
 }
 
 void PlayerState::AttackCombo2State::Execute(float elapsedTime)
@@ -365,6 +370,8 @@ void PlayerState::AttackCombo3State::Enter()
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::SlashKaratake, false, 1.2f, animeSpeed);
 	owner->SetMovingFlag(false);
+	DirectX::XMFLOAT3 vec = PlayerState::Versatility::Direction();
+	PlayerState::Versatility::Rotate(vec);
 }
 
 void PlayerState::AttackCombo3State::Execute(float elapsedTime)
@@ -564,4 +571,87 @@ void PlayerState::DieState::Execute(float elapsedTime)
 void PlayerState::DieState::Exit()
 {
 
+}
+
+DirectX::XMFLOAT3 PlayerState::Versatility::Direction()
+{
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	float ax = gamePad.GetAxisLX();
+	float ay = gamePad.GetAxisLY();
+
+	// カメラ方向とスティックの入力値によって進行方向を計算する
+	Camera& camera = Camera::Instance();
+	const DirectX::XMFLOAT3& cameraRight = camera.GetRight();
+	const DirectX::XMFLOAT3& cameraFront = camera.GetFront();
+	// 移動ベクトルはXZ平面に水平なベクトルになるようにする
+	// カメラ右方向ベクトルをXZ単位ベクトルに変換
+	float cameraRightX = cameraRight.x;
+	float cameraRightZ = cameraRight.z;
+	float cameraRightLength = sqrtf(cameraRightX * cameraRightX + cameraRightZ * cameraRightZ);
+	if (cameraRightLength > 0.0f)
+	{
+		// 単位ベクトル化
+		cameraRightX /= cameraRightLength;
+		cameraRightZ /= cameraRightLength;
+	}
+	// カメラ前方向ベクトルをXZ単位ベクトルに変換
+	float cameraFrontX = cameraFront.x;
+	float cameraFrontZ = cameraFront.z;
+	float cameraFrontLength = sqrtf(cameraFrontX * cameraFrontX + cameraFrontZ * cameraFrontZ);
+	if (cameraFrontLength > 0.0f)
+	{
+		// 単位ベクトル化
+		cameraFrontX /= cameraFrontLength;
+		cameraFrontZ /= cameraFrontLength;
+	}
+	// スティックの水平入力値をカメラ右方向に反映し、
+	// スティックの垂直入力値をカメラ前方向に反映し、
+	// 進行ベクトルを計算する
+	DirectX::XMFLOAT3 vec;
+	vec.x = (cameraRightX * ax) + (cameraFrontX * ay);
+	vec.z = (cameraRightZ * ax) + (cameraFrontZ * ay);
+
+	vec.y = 0.0f;
+	return vec;
+}
+
+void PlayerState::Versatility::Rotate(DirectX::XMFLOAT3 vec)
+{
+	PlayerManager& playerManager = PlayerManager::Instance();
+	Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+
+	if (vec.x == 0.0f && vec.z == 0.0f)
+		return;
+
+	float v = static_cast<float>(sqrt(pow(vec.x, 2.0f) + pow(vec.z, 2.0f)));
+	vec.x /= v;
+	vec.z /= v;
+
+	//自身の回転値から前方向を求める
+	float frontX = sinf(player->GetAngle().y);
+	float frontZ = cosf(player->GetAngle().y);
+
+	//左右判定を行うために2つの単位ベクトルの外積を計算する
+	float cross = (vec.x * frontZ) - (vec.z * frontX);
+
+	//回転角を求めるため、2つの単位ベクトルの内積を計算する
+	float dot = (vec.x * frontX) + (vec.z * frontZ);
+
+	//内積値は-1.0~1.0で表現されており、2つの単位ベクトルの角度が
+	//小さいほどに1.0に近づくという性質を利用して回転速度を調整する
+	float rot = 1.0f - dot;
+
+	//2Dの外積値が正の場合か負の場合によって左右判定が行える
+	//左右判定を行うことによって左右回転を選択する
+	DirectX::XMFLOAT3 angle = player->GetAngle();
+	if (cross < 0.0f)
+	{
+		angle.y -= DirectX::XMConvertToRadians(720) * rot;
+		player->SetAngle(angle);
+	}
+	else
+	{
+		angle.y += DirectX::XMConvertToRadians(720) * rot;
+		player->SetAngle(angle);
+	}
 }

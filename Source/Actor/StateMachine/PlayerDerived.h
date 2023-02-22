@@ -188,4 +188,14 @@ namespace PlayerState
 		// ステートから出ていくときのメソッド
 		void Exit()override;
 	};
+
+	class Versatility
+	{
+	public:
+		// スティック入力値から方向ベクトルを求める
+		static DirectX::XMFLOAT3 Direction();
+
+		// 方向ベクトルの向きへ向く
+		static void Rotate(DirectX::XMFLOAT3 vec);
+	};
 }
