@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "Mathf.h"
 #include <time.h>
+#include "Extract.h"
 
 float Mathf::LerpFloat(float start, float end, float time)
 {
@@ -163,4 +164,26 @@ float Mathf::Percentage(float floatA, float floatB)
 {
 	float outfloat = floatA / floatB;
 	return outfloat;
+}
+
+float Mathf::PlayerAttackDamageCalculation(float attackPower, float defensePower)
+{
+	if (Extract::Instance().GetExtract(ExtractColor::Red) >= 0.00f)
+		attackPower *= 20.0f;
+	float outResult = attackPower - defensePower;
+	if (outResult < 0.0f)
+		outResult = 0.0f;
+
+	return outResult;
+}
+
+float Mathf::PlayerDamageCalculation(float attackPower, float defensePower)
+{
+	if (Extract::Instance().GetExtract(ExtractColor::Orange) >= 0.00f)
+		defensePower *= 1.2f;
+	float outResult = attackPower - defensePower;
+	if (outResult < 0.0f)
+		outResult = 0.0f;
+
+	return outResult;
 }

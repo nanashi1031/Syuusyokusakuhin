@@ -47,4 +47,10 @@ public:
 
 	// 割合を求める floatA ÷ floatB
 	static float Percentage(float floatA, float floatB);
+
+	// プレイヤーの攻撃のダメージ計算
+	static float PlayerAttackDamageCalculation(float attackPower, float defensePower);
+
+	// プレイヤーへのダメージ計算
+	static float PlayerDamageCalculation(float attackPower, float defensePower);
 };
