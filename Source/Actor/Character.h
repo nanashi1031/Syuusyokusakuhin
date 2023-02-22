@@ -37,9 +37,6 @@ public:
     // 衝撃を与える
     void AddImpulse(const DirectX::XMFLOAT3& impulse);
 
-    // ダメージ量計算
-    float DamageCalculation(float attackPower, float defensePower);
-
     // ゲッター、セッター
     const float GetRadius() const { return this->radius; }
 
