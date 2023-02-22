@@ -120,15 +120,15 @@ private:
 
     DirectX::XMFLOAT3 GetMoveVec();
 
+    void HealthMax()
+    {
+        if (health > maxHealth)
+            health = maxHealth;
+    }
+
 public:
     // プレイヤーのノードの名前定数
     const char* swordName = "mixamorig:Sword_joint";
-
-private:
-    const float size = 0.015f;
-    const float moveSpeed = 5.0f;
-
-    float turnSpeed = DirectX::XMConvertToRadians(720);
 
     std::unique_ptr<AudioSource> SE_Walk;
     std::unique_ptr<AudioSource> SE_Run;
@@ -137,4 +137,10 @@ private:
     std::unique_ptr<AudioSource> SE_Attack3;
     std::unique_ptr<AudioSource> SE_DashAttack;
     std::unique_ptr<AudioSource> SE_Die;
+private:
+    const float size = 0.015f;
+    const float moveSpeed = 5.0f;
+
+    float turnSpeed = DirectX::XMConvertToRadians(720);
+
 };

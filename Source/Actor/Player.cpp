@@ -7,6 +7,7 @@
 #include "EnemyManager.h"
 #include "Mathf.h"
 #include "PlayerDerived.h"
+#include "Extract.h"
 
 Player::Player()
 {
@@ -20,6 +21,8 @@ Player::Player()
     health = maxHealth;
 
     stateMachine = new StateMachine();
+
+    Extract::Instance().Initialize();
 
 #pragma region ステート登録
     stateMachine->RegisterState(new PlayerState::IdleState(this));
@@ -58,11 +61,21 @@ void Player::Update(float elapsedTime)
         // 進行ベクトル取得
         DirectX::XMFLOAT3 moveVec = GetMoveVec();
         float moveSpeed = this->moveSpeed * elapsedTime;
+        if (Extract::Instance().GetExtract(ExtractColor::White))
+            moveSpeed *= 1.2f;
         position.x += moveVec.x * moveSpeed;
         position.z += moveVec.z * moveSpeed;
 
         InputMove(elapsedTime);
     }
+
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButtonDown() & gamePad.KEY_Z)
+        position = { 0, 10, 0 };
+
+    HealthMax();
+
+    Extract::Instance().Update(elapsedTime);
 
     InputAttack(elapsedTime);
 
@@ -171,9 +184,19 @@ void Player::CollisionPlayerVsEnemies()
             Enemy* enemy = enemyManager.GetEnemy(i);
 
             DirectX::XMFLOAT3 outPosition;
-            if (Collision::IntersectSphereVsNode(
+            /*if (Collision::IntersectSphereVsNode(
                 position, radius,
                 enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+                outPosition))
+            {
+                position = outPosition;
+            }*/
+            DirectX::XMFLOAT3 enemyPosition =
+                enemy->GetNodePosition(enemy->GetNode(enemy->GetParts()[j].name));
+            enemyPosition.y = enemyPosition.y - (enemy->GetParts()[j].radius / 2);
+            if (Collision::IntersectCylinderVsNodeCylinder(
+                position, radius, height,
+                enemyPosition, enemy->GetParts()[j].radius, enemy->GetParts()[j].radius,
                 outPosition))
             {
                 position = outPosition;
