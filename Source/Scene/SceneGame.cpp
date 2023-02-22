@@ -562,7 +562,7 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 	hpFrame->Render(
 		dc,
 		screenWidth / -55, screenHeight / -20,
-		textureWidth / 1.5f, textureHeight / 2.5,
+		textureWidth / 1.5f, textureHeight / 2.5f,
 		0, 0,
 		textureWidth, textureHeight,
 		0,

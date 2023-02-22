@@ -86,15 +86,15 @@ void EnemyPurpleDragonState::NeglectState::Enter()
 	int neglectIndex = static_cast<int>(Mathf::RandomRange(0, 2));
 	switch (neglectIndex)
 	{
-	/*case 0:
-		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Neglect1, false);
+	case 0:
+		/*owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Neglect1, false);
 		break;
 	case 1:
 		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Neglect2, false);
 		break;
 	case 2:
-		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Neglect3, false);
-		break;*/
+		owner->GetModel()->PlayAnimation(EnemyPurpleDragon::EnemyPurpleDragonAnimation::Neglect3, false);*/
+		break;
 	}
 }
 
