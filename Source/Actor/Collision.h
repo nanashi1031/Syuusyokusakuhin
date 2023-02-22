@@ -32,6 +32,17 @@ public:
         const float radiusB,
         DirectX::XMFLOAT3& outPosition);
 
+    // ‰~’ŒA->‰~’ŒB‚Ì“–‚½‚è”»’è
+    static bool IntersectCylinderVsCylinder(
+        const DirectX::XMFLOAT3& positionA,
+        float radiusA,
+        float heightA,
+        const DirectX::XMFLOAT3& positionB,
+        float radiusB,
+        float heightB,
+        DirectX::XMFLOAT3& outPositionB
+    );
+
     // ‹…‚Æƒm[ƒhB‚Ì“–‚½‚è”»’è
     static bool IntersectSphereVsNode(
         const DirectX::XMFLOAT3 positionA,
@@ -39,6 +50,16 @@ public:
         const Character* characterB,
         const char* nodeNameB,
         const float nodeRadiusB,
+        DirectX::XMFLOAT3& outPosition);
+
+    // ‰~’Œ‚Æƒm[ƒhB(‰~’Œ)‚Ì“–‚½‚è”»’è
+    static bool IntersectCylinderVsNodeCylinder(
+        const DirectX::XMFLOAT3 positionA,
+        const float radiusA,
+        const float heightA,
+        const DirectX::XMFLOAT3 positionB,
+        const float nodeRadiusB,
+        const float nodeHeightB,
         DirectX::XMFLOAT3& outPosition);
 
     // ƒm[ƒhA‚Æ‹…‚Ì“–‚½‚è”»’è

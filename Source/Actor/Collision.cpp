@@ -59,6 +59,48 @@ bool Collision::IntersectSphereVsSphererEst(
 	return true;
 }
 
+bool Collision::IntersectCylinderVsCylinder(
+	const DirectX::XMFLOAT3& positionA,
+	float radiusA,
+	float heightA,
+	const DirectX::XMFLOAT3& positionB,
+	float radiusB,
+	float heightB,
+	DirectX::XMFLOAT3& outPositionB)
+{
+	// Aの足元がBの頭より上なら当たっていない
+	if (positionA.y > positionB.y + heightB)
+	{
+		return false;
+	}
+
+	// Aの頭がBの足元より下なら当たっていない
+	if (positionA.y + heightA < positionB.y)
+	{
+		return false;
+	}
+
+	// XZ平面での範囲チェック
+	float vx = positionB.x - positionA.x;
+	float vz = positionB.z - positionA.z;
+	float range = radiusA + radiusB;
+	float distXZ = sqrtf(vx * vx + vz * vz);
+
+	if (distXZ > range)
+	{
+		return false;
+	}
+
+	// AがBを押し出す
+	vx /= distXZ;
+	vz /= distXZ;
+	outPositionB.x = positionA.x + (vx * range);
+	outPositionB.y = positionB.y;
+	outPositionB.z = positionA.z + (vz * range);
+
+	return true;
+}
+
 // 球とノードAの当たり判定
 bool Collision::IntersectSphereVsNode(
 	const DirectX::XMFLOAT3 positionA,
@@ -93,7 +135,7 @@ bool Collision::IntersectSphereVsNode(
 		{
 			return false;
 		}
-
+		vec = DirectX::XMVectorScale(vec, 2.0f);
 		vec = DirectX::XMVector3Normalize(vec);
 		vec = DirectX::XMVectorScale(vec, range);
 		positionBVec = DirectX::XMVectorAdd(positionAVec, vec);
@@ -105,7 +147,7 @@ bool Collision::IntersectSphereVsNode(
 	return false;
 }
 
-static bool IntersectSphereVsNode(
+bool Collision::IntersectSphereVsNode(
 	const Character* characterA,
 	const char* nodeNameA,
 	const float nodeRadiusA,
@@ -143,6 +185,34 @@ static bool IntersectSphereVsNode(
 		positionBVec = DirectX::XMVectorAdd(positionAVec, vec);
 		DirectX::XMStoreFloat3(&outPosition, positionBVec);
 
+		return true;
+	}
+
+	return false;
+}
+
+bool Collision::IntersectCylinderVsNodeCylinder(
+	const DirectX::XMFLOAT3 positionA,
+	const float radiusA,
+	const float heightA,
+	const DirectX::XMFLOAT3 positionB,
+	const float nodeRadiusB,
+	const float nodeHeightB,
+	DirectX::XMFLOAT3& outPosition)
+{
+	Graphics::Instance().GetDebugRenderer()->DrawCylinder(
+		positionA, radiusA, heightA, DirectX::XMFLOAT4(0, 1, 0, 1)
+	);
+
+	Graphics::Instance().GetDebugRenderer()->DrawCylinder(
+		positionB, nodeRadiusB, nodeHeightB, DirectX::XMFLOAT4(0, 1, 0, 1)
+	);
+
+	if (IntersectCylinderVsCylinder(
+		positionB, nodeRadiusB, nodeHeightB,
+		positionA, radiusA, heightA,
+		outPosition))
+	{
 		return true;
 	}
 
