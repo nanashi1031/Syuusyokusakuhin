@@ -14,7 +14,7 @@
 void SceneTitle::Initialize()
 {
     //スプライト初期化
-    //title = new Sprite("Data/Sprite/Scene/Title.png");
+    title = std::make_unique<Sprite>("Data/Sprite/Scene/Title.png");
 
     StageManager& stageManager = StageManager::Instance();
     StageMain* stageMain = new StageMain;
@@ -46,7 +46,7 @@ void SceneTitle::Initialize()
 	{
 		Graphics& graphics = Graphics::Instance();
 		skyboxTexture = std::make_unique<Texture>(
-			"Data/Sprite/SkyTexture.jpg");
+			"Data/Sprite/SkyTexture.png");
 		sprite = std::make_unique<Sprite>();
 		sprite->SetShaderResourceView(
 			skyboxTexture->GetShaderResourceView(),
@@ -67,23 +67,14 @@ void SceneTitle::Finalize()
 {
     StageManager::Instance().Clear();
 	LightManager::Instane().Clear();
-
-    //スプライト終了化
-  //  if (title != nullptr)
-  //  {
-  //      delete title;
-		//title = nullptr;
-  //  }
 }
 
 //更新処理
 void SceneTitle::Update(float elapsedTime)
 {
-	DirectX::XMFLOAT3 target = { 0, 10, 0 };
+	DirectX::XMFLOAT3 target = { 0, 0, 0 };
 	CameraController::Instance().SetTarget(target);
 	CameraController::Instance().Update(elapsedTime);
-
-
 
 	Stage* stage = StageManager::Instance().GetStage(0);
 	StageManager::Instance().Update(elapsedTime);
@@ -152,14 +143,14 @@ void SceneTitle::Render()
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-        //float textureWidth = static_cast<float>(title->GetTextureWidth());
-        //float textureHeight = static_cast<float>(title->GetTextureHeight());
+        float textureWidth = static_cast<float>(title->GetTextureWidth());
+        float textureHeight = static_cast<float>(title->GetTextureHeight());
         //タイトルスプライト描画
-        /*title->Render(dc,
-            0, 0, screenWidth, screenHeight,
+        title->Render(dc,
+            -100, -100, screenWidth * 1.2f, screenHeight * 1.2f,
             0, 0, textureWidth, textureHeight,
             0,
-            1, 1, 1, 1);*/
+            1, 1, 1, 1);
     }
 }
 
