@@ -70,6 +70,9 @@
     <Filter Include="Source\System\Extract">
       <UniqueIdentifier>{f2372b5c-ec73-4937-b22c-15b88158086b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Effect">
+      <UniqueIdentifier>{246406db-8613-4b7c-9747-29de804442b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -300,6 +303,18 @@
     <ClInclude Include="Source\System\Extract\Extract.h">
       <Filter>Source\System\Extract</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Scene\SceneClear.h">
+      <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\EnemyPurpleDragonDerived.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Effect\EffectManager.h">
+      <Filter>Source\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Effect\Effect.h">
+      <Filter>Source\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -499,6 +514,18 @@
     </ClCompile>
     <ClCompile Include="Source\System\Extract\Extract.cpp">
       <Filter>Source\System\Extract</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scene\SceneClear.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\EnemyPurpleDragonDerived.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Effect\EffectManager.cpp">
+      <Filter>Source\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Effect\Effect.cpp">
+      <Filter>Source\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
