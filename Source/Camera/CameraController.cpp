@@ -62,7 +62,7 @@ void CameraController::Update(float elapsedTime)
         lockOnTimer += elapsedTime;
 
     // ステージとのレイキャスト
-    //UpdateStageRayCast();
+    UpdateStageRayCast();
 
     // カメラの視点と注視点を設定
     DirectX::XMFLOAT3 up = { 0, 1, 0 };
@@ -307,14 +307,19 @@ void CameraController::UpdateStageRayCast()
 {
     HitResult hitResult;
     StageManager& stageManager = StageManager::Instance();
-    if (stageManager.GetStage(stageManager.GetNowStage())->
-        RayCast(beforePerspective, afterPerspective, hitResult))
+    PlayerManager& playerManager = PlayerManager::Instance();
+    if (playerManager.GetPlayerCount() > 0)
     {
-        DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&hitResult.position);
-        DirectX::XMVECTOR cuv = DirectX::XMVectorSet(0, 1, 0, 0);
-        p = DirectX::XMVectorMultiplyAdd(DirectX::XMVectorReplicate(4), cuv, p);
-        DirectX::XMStoreFloat3(&perspective, p);
-        perspective = hitResult.position;
+        Player* player =
+            playerManager.GetPlayer(playerManager.GetplayerOneIndex());
+        Mathf::CalculateLength(player->GetPosition(), perspective);
+
+        if (stageManager.GetStage(stageManager.GetNowStage())->
+            RayCast(player->GetPosition(), perspective, hitResult))
+        {
+            perspective = hitResult.position;
+            perspective.y += 1.0f;
+        }
     }
 }
 
@@ -418,12 +423,14 @@ DirectX::XMFLOAT3 CameraController::ResetCamera(float elapsedTime)
 bool CameraController::LockOnSwitching()
 {
     Mouse& mouse = Input::Instance().GetMouse();
+    GamePad& gamePad = Input::Instance().GetGamePad();
 
     if (cameraMouseOperationFlag)
     {
         float mousePos = static_cast<float>(mouse.GetPositionX());
+        float stick = gamePad.GetAxisRX();
         // マウスの位置がスクリーンの真ん中から左に移動したら
-        if (mousePos > mouse.GetScreenWidth() * 0.5f + 50)
+        if ((mousePos > mouse.GetScreenWidth() * 0.5f + 50 || stick > 0))
         {
             //CalculationEnemyLenght();
             Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
@@ -437,7 +444,7 @@ bool CameraController::LockOnSwitching()
             }
         }
         // マウスの位置がスクリーンの真ん中から右に移動したら
-        else if (mousePos < mouse.GetScreenWidth() * 0.5 - 50)
+        else if ((mousePos < mouse.GetScreenWidth() * 0.5 - 50) || stick < 0)
         {
             // targets.indexの先頭じゃなければ対象を変更
             if (nowTargetIndex  > 0)
