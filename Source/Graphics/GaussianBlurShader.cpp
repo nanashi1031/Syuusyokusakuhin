@@ -201,7 +201,7 @@ void GaussianBlurShader::CalcGaussianFilter(CBFilter& cbFilter, const GaussianFi
 	if (kernelSize % 2 == 0)	kernelSize++;
 
 	kernelSize = max(1, min(MaxKernelSize - 1, kernelSize));
-	cbFilter.kernelSize = kernelSize;
+	cbFilter.kernelSize = static_cast<float>(kernelSize);
 	cbFilter.texcel.x = 1.0f / gaussianFilterData.textureSize.x;
 	cbFilter.texcel.y = 1.0f / gaussianFilterData.textureSize.y;
 
