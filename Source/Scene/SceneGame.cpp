@@ -12,6 +12,10 @@
 #include "StageManager.h"
 #include "LightManager.h"
 #include "Mathf.h"
+#include "SceneManager.h"
+#include "SceneLoading.h"
+#include "SceneClear.h"
+#include "EffectManager.h"
 
 //	シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048;
@@ -67,8 +71,8 @@ void SceneGame::Initialize()
 	}
 
 	// スプライト
-	hpFrame = std::make_unique<Sprite>("Data/Sprite/UI/HP.png");
-	hpBar_red = std::make_unique<Sprite>("Data/Sprite/UI/HPBar(Red).png");
+	hpFrame = std::make_unique<Sprite>("Data/Sprite/UI/HPFrame.png");
+	hpBar_red = std::make_unique<Sprite>("Data/Sprite/UI/HPBar.png");
 
 	targetRing = std::make_unique<Sprite>("Data/Sprite/UI/Ring1.png");
 	butterfly = std::make_unique<Sprite>("Data/Sprite/UI/Butterfly.png");
@@ -108,6 +112,10 @@ void SceneGame::Initialize()
 
 	// シャドウマップ用に深度ステンシルの生成
 	{
+		shadowDrawRect = 120.0f; // シャドウマップに描画する範囲
+		shadowColor = { 0.7f, 0.7f, 0.7f }; // 影の色
+		shadowBias = 0.001f; // 深度比較用のオフセット値
+
 		Graphics& graphics = Graphics::Instance();
 		shadowmapDepthStencil =
 			std::make_unique<DepthStencil>(SHADOWMAP_SIZE, SHADOWMAP_SIZE);
@@ -117,7 +125,7 @@ void SceneGame::Initialize()
 	{
 		Graphics& graphics = Graphics::Instance();
 		skyboxTexture = std::make_unique<Texture>(
-			"Data/Sprite/FluffballDay4k.png");
+			"Data/Sprite/SkyTexture.png");
 		sprite = std::make_unique<Sprite>();
 		sprite->SetShaderResourceView(
 			skyboxTexture->GetShaderResourceView(),
@@ -203,6 +211,11 @@ void SceneGame::Update(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	if (CameraController::Instance().GetCameraMouseOperationFlag())
 		mouse.SetMiddlePosition();
+
+	if (EnemyManager::Instance().GetEnemyCount() == 0)
+	{
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
+	}
 }
 
 void SceneGame::Render()
@@ -251,17 +264,23 @@ void SceneGame::Render()
 
 	// 2Dスプライト描画
 	{
+		Camera& camera = Camera::Instance();
+		rc.view = camera.GetView();
+		rc.projection = camera.GetProjection();
 		RenderHPBar(dc);
 
 		RenderButterfly(dc);
 
 		if (CameraController::Instance().GetLockOnFlag())
 			RenderLockOn(dc, rc.view, rc.projection);
+
+		Extract::Instance().Render2D(dc);
 	}
 
 	// 2DデバッグGUI描画
 	{
 #ifdef _DEBUG
+		Extract::Instance().DrawDebugGUI();
 		StageManager::Instance().DrawDebugGUI();
 		PlayerManager::Instance().DrawDebugGUI();
 		InsectManager::Instance().DrawDebugGUI();
@@ -375,6 +394,8 @@ void SceneGame::Render3DScene()
 
 		modelShader->End(rc);
 	}
+
+	EffectManager::Instance().Render(rc.view, rc.projection);
 
 	// 3Dデバッグ描画
 	{
@@ -534,38 +555,38 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 {
 	Graphics& graphics = Graphics::Instance();
 	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
-	float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+	float screenHeight = static_cast<float>(graphics.GetScreenHeight());
 	float textureWidth = static_cast<float>(hpFrame->GetTextureWidth());
 	float textureHeight = static_cast<float>(hpFrame->GetTextureHeight());
 	// プレイヤーHPのフレーム
-	/*hpFrame->Render(
+	hpFrame->Render(
 		dc,
-		(screenWidth / 100), 10,
-		textureWidth, textureHeight,
+		screenWidth / -55, screenHeight / -20,
+		textureWidth / 1.5f, textureHeight / 2.5,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
-		1, 1, 1, 1*/
-	//);
+		1, 1, 1, 1
+	);
 
-	// ボスHPのフレーム
-	//hpFrame->Render(
-	//	dc,
-	//	134, 635,
-	//	textureWidth * 2 - 16, textureHeight,
-	//	0, 0,
-	//	textureWidth, textureHeight,
-	//	0,
-	//	1, 1, 1, 1
-	//);
+	// エネミーHPのフレーム
+	hpFrame->Render(
+		dc,
+		screenWidth / 10, screenHeight / 1.3f,
+		(textureWidth * 3) / 2, textureHeight / 1.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
+	);
 
 	textureWidth = static_cast<float>(hpBar_red->GetTextureWidth());
 	textureHeight = static_cast<float>(hpBar_red->GetTextureHeight());
 	// プレイヤーのHP
 	hpBar_red->Render(
 		dc,
-		(screenWidth / 76), (screenHeight / 43),
-		playerHpRatio * textureWidth, textureHeight,
+		screenWidth / -55, screenHeight / -20,
+		playerHpRatio * (textureWidth / 1.5f), textureHeight / 2.5f,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
@@ -575,9 +596,9 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 	// ボスのHP
 	hpBar_red->Render(
 		dc,
-		(screenWidth / 9), (900),
+		screenWidth / 10, screenHeight / 1.3f,
 	    //150, 650,
-		enemyBossHpRatio * (textureWidth * 3), textureHeight,
+		enemyBossHpRatio * (textureWidth * 3) / 2, textureHeight / 1.6f,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
@@ -587,15 +608,18 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 
 void SceneGame::RenderButterfly(ID3D11DeviceContext* dc)
 {
+	Graphics& graphics = Graphics::Instance();
+	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+	float screenHeight = static_cast<float>(graphics.GetScreenWidth());
 	float textureWidth = static_cast<float>(butterfly->GetTextureWidth());
 	float textureHeight = static_cast<float>(butterfly->GetTextureHeight());
 
-	DirectX::XMFLOAT4 color = Extract::ColorConversion(
+	DirectX::XMFLOAT4 color = Extract::Instance().ColorConversion(
 		InsectManager::Instance().GetInsect(0)->GetExtractColor());
 
 	butterfly->Render(
 		dc,
-		80, 100,
+		screenWidth / 40, screenHeight / 18,
 		textureWidth / 4, textureHeight / 4,
 		0, 0,
 		textureWidth, textureHeight,
