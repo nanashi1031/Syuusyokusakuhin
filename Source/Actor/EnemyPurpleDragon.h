@@ -10,6 +10,18 @@ class NodeBase;
 class EnemyPurpleDragon : public Enemy
 {
 public:
+	enum class State
+	{
+		Idle,
+		Neglect,
+		Pursuit,
+		Walk,
+		Run,
+		AttackCombo,
+		Damages,
+		Die,
+	};
+
 	enum class EnemyPurpleDragonAnimation
 	{
 		IdleNormal,

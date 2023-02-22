@@ -3,6 +3,7 @@
 #include "EnemyPurpleDragon.h"
 #include "JudgmentDerived.h"
 #include "EnemyPurpleDragonActionDerived.h"
+#include "EnemyPurpleDragonDerived.h"
 
 EnemyPurpleDragon::EnemyPurpleDragon()
 {
@@ -13,7 +14,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	radius = 3.0f;
 	height = 1.5f;
 
-	maxHealth = 200.0f;
+	maxHealth = 15000.0f;
 	health = maxHealth;
 
 	CharacterType = 1;
@@ -43,6 +44,16 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	aiTree->AddNode("Battle", "Pursuit", 10, BehaviorTree::SelectRule::Non, nullptr, new PursuitAction(this));
 
 	aiTree->AddNode("Battle", "Death", 11, BehaviorTree::SelectRule::Non, nullptr, new DeathAction(this));
+#pragma endregion
+
+#pragma region ƒXƒe[ƒg“o˜^
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::IdleState(this));
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::NeglectState(this));
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::PursuitState(this));
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::WalkState(this));
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::RunState(this));
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::AttackCombo1State(this));
+	//stateMachine->RegisterState(new EnemyPurpleDragonState::DieState(this));
 #pragma endregion
 
 	model->PlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
@@ -119,7 +130,7 @@ void EnemyPurpleDragon::DrawDebugPrimitive()
 		DirectX::XMFLOAT3 partsPosition =
 			GetNodePosition(model->FindNode(GetParts()[partsIndex - 1].name));
 		DirectX::XMFLOAT4 color =
-			Extract::ColorConversion(GetParts()[partsIndex - 1].extractColor);
+			Extract::Instance().ColorConversion(GetParts()[partsIndex - 1].extractColor);
 		debugRenderer->DrawSphere(partsPosition, GetParts()[partsIndex - 1].radius + 0.01f,
 			DirectX::XMFLOAT4(color));
 	}
@@ -198,44 +209,44 @@ void EnemyPurpleDragon::OnDamaged()
 
 void EnemyPurpleDragon::PartsRegister()
 {
-	SetParts("Jaw1", 0.7f, ExtractColor::Red, true);
-	SetParts("Neck3", 0.7f, ExtractColor::Red);
-	SetParts("Neck1", 0.7f, ExtractColor::Red);
-	SetParts("Hand_L", 0.7f, ExtractColor::White, true);
-	SetParts("LowerArm_L", 0.7f, ExtractColor::White);
-	SetParts("Hand_L_1", 0.7f, ExtractColor::White, true);
-	SetParts("LowerArm_L_1", 0.7f, ExtractColor::White);
-	SetParts("Feet_L", 0.7f, ExtractColor::Orange, true);
-	SetParts("LowerLeg_L", 0.7f, ExtractColor::Orange);
-	SetParts("Feet_L_1", 0.7f, ExtractColor::Orange, true);
-	SetParts("LowerLeg_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("Wing1_L", 0.7f, ExtractColor::Orange);
-	SetParts("Wing2_L", 0.7f, ExtractColor::Orange);
-	SetParts("Wing3_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail12_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail2_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail3_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail5_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail6_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail7_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail9_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail10_L", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail11_L", 0.7f, ExtractColor::Orange);
-	SetParts("Wing1_L1", 0.7f, ExtractColor::Orange);
-	SetParts("Wing2_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("Wing3_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail12_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail2_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail3_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail5_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail6_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail7_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail9_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail10_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("WingDetail11_L_1", 0.7f, ExtractColor::Orange);
-	SetParts("Tail1", 0.7f, ExtractColor::Heal);
-	SetParts("Tail2", 0.7f, ExtractColor::Heal);
-	SetParts("Tail3", 0.7f, ExtractColor::Heal);
-	SetParts("Tail4", 0.7f, ExtractColor::Heal, true);
-	SetParts("Tail5", 0.7f, ExtractColor::Heal);
+	SetParts("Jaw1", 1.0f, ExtractColor::Red, true);
+	SetParts("Neck3", 1.0f, ExtractColor::Red);
+	SetParts("Neck1", 1.0f, ExtractColor::Red);
+	SetParts("Hand_L", 1.0f, ExtractColor::White, true);
+	SetParts("LowerArm_L", 1.0f, ExtractColor::White);
+	SetParts("Hand_L_1", 1.0f, ExtractColor::White, true);
+	SetParts("LowerArm_L_1", 1.0f, ExtractColor::White);
+	SetParts("Feet_L", 1.0f, ExtractColor::Orange, true);
+	SetParts("LowerLeg_L", 1.0f, ExtractColor::Orange);
+	SetParts("Feet_L_1", 1.0f, ExtractColor::Orange, true);
+	SetParts("LowerLeg_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("Wing1_L", 1.0f, ExtractColor::Orange);
+	SetParts("Wing2_L", 1.0f, ExtractColor::Orange);
+	SetParts("Wing3_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail12_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail2_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail3_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail5_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail6_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail7_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail9_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail10_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail11_L", 1.0f, ExtractColor::Orange);
+	SetParts("Wing1_L1", 1.0f, ExtractColor::Orange);
+	SetParts("Wing2_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("Wing3_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail12_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail2_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail3_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail5_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail6_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail7_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail9_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail10_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingDetail11_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("Tail1", 1.0f, ExtractColor::Heal);
+	SetParts("Tail2", 1.0f, ExtractColor::Heal);
+	SetParts("Tail3", 1.0f, ExtractColor::Heal);
+	SetParts("Tail4", 1.0f, ExtractColor::Heal, true);
+	SetParts("Tail5", 1.0f, ExtractColor::Heal);
 }
