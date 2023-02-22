@@ -22,6 +22,8 @@ public:
     void Update(float elapsedTime);
     void Render(RenderContext rc, ModelShader* shader);
 
+    void Render2D(ID3D11DeviceContext* dc);
+
     void Register(Player* player);
 
     void DrawDebugPrimitive();
