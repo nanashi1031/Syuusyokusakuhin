@@ -160,10 +160,10 @@ public:
             node->worldTransform._43);
         return nodePosition;
     }
-
+    void Turn(float elapsedTime, float vx, float vz, float speed);
 protected:
     void Move(float vx, float vz, float speed);
-    void Turn(float elapsedTime, float vx, float vz, float speed);
+
 
     // ’…’n‚µ‚½Žž‚ÉŒÄ‚Î‚ê‚é
     virtual void OnLanding() {}

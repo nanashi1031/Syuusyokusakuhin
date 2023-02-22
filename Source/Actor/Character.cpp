@@ -2,6 +2,7 @@
 #include "Collision.h"
 #include "StageManager.h"
 #include "LightManager.h"
+#include "Mathf.h"
 
 void Character::Move(float vx, float vz, float speed)
 {
@@ -51,6 +52,17 @@ void Character::Turn(float elapsedTime, float vx, float vz, float speed)
         angle.y += speed * rot;
     }
 
+	DirectX::XMFLOAT3 angles =
+	{ DirectX::XMConvertToDegrees(angle.x), DirectX::XMConvertToDegrees(angle.y), DirectX::XMConvertToDegrees(angle.z) };
+
+	if (angles.x > 360 || angles.x < -360)
+		angles.x = static_cast<int>(angles.x) % 360;
+	if (angles.y > 360 || angles.y < -360)
+		angles.y = static_cast<int>(angles.y) % 360;
+	if (angles.z > 360 || angles.z < -360)
+		angles.z = static_cast<int>(angles.z) % 360;
+	angle =
+	{ DirectX::XMConvertToRadians(angles.x),  DirectX::XMConvertToRadians(angles.y), DirectX::XMConvertToRadians(angles.z) };
 }
 
 void Character::UpdateVelocity(float elapsedTime)
