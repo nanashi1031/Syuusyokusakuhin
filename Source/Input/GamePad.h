@@ -31,6 +31,17 @@ public:
 	static const GamePadButton KEY_R				= (1 << 21);
 	static const GamePadButton KEY_Z				= (1 << 22);
 
+	//Xboxキー配置
+	static const GamePadButton BTN_PAD_A = (1 << 23);
+	static const GamePadButton BTN_PAD_B = (1 << 24);
+	static const GamePadButton BTN_PAD_X = (1 << 25);
+	static const GamePadButton BTN_PAD_Y = (1 << 26);
+	static const GamePadButton BTN_PAD_LB = (1 << 27);
+	static const GamePadButton BTN_PAD_RB = (1 << 28);
+	static const GamePadButton BTN_PAD_LT = (1 << 29);
+	static const GamePadButton BTN_PAD_RT = (1 << 30);
+	static const GamePadButton BTN_PAD_MENU = (1 << 31);
+
 public:
 	GamePad() {}
 	~GamePad() {}
