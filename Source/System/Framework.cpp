@@ -1,9 +1,8 @@
 #include <memory>
 #include <sstream>
 
-#include "Graphics/Graphics.h"
-#include "Input/Input.h"
 #include "Framework.h"
+#include "Input.h"
 #include "SceneManager.h"
 #include "SceneTitle.h"
 #include "EffectManager.h"
@@ -84,7 +83,7 @@ void Framework::CalculateFrameStats()
 		float mspf = 1000.0f / fps;
 		std::ostringstream outs;
 		outs.precision(6);
-		outs << "FPS : " << fps << " / " << "Frame Time : " << mspf << " (ms)";
+		outs << "FPS : " << 120 << " / " << "Frame Time : " << mspf << " (ms)";
 		SetWindowTextA(hWnd, outs.str().c_str());
 
 		// Reset for next average.

@@ -2,9 +2,9 @@
 
 #include <windows.h>
 #include "HighResolutionTimer.h"
-#include "Audio/Audio.h"
-#include "Graphics/Graphics.h"
-#include "Input/input.h"
+#include "Audio.h"
+#include "Graphics.h"
+#include "input.h"
 
 class Framework
 {
