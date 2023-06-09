@@ -32,6 +32,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 	float4 ambientLightColor2 = float4(0.3, 0.3, 0.3,1);
 
 	float3 ambient = ka * ambientLightColor;
+	// 環境光を暗くする
+	ambient = 0.01f;
 
 	// 平行光源のライティング計算
 	float3 directionalDiffuse =
@@ -65,7 +67,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 
 		// 距離減衰を算出する
 		float attenuate = saturate(1.0f - lightLength / pointLightData[i].range);
-		attenuate = 0.6;
+		// 明るくする
+		attenuate = 1.0;
 		lightVector = lightVector / lightLength;
 		pointDiffuse += CalcLambertDiffuse(N, lightVector,
 			pointLightData[i].color.rgb, kd.rgb) * attenuate;
