@@ -52,17 +52,26 @@ void Character::Turn(float elapsedTime, float vx, float vz, float speed)
         angle.y += speed * rot;
     }
 
-	DirectX::XMFLOAT3 angles =
-	{ DirectX::XMConvertToDegrees(angle.x), DirectX::XMConvertToDegrees(angle.y), DirectX::XMConvertToDegrees(angle.z) };
+	DirectX::XMFLOAT3 angles = {
+		DirectX::XMConvertToDegrees(angle.x),
+		DirectX::XMConvertToDegrees(angle.y),
+		DirectX::XMConvertToDegrees(angle.z)
+	};
 
-	if (angles.x > 360 || angles.x < -360)
-		angles.x = static_cast<int>(angles.x) % 360;
-	if (angles.y > 360 || angles.y < -360)
-		angles.y = static_cast<int>(angles.y) % 360;
-	if (angles.z > 360 || angles.z < -360)
-		angles.z = static_cast<int>(angles.z) % 360;
-	angle =
-	{ DirectX::XMConvertToRadians(angles.x),  DirectX::XMConvertToRadians(angles.y), DirectX::XMConvertToRadians(angles.z) };
+	// 回転値が360を超えたら360以内に修正する
+	{
+		if (angles.x > 360 || angles.x < -360)
+			angles.x = static_cast<float>(static_cast<int>(angles.x) % 360);
+		if (angles.y > 360 || angles.y < -360)
+			angles.y = static_cast<float>(static_cast<int>(angles.y) % 360);
+		if (angles.z > 360 || angles.z < -360)
+			angles.z = static_cast<float>(static_cast<int>(angles.z) % 360);
+		angle = {
+			DirectX::XMConvertToRadians(angles.x),
+			DirectX::XMConvertToRadians(angles.y),
+			DirectX::XMConvertToRadians(angles.z)
+		};
+	}
 }
 
 void Character::UpdateVelocity(float elapsedTime)
@@ -263,14 +272,18 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&collectPosition), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
 				float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&hit.position), DirectX::XMLoadFloat3(&position)), Normal));
 
-				// positionをスタートにすることでその場から動かない(はずだったのに)
+				// positionをスタートにすることでその場から動かない(はずだったのになぜ)
+#if 0
 				//start.y = position.y;
 				//position = start;
+#endif
 
 				DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&position), DirectX::XMVectorScale(Normal, radius + dot)));
 			}
 			else
 			{
+				// TODO 一応残してる、いらないなら消せ
+#if 0
 				//position.x = hit2.position.x;
 				//position.z = hit2.position.z;
 
@@ -280,6 +293,7 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 				//Vec = DirectX::XMVectorSubtract(Start, DirectX::XMLoadFloat3(&hit2.position));
 				//Dot = DirectX::XMVector3Dot(Vec, Normal);
 				//DirectX::XMStoreFloat3(&position, DirectX::XMVectorAdd(DirectX::XMLoadFloat3(&hit2.position), DirectX::XMVectorScale(Normal, radius - DirectX::XMVectorGetX(Dot))));
+#endif
 			}
 		}
 		else
@@ -288,7 +302,6 @@ void Character::UpdateHorizontalMove(float elapsedTime)
 			position.x += mx;
 			position.z += mz;
 		}
-
 	}
 }
 
@@ -359,4 +372,14 @@ void Character::UpdateInvincibleTime(float elapsedTime)
 	{
 		invincibleTimer -= elapsedTime;
 	}
+}
+
+DirectX::XMFLOAT3 Character::GetFront() const
+{
+	DirectX::XMFLOAT3 front;
+	front.x = sinf(this->angle.y);
+	front.y = 0.0f;
+	front.z = cosf(this->angle.y);
+
+	return front;
 }
