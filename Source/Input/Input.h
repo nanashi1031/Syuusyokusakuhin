@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Input/GamePad.h"
-#include "Input/Mouse.h"
+#include "GamePad.h"
+#include "Mouse.h"
 
 // インプット
 class Input
