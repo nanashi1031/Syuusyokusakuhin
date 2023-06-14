@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "Graphics.h"
 
 // Floatの計算
 class Mathf
@@ -53,4 +54,10 @@ public:
 
 	// プレイヤーへのダメージ計算
 	static float PlayerDamageCalculation(float attackPower, float defensePower);
+
+	// ワールド座標からスクリーン座標への変換
+	static DirectX::XMFLOAT2 ConvertWorldToScreen(DirectX::XMFLOAT3 worldPosition,
+		ID3D11DeviceContext* dc,
+		const DirectX::XMFLOAT4X4& view,
+		const DirectX::XMFLOAT4X4& projection);
 };

@@ -8,7 +8,8 @@ float Mathf::LerpFloat(float start, float end, float time)
 	return start * (1.0f - time) + (end * time);
 }
 
-DirectX::XMFLOAT3 Mathf::LerpFloat3(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, float time)
+DirectX::XMFLOAT3 Mathf::LerpFloat3(
+	DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 end, float time)
 {
 	DirectX::XMFLOAT3 outLerp;
 	outLerp.x = start.x * (1.0f - time) + (end.x * time);
@@ -19,7 +20,8 @@ DirectX::XMFLOAT3 Mathf::LerpFloat3(DirectX::XMFLOAT3 start, DirectX::XMFLOAT3 e
 }
 
 // 球面補間
-DirectX::XMFLOAT3* Mathf::SphereLinear(DirectX::XMFLOAT3* out, DirectX::XMFLOAT3* start, DirectX::XMFLOAT3* end, float t)
+DirectX::XMFLOAT3* Mathf::SphereLinear(
+	DirectX::XMFLOAT3* out, DirectX::XMFLOAT3* start, DirectX::XMFLOAT3* end, float t)
 {
 	DirectX::XMVECTOR vectorS, vectorE;
 
@@ -34,21 +36,25 @@ DirectX::XMFLOAT3* Mathf::SphereLinear(DirectX::XMFLOAT3* out, DirectX::XMFLOAT3
 	float dotdot;
 	DirectX::XMStoreFloat(&dotdot, dot);
 	double anger = static_cast<double>(dotdot);
-	float angle = acos(anger);
+	double angle = acos(anger);
 
 	// sinθ
-	float SinTh = sin(angle);
+	double SinTh = sin(angle);
 	// SinThの逆数を用意 1からShinThを割るとShinThの逆数になる
-	float ShinThReciprocal = 1.0f / SinTh;
+	double ShinThReciprocal = 1.0f / SinTh;
 	// 補間係数
-	float Ps = sin(static_cast<double>(angle * (1 - t)));
-	float Pe = sin(static_cast<double>(angle * t));
+	double Ps = sin(static_cast<double>(angle * (1 - t)));
+	double Pe = sin(static_cast<double>(angle * t));
 
-	DirectX::XMStoreFloat3(out, DirectX::XMVectorScale(DirectX::XMVectorAdd(DirectX::XMVectorScale(vectorS, Ps), DirectX::XMVectorScale(vectorE, Pe)), ShinThReciprocal));// ベクターをShinThの逆数でかけることで(ベクター ÷ ShinTh)になる
+	DirectX::XMStoreFloat3(
+		out, DirectX::XMVectorScale(DirectX::XMVectorAdd(
+			DirectX::XMVectorScale(vectorS, static_cast<float>(Ps)),
+				DirectX::XMVectorScale(vectorE, static_cast<float>(Pe))),
+			static_cast<float>(ShinThReciprocal)));
+	// ベクターをShinThの逆数でかけることで(ベクター ÷ ShinTh)になる
 
 	// 一応正規化して球面線形補間に
 	DirectX::XMVECTOR outVec = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(out));
-	DirectX::XMFLOAT3 outFloat3;
 	DirectX::XMStoreFloat3(out, outVec);
 
 	return out;
@@ -132,11 +138,14 @@ DirectX::XMFLOAT3 Mathf::SqFloat3(DirectX::XMFLOAT3 float3A)
 	return outFloat3;
 }
 
-DirectX::XMFLOAT3 Mathf::CalculateLength(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
+DirectX::XMFLOAT3 Mathf::CalculateLength(
+	DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B)
 {
 	DirectX::XMFLOAT3 length = SubtractFloat3(float3A, float3B);
-	float square = sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
-	DirectX::XMFLOAT3 outObjectLength = DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
+	float square =
+		sqrtf(powf(length.x, 2.0f) + powf(length.y, 2.0f) + powf(length.z, 2.0f));
+	DirectX::XMFLOAT3 outObjectLength =
+		DirectX::XMFLOAT3(length.x / square, length.y / square, length.z / square);
 
 	return outObjectLength;
 }
@@ -186,4 +195,40 @@ float Mathf::PlayerDamageCalculation(float attackPower, float defensePower)
 		outResult = 0.0f;
 
 	return outResult;
+}
+
+DirectX::XMFLOAT2 Mathf::ConvertWorldToScreen(DirectX::XMFLOAT3 worldPosition,
+	ID3D11DeviceContext* dc,
+	const DirectX::XMFLOAT4X4& view,
+	const DirectX::XMFLOAT4X4& projection)
+{
+	//ビューポート
+	D3D11_VIEWPORT viewport;
+	UINT numVieports = 1;
+	dc->RSGetViewports(&numVieports, &viewport);
+	//変換行列
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&view);
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&projection);
+	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
+	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+	// ワールド座標からスクリーン座標へ変換
+	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+		WorldPosition,			//ワールド座標
+		viewport.TopLeftX,		//ビューポート左上X位置
+		viewport.TopLeftY,		//ビューポート左上Y位置
+		viewport.Width,			//ビューポート幅
+		viewport.Height,		//ビューポート高さ
+		viewport.MinDepth,		//深度幅の範囲を表す最小値
+		viewport.MaxDepth,		//深度幅の範囲を表す最大値
+		Projection,				//プロジェクション行列
+		View,					//ビュー行列
+		World					//ワールド行列
+	);
+
+	// スクリーン座標
+	DirectX::XMFLOAT2 screenPosition;
+	DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+	return screenPosition;
 }
