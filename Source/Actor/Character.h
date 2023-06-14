@@ -6,6 +6,7 @@
 #include "StateMachine.h"
 #include "Extract.h"
 #include "Audio.h"
+// TODO:本来はこんなとこでSceneGame呼ぶな
 #include "SceneGame.h"
 
 // キャラクター
