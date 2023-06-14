@@ -79,7 +79,9 @@ public:
         Character* characterB,
         const char* nodeNameB,
         const float nodeRadiusB,
+        DirectX::XMFLOAT3& hitPosition,
         float damage = 0.0f,
+        float invincibleTime = 1.0f,
         float power = 0.0f);
 
     // ƒŒƒC‚Æƒ‚ƒfƒ‹‚ÌŒğ·”»’è

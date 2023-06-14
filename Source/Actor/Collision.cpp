@@ -227,8 +227,11 @@ bool Collision::AttackNodeVsNode(
 	Character* characterB,
 	const char* nodeNameB,
 	const float nodeRadiusB,
+	DirectX::XMFLOAT3& hitPosition,
 	float damage,
-	float power)
+	float invincibleTime,
+	float power
+	)
 {
 	Model::Node* nodeA;
 	if (nodeNameA == "NotFound")
@@ -273,7 +276,7 @@ bool Collision::AttackNodeVsNode(
 				outPosition))
 			{
 				// ダメージを与える
-				if (characterB->ApplyDamage(damage, 0.5f))
+				if (characterB->ApplyDamage(damage, invincibleTime))
 				{
 					//　powerが踏ん張る力より強いなら
 					if (power > characterB->GetNotStand())
@@ -294,6 +297,7 @@ bool Collision::AttackNodeVsNode(
 						vec.y = 5.0f;
 						// 吹っ飛ばす
 						characterB->AddImpulse(vec);
+						hitPosition = outPosition;
 					}
 					return true;
 				}
