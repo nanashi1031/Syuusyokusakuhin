@@ -105,6 +105,7 @@ void CameraController::DrawDebugGUI()
             ImGui::SliderFloat("mouseRollSpeed", &mouseRollSpeed, 0.0f, 5.0f);
             // レンジ
             ImGui::SliderFloat("playerRange", &playerRange, 0.001f, 50.0f);
+            ImGui::SliderFloat("lockOnCameraHeight", &lockOnCameraHeight, 0.001f, 50.0f);
         }
         if (ImGui::CollapsingHeader("LockOn", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -176,7 +177,7 @@ void CameraController::UpdateMouse(float elapsedTime)
 
     // マウスカーソル非表示
     // TODO 今はカーソルの動きを見るため実行しない、本番ではコメントを外す
-    //ShowCursor(false);
+    ShowCursor(false);
 
     float speed = mouseRollSpeed * elapsedTime;
     angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() / 2.0f) * speed;
@@ -193,25 +194,6 @@ void CameraController::UpdatePad(float elapsedTime)
     // スティックの入力値に合わせてX軸とY軸を回転
     angle.x -= padRY * speed;
     angle.y += padRX * speed;
-}
-
-void CameraController::UpdateKeyboard(float elapsedTime)
-{
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-    // マウスカーソル表示
-    ShowCursor(true);
-
-    float speed = rollSpeed * elapsedTime;
-
-    if (gamePad.GetButton() & gamePad.KEY_I)
-        angle.x -= 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_K)
-        angle.x += 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_J)
-        angle.y -= 1.0f * speed;
-    if (gamePad.GetButton() & gamePad.KEY_L)
-        angle.y += 1.0f * speed;
 }
 
 void CameraController::CameraRotationAxisLimit()
@@ -249,7 +231,6 @@ void CameraController::UpdateNormalCamera(float elapsedTime)
     // カメラのキーボードIJKL操作
     else if (!cameraMouseOperationFlag)
     {
-        UpdateKeyboard(elapsedTime);
     }
 #endif
 
@@ -274,8 +255,20 @@ void CameraController::UpdateLockOnCamera(float elapsedTime)
         if (LockOnSwitching()) {};
     }
 
-    char* targetName =
-        enemyManager.GetEnemy(0)->GetParts()[targets[nowTargetIndex].index].name;
+    // 部位にロックオンするとカメラがぐわんぐわんして酔う
+    //char* targetName =
+    //    enemyManager.GetEnemy(0)->GetParts()[targets[nowTargetIndex].index].name;
+    //Model::Node* node =
+    //    enemyManager.GetEnemy(0)->GetModel()->FindNode(targetName);
+    //DirectX::XMFLOAT3 targetposition = enemyManager.GetEnemy(0)->GetNodePosition(node);
+
+    /// 顎は頭を振り回すからぐわんぐわんして酔いやすいかも
+    //char* targetName = "Neck1";
+    //char* targetName = "Chest";
+    //char* targetName = "Spine1";
+    char* targetName = "Root";
+    // 腰のあたりにロックオンしておいて酔い防止
+    //char* targetName = "Tail1";
     Model::Node* node =
         enemyManager.GetEnemy(0)->GetModel()->FindNode(targetName);
     DirectX::XMFLOAT3 targetposition = enemyManager.GetEnemy(0)->GetNodePosition(node);
@@ -284,9 +277,10 @@ void CameraController::UpdateLockOnCamera(float elapsedTime)
         Mathf::CalculateLength(targetposition, player->GetPosition());
 
     afterPerspective = DirectX::XMFLOAT3(
-        player->GetPosition().x - playerEnemyLength.x * playerRange,
-        player->GetPosition().y - playerEnemyLength.y + 1,
-        player->GetPosition().z - playerEnemyLength.z * playerRange);
+        player->GetPosition().x - (playerEnemyLength.x * playerRange),
+        player->GetPosition().y - playerEnemyLength.y * playerRange + lockOnCameraHeight,
+        player->GetPosition().z - (playerEnemyLength.z * playerRange));
+
 
     //perspective = afterPerspective;
 }
@@ -313,12 +307,15 @@ void CameraController::UpdateStageRayCast()
         Player* player =
             playerManager.GetPlayer(playerManager.GetplayerOneIndex());
         Mathf::CalculateLength(player->GetPosition(), perspective);
+        DirectX::XMFLOAT3 start = player->GetPosition();
+        start.y += player->GetHeight();
 
         if (stageManager.GetStage(stageManager.GetNowStage())->
-            RayCast(player->GetPosition(), perspective, hitResult))
+            RayCast(start, perspective, hitResult))
         {
             perspective = hitResult.position;
-            perspective.y += 1.0f;
+            // カメラの位置を少し上げないと床の下が見える
+            perspective.y += 0.1f;
         }
     }
 }
@@ -429,8 +426,9 @@ bool CameraController::LockOnSwitching()
     {
         float mousePos = static_cast<float>(mouse.GetPositionX());
         float stick = gamePad.GetAxisRX();
-        // マウスの位置がスクリーンの真ん中から左に移動したら
-        if ((mousePos > mouse.GetScreenWidth() * 0.5f + 50 || stick > 0))
+        // マウスの位置がスクリーンの真ん中から左に移動するか、マウスホイールを下にしたか
+        if ((mousePos > mouse.GetScreenWidth() * 0.5f + 50 || stick > 0) ||
+            (mouse.GetWheel() < 0))
         {
             //CalculationEnemyLenght();
             Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
@@ -443,8 +441,9 @@ bool CameraController::LockOnSwitching()
                 return true;
             }
         }
-        // マウスの位置がスクリーンの真ん中から右に移動したら
-        else if ((mousePos < mouse.GetScreenWidth() * 0.5 - 50) || stick < 0)
+        // マウスの位置がスクリーンの真ん中から右に移動するか、マウスホイールを上にしたか
+        else if ((mousePos < mouse.GetScreenWidth() * 0.5 - 50) || stick < 0 ||
+            (mouse.GetWheel() > 0))
         {
             // targets.indexの先頭じゃなければ対象を変更
             if (nowTargetIndex  > 0)
@@ -483,6 +482,13 @@ DirectX::XMFLOAT3 CameraController::GetPerspective()
     return outPerspective;
 }
 
+
+void CameraController::SetCamerarShake(bool flag, DirectX::XMFLOAT3 power)
+{
+    shakeFlag = flag;
+    shakePower = power;
+}
+
 // カメラシェイク
 void CameraController::ShakeCamera(DirectX::XMFLOAT3 shakePower)
 {
@@ -497,15 +503,6 @@ void CameraController::ShakeCamera(DirectX::XMFLOAT3 shakePower)
     perspective.x += shakePower.x;
     perspective.y += shakePower.y;
     perspective.z += shakePower.z;
-}
-
-void CameraController::SetCamerarShake(DirectX::XMFLOAT3 shakePower, float shakeTime)
-{
-    shakeTimer += 1.0f;
-    if (shakeTime < shakeTimer)
-    {
-        ShakeCamera(shakePower);
-    }
 }
 
 void CameraController::CalculationEnemyLenght()

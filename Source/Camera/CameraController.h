@@ -54,7 +54,7 @@ public:
 
     int GetTagetIndex() const { return this->nowTargetIndex; }
 
-    void SetCamerarShake(DirectX::XMFLOAT3 shakePower, float shakeTime);
+    void SetCamerarShake(bool flag,  DirectX::XMFLOAT3 power = { 0.0f, 0.0f, 0.0f });
 
     bool GetLockOnFlag() const { return this->lockOnFlag; }
 
@@ -66,7 +66,6 @@ public:
 private:
     void UpdateMouse(float elapsedTime);
     void UpdatePad(float elapsedTime);
-    void UpdateKeyboard(float elapsedTime);
 
     void CameraRotationAxisLimit();
 
@@ -96,6 +95,7 @@ private:
     float rollSpeed = DirectX::XMConvertToRadians(90);
     float mouseRollSpeed = 0.11f;
     float playerRange = 8.0f;
+    float lockOnCameraHeight = 4.0f;
     const float maxAngleX = DirectX::XMConvertToRadians(45);
     const float minAngleX = DirectX::XMConvertToRadians(-45);
 
