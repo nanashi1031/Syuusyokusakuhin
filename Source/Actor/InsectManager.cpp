@@ -14,6 +14,8 @@ void InsectManager::Clear()
     {
         delete insect;
     }
+    insects.clear();
+
 }
 
 void InsectManager::Update(float elapsedTime)
