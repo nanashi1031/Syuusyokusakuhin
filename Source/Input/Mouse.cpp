@@ -1,4 +1,4 @@
-#include "Input/Mouse.h"
+#include "Mouse.h"
 
 static const int KeyMap[] =
 {
@@ -66,8 +66,8 @@ void Mouse::Update()
 void Mouse::SetMiddlePosition()
 {
 	POINT center;
-	center.x = GetScreenWidth() * 0.5f;
-	center.y = GetScreenHeight() * 0.5f;
+	center.x = (LONG)(GetScreenWidth() * 0.5f);
+	center.y = (LONG)(GetScreenHeight() * 0.5f);
 	::ClientToScreen(hWnd, &center);
 	SetCursorPos(center.x, center.y);
 }
