@@ -61,9 +61,9 @@ void Effect::SetColor(Effekseer::Handle handle, const DirectX::XMFLOAT4& color)
 {
     Effekseer::Manager* effekseerManager = EffectManager::Instance().GetEffekseerManager();
     Effekseer::Color colors;
-    colors.R = color.x;
-    colors.G = color.y;
-    colors.B = color.z;
-    colors.A = color.w;
+    colors.R = static_cast<uint8_t>(color.x);
+    colors.G = static_cast<uint8_t>(color.y);
+    colors.B = static_cast<uint8_t>(color.z);
+    colors.A = static_cast<uint8_t>(color.w);
     effekseerManager->SetAllColor(handle, colors);
 }
