@@ -19,7 +19,37 @@ namespace EnemyPurpleDragonState
 		void Exit()override;
 
 	private:
+		enum class IdleStateChange
+		{
+			Pursuit,
+			fly,
+		};
+
 		float stateTimer = 0.0f;
+	};
+
+	// 戦闘待機ステート
+	class BattleIdleState : public State
+	{
+	public:
+		BattleIdleState(EnemyPurpleDragon* actor) :State(actor) {};
+		~BattleIdleState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+
+	private:
+		enum class BattleIdleStateChange
+		{
+			Pursuit,
+			fly,
+		};
+
+		float stateTimer = 3.0f;
 	};
 
 	// 放置ステート
@@ -37,6 +67,25 @@ namespace EnemyPurpleDragonState
 		void Exit()override;
 	};
 
+	// 咆哮ステート
+	class HowlState : public State
+	{
+	public:
+		HowlState(EnemyPurpleDragon* actor) :State(actor) {};
+		~HowlState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	private:
+		float seTimer = 0.0f;
+		bool seFlag = false;
+		std::unique_ptr<AudioSource> SE_Howl1;
+	};
+
 	// 追跡ステート
 	class PursuitState : public State
 	{
@@ -51,6 +100,12 @@ namespace EnemyPurpleDragonState
 		// ステートから出ていくときのメソッド
 		void Exit()override;
 	private:
+		enum class PursuitStateChange
+		{
+			BiteAttack,
+			ClawAttack,
+		};
+
 		float stateTimer = 0.0f;
 	};
 
@@ -84,12 +139,12 @@ namespace EnemyPurpleDragonState
 		void Exit()override;
 	};
 
-	// コンボ攻撃1ステート
-	class AttackCombo1State : public State
+	// 離陸ステート
+	class TakeOffState : public State
 	{
 	public:
-		AttackCombo1State(EnemyPurpleDragon* actor) :State(actor) {};
-		~AttackCombo1State() {}
+		TakeOffState(EnemyPurpleDragon* actor) :State(actor) {};
+		~TakeOffState() {}
 
 		// ステートに入った時のメソッド
 		void Enter()override;
@@ -99,9 +154,102 @@ namespace EnemyPurpleDragonState
 		void Exit()override;
 	private:
 		float stateTimer = 0.0f;
-		bool nextAttackFlag = false;
+		std::unique_ptr<AudioSource> SE_Flapping;
 	};
 
+	// 飛行ステート
+	class FlyState : public State
+	{
+	public:
+		FlyState(EnemyPurpleDragon* actor) :State(actor) {};
+		~FlyState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	private:
+		enum class FlyStateChange
+		{
+			Landing,
+			TakeOff,
+		};
+
+		float stateTimer = 0.0f;
+		std::unique_ptr<AudioSource> SE_Flapping;
+	};
+
+	// 着陸ステート
+	class LandingState : public State
+	{
+	public:
+		LandingState(EnemyPurpleDragon* actor) :State(actor) {};
+		~LandingState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	private:
+		float seTimer = 0.0f;
+		std::unique_ptr<AudioSource> SE_Flapping;
+	};
+
+	// 睡眠ステート
+	class SleepState : public State
+	{
+	public:
+		SleepState(EnemyPurpleDragon* actor) :State(actor) {};
+		~SleepState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	};
+
+	// 噛みつき攻撃ステート
+	class BiteAttackState : public State
+	{
+	public:
+		BiteAttackState(EnemyPurpleDragon* actor) :State(actor) {};
+		~BiteAttackState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	private:
+		float stateTimer = 0.0f;
+		bool seFlag = false;
+		std::unique_ptr<AudioSource> SE_Bite;
+	};
+
+	// 爪攻撃ステート
+	class ClawAttackState : public State
+	{
+	public:
+		ClawAttackState(EnemyPurpleDragon* actor) :State(actor) {};
+		~ClawAttackState() {}
+
+		// ステートに入った時のメソッド
+		void Enter()override;
+		// ステートで実行するメソッド
+		void Execute(float elapsedTime)override;
+		// ステートから出ていくときのメソッド
+		void Exit()override;
+	private:
+		float stateTimer = 0.0f;
+		std::unique_ptr<AudioSource> SE_Claw;
+	};
 
 	// ダメージステート
 	class DamagesState : public State
@@ -131,5 +279,9 @@ namespace EnemyPurpleDragonState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
+	private:
+		float seTimer = 0.0f;
+		bool seFlag = false;
+		std::unique_ptr<AudioSource> SE_FallDown;
 	};
 }
