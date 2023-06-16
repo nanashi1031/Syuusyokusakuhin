@@ -6,6 +6,7 @@ void PlayerManager::Clear()
     {
         delete player;
     }
+    players.clear();
 }
 
 void PlayerManager::Update(float elapsedTime)
@@ -39,9 +40,16 @@ void PlayerManager::Render(RenderContext rc, ModelShader* shader)
     }
 }
 
+//void PlayerManager::Register(std::shared_ptr<Player> player)
+//{
+//    players.emplace_back(player.get());
+////    players.push_back(player.get());
+//}
+
 void PlayerManager::Register(Player* player)
 {
     players.emplace_back(player);
+    //    players.push_back(player.get());
 }
 
 void PlayerManager::DrawDebugPrimitive()
