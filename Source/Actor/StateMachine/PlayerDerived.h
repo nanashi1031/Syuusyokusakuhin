@@ -157,6 +157,9 @@ namespace PlayerState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
+	private:
+		float stateTimer = 0.0f;
+		DirectX::XMFLOAT3 angle = { 0.0f, 0.0f, 0.0f };
 	};
 
 	// ダメージステート

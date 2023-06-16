@@ -1,10 +1,13 @@
-#include "Input\Input.h"
+#include "Input.h"
 #include "PlayerDerived.h"
 #include "Mathf.h"
 #include "Collision.h"
+#include "PlayerManager.h"
 #include "EnemyManager.h"
 #include "LightManager.h"
 #include "Camera.h"
+#include "CameraController.h"
+#include "SceneGame.h"
 
 void PlayerState::IdleState::Enter()
 {
@@ -19,9 +22,10 @@ void PlayerState::IdleState::Execute(float elapsedTime)
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::Walk);
 	}
-	// スティックorキーボードでの移動が10以上無い場合放置ステートへ移動
+	// スティックorキーボードでの移動が10秒以上無い場合放置ステートへ移動
 	else if(owner->GetMoveFlag() == 0.0f)
 	{
+		float animationEndTime = 10;
 		if (stateTimer > 10)
 		{
 			owner->GetStateMachine()->ChangeState(Player::State::Neglect);
@@ -32,16 +36,13 @@ void PlayerState::IdleState::Execute(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-		(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
 
-	// 右クリック押されたら回避ステートへ遷移
-	/*if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
-	{
+	if(mouse.GetButtonDown() & mouse.BTN_RIGHT)
 		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
-	}*/
 }
 
 void PlayerState::IdleState::Exit()
@@ -84,16 +85,10 @@ void PlayerState::NeglectState::Execute(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-		(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
-
-	// 右クリック押されたら回避ステートへ遷移
-	/*if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
-	{
-		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
-	}*/
 }
 
 void PlayerState::NeglectState::Exit()
@@ -123,16 +118,14 @@ void PlayerState::WalkState::Execute(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-		(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
 
-	// 右クリック押されたら回避ステートへ遷移
-	/*if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
-	{
+	if ((gamePad.GetButtonDown() & gamePad.BTN_SPACE) ||
+		(gamePad.GetButtonDown() & gamePad.BTN_B))
 		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
-	}*/
 }
 
 void PlayerState::WalkState::Exit()
@@ -156,17 +149,14 @@ void PlayerState::RunState::Execute(float elapsedTime)
 	Mouse& mouse = Input::Instance().GetMouse();
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-		(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
-		//owner->GetStateMachine()->ChangeState(Player::State::AttackDashu);
 	}
 
-	// 右クリック押されたら回避ステートへ遷移
-	/*if (mouse.GetButtonDown() & mouse.BTN_RIGHT)
-	{
+	if ((gamePad.GetButtonDown() & gamePad.BTN_SPACE) ||
+		(gamePad.GetButtonDown() & gamePad.BTN_B))
 		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
-	}*/
 }
 
 void PlayerState::RunState::Exit()
@@ -191,50 +181,10 @@ void PlayerState::AttackCombo1State::Enter()
 void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
-	{
-		Enemy* enemy = enemyManager.GetEnemy(i);
-		for (int j = 0; j < enemy->GetParts().size(); j++)
-		{
-			float attackPower =
-				Mathf::PlayerAttackDamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
-			if (Collision::AttackNodeVsNode(
-				owner, "mixamorig:Sword_joint", 1.0f,
-				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-				attackPower))
-			{
-				if (owner->GetLightIndex() < 0)
-				{
-					DirectX::XMFLOAT4 color =
-						Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
-					Light* light = new Light(LightType::Point);
-					DirectX::XMFLOAT3 LightPosition =
-						owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-					light->SetPosition(LightPosition);
-					light->SetColor(DirectX::XMFLOAT4({ color }));
-					light->SetRange(2.0f);
-					LightManager::Instane().Register(light);
-					owner->SetLightIndex(LightManager::Instane().GetLightCount());
-					hitEffect1->Play(LightPosition);
-				}
-				//owner->GetAudios(0)->Play(false);
-				SE_Attack1->Play(false);
-			}
-		}
-	}
-
-	Mouse& mouse = Input::Instance().GetMouse();
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-		(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
-	{
-		nextAttackFlag = true;
-	}
 
 	// アニメーション再生が終了時
-	//if (!owner->GetModel()->IsPlayAnimation())
 	float nextAnimeSeconds = 0.9f;
-	if(owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
+	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
 	{
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
@@ -244,10 +194,56 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 		else if (!nextAttackFlag)
 		{
 			// 0秒経ったら待機ステートへ移動
-			if (stateTimer >= 0.5f)
+			float animationEndTime = 0.5f;
+			if (stateTimer >= animationEndTime)
 				owner->GetStateMachine()->ChangeState(Player::State::Idle);
 			stateTimer += elapsedTime;
 		}
+	}
+	else
+	{
+		for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+		{
+			Enemy* enemy = enemyManager.GetEnemy(i);
+			for (int j = 0; j < enemy->GetParts().size(); j++)
+			{
+				float radius = 1.0f;
+				float attackPower =
+					Mathf::PlayerAttackDamageCalculation(
+						5.0f, enemy->GetParts()[j].defensePower);
+				DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
+				float invincibleTime = 0.5f;
+				if (Collision::AttackNodeVsNode(
+					owner, "mixamorig:Sword_joint", radius,
+					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+					hitPosition, attackPower, invincibleTime))
+				{
+					if (owner->GetLightIndex() < 0)
+					{
+						DirectX::XMFLOAT4 color =
+							Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
+						Light* light = new Light(LightType::Point);
+						DirectX::XMFLOAT3 LightPosition =
+							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
+						light->SetPosition(LightPosition);
+						light->SetColor(DirectX::XMFLOAT4({ color }));
+						light->SetRange(2.0f);
+						LightManager::Instane().Register(light);
+						owner->SetLightIndex(LightManager::Instane().GetLightCount());
+						hitEffect1->Play(LightPosition);
+					}
+					SE_Attack1->Play(false);
+				}
+			}
+		}
+	}
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
+	{
+		nextAttackFlag = true;
 	}
 }
 
@@ -282,54 +278,8 @@ void PlayerState::AttackCombo2State::Enter()
 void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
-	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
-	{
-		for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
-		{
-			Enemy* enemy = enemyManager.GetEnemy(i);
-			for (int j = 0; j < enemy->GetParts().size(); j++)
-			{
-				float attackPower =
-					Mathf::PlayerAttackDamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
-				if(Collision::AttackNodeVsNode(
-					owner, "mixamorig:Sword_joint", 1.0f,
-					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-					attackPower))
-				{
-					if (owner->GetLightIndex() < 0)
-					{
-						DirectX::XMFLOAT4 color =
-							Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
-						Light* light = new Light(LightType::Point);
-						DirectX::XMFLOAT3 LightPosition =
-							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-						light->SetPosition(LightPosition);
-						light->SetColor(DirectX::XMFLOAT4({ color }));
-						light->SetRange(2.0f);
-						LightManager::Instane().Register(light);
-						owner->SetLightIndex(LightManager::Instane().GetLightCount());
-						hitEffect2->Play(LightPosition);
-						owner->SetLightIndex(LightManager::Instane().GetLightCount());
-						DirectX::XMFLOAT3 rotation = { 0, 0, DirectX::XMConvertToRadians(180) };
-						int ii = hitEffect2->Play(LightPosition);
-						hitEffect2->SetRotation(ii, rotation);
-					}
-					SE_Attack2->Play(false);
-				}
-			}
-		}
-	}
-
-	Mouse& mouse = Input::Instance().GetMouse();
-	GamePad& gamePad = Input::Instance().GetGamePad();
-	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-		(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
-	{
-		nextAttackFlag = true;
-	}
 
 	// アニメーション再生が終了時
-	//if (!owner->GetModel()->IsPlayAnimation())
 	float nextAnimeSeconds = 0.9f;
 	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
 	{
@@ -341,10 +291,68 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 		else if (!nextAttackFlag)
 		{
 			// 1秒経ったら待機ステートへ移動
-			if (stateTimer >= 0.5f)
+			float animationEndTime = 0.5f;
+			if (stateTimer >= animationEndTime)
 				owner->GetStateMachine()->ChangeState(Player::State::Idle);
 			stateTimer += elapsedTime;
 		}
+	}
+	else
+	{
+		nextAnimeSeconds = 0.4f;
+		if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
+		{
+			for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+			{
+				Enemy* enemy = enemyManager.GetEnemy(i);
+				for (int j = 0; j < enemy->GetParts().size(); j++)
+				{
+					float radius = 1.0f;
+					float attackPower =
+						Mathf::PlayerAttackDamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
+					DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
+					float invincibleTime = 0.3f;
+					if (Collision::AttackNodeVsNode(
+						owner, "mixamorig:Sword_joint", radius,
+						enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
+						hitPosition, attackPower, invincibleTime))
+					{
+						if (owner->GetLightIndex() < 0)
+						{
+							DirectX::XMFLOAT4 color =
+								Extract::Instance().ColorConversion(
+									enemy->GetParts()[j].extractColor);
+							Light* light = new Light(LightType::Point);
+							DirectX::XMFLOAT3 LightPosition =
+								owner->GetNodePosition(
+									owner->GetNode("mixamorig:Sword_joint"));
+							light->SetPosition(LightPosition);
+							light->SetColor(DirectX::XMFLOAT4({ color }));
+							light->SetRange(2.0f);
+							LightManager::Instane().Register(light);
+							owner->SetLightIndex(
+								LightManager::Instane().GetLightCount());
+							hitEffect2->Play(LightPosition);
+							owner->SetLightIndex(
+								LightManager::Instane().GetLightCount());
+							DirectX::XMFLOAT3 rotation =
+							{ 0, 0, DirectX::XMConvertToRadians(180) };
+							int ii = hitEffect2->Play(LightPosition);
+							hitEffect2->SetRotation(ii, rotation);
+						}
+						SE_Attack2->Play(false);
+					}
+				}
+			}
+		}
+	}
+
+	Mouse& mouse = Input::Instance().GetMouse();
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
+	{
+		nextAttackFlag = true;
 	}
 }
 
@@ -376,20 +384,28 @@ void PlayerState::AttackCombo3State::Enter()
 
 void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 {
-	if (owner->GetModel()->GetAnimationSeconds() > 1.0f)
+	EnemyManager& enemyManager = EnemyManager::Instance();
+
+	float nextAnimeSecondsStart = 1.0f;
+	float nextAnimeSecondsStEnd = 2.0f;
+	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSecondsStart &&
+		owner->GetModel()->GetAnimationSeconds() < nextAnimeSecondsStEnd)
 	{
-		EnemyManager& enemyManager = EnemyManager::Instance();
 		for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 		{
 			Enemy* enemy = enemyManager.GetEnemy(i);
 			for (int j = 0; j < enemy->GetParts().size(); j++)
 			{
 				float attackPower =
-					Mathf::PlayerAttackDamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
+					Mathf::PlayerAttackDamageCalculation(
+						10.0f, enemy->GetParts()[j].defensePower);
+				float radius = 1.0f;
+				DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
+				float invincibleTime = 1.0f;
 				if (Collision::AttackNodeVsNode(
-					owner, "mixamorig:Sword_joint", 1.0f,
+					owner, "mixamorig:Sword_joint", radius,
 					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-					attackPower))
+					hitPosition, attackPower, invincibleTime))
 				{
 					if (owner->GetLightIndex() < 0)
 					{
@@ -446,17 +462,19 @@ void PlayerState::AttackDashuState::Enter()
 void PlayerState::AttackDashuState::Execute(float elapsedTime)
 {
 	EnemyManager& enemyManager = EnemyManager::Instance();
-for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
+	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
 		Enemy* enemy = enemyManager.GetEnemy(i);
 		for (int j = 0; j < enemy->GetParts().size(); j++)
 		{
+			float radius = 1.0f;
 			float attackPower =
 				Mathf::PlayerAttackDamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
+			DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
 			if (Collision::AttackNodeVsNode(
-				owner, "mixamorig:Sword_joint", 1.0f,
+				owner, "mixamorig:Sword_joint", radius,
 				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-				attackPower))
+				hitPosition, attackPower))
 			{
 				if (owner->GetLightIndex() < 0)
 				{
@@ -475,10 +493,10 @@ for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 		}
 	}
 
-Mouse& mouse = Input::Instance().GetMouse();
-GamePad& gamePad = Input::Instance().GetGamePad();
-if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
-	(gamePad.GetButtonDown() & gamePad.BTN_PAD_RB))
+	Mouse& mouse = Input::Instance().GetMouse();
+	GamePad& gamePad = Input::Instance().GetGamePad();
+	if ((mouse.GetButtonDown() & mouse.BTN_LEFT) ||
+		(gamePad.GetButtonDown() & gamePad.BTN_A))
 	{
 		nextAttackFlag = true;
 	}
@@ -513,34 +531,76 @@ void PlayerState::AttackDashuState::Exit()
 
 void PlayerState::AvoiDanceState::Enter()
 {
+	float animationTime = 0.0f;
+
+	if (Extract::Instance().GetExtract(ExtractColor::White) > 0.0f)
+	{
+		animationTime = 1.7f;
+	}
+	else
+	{
+		animationTime = 1.2f;
+	}
+
 	owner->GetModel()->PlayAnimation(
-		Player::PlayerAnimation::Block, true);
+		Player::PlayerAnimation::Avoidance, true, 0.2f, animationTime);
+	owner->SetInvincibleTimer(animationTime);
+	owner->SetMovingFlag(false);
+	//DirectX::XMFLOAT3 directionFront = owner->GetFront();
+	DirectX::XMFLOAT3 directionFront = PlayerState::Versatility::Direction();
+	PlayerState::Versatility::Rotate(directionFront);
+	directionFront.x *= 100.0;
+	directionFront.z *= 100.0;
+	owner->SetTargetPosition(directionFront);
+
+	stateTimer = 0.0f;
 }
 
 void PlayerState::AvoiDanceState::Execute(float elapsedTime)
 {
-	Mouse& mouse = Input::Instance().GetMouse();
+	Player* player = PlayerManager::Instance().GetPlayer(0);
+	float animationEndTime = 0.0f;
 
-	// マウスを右クリックしている間は回避、離したらActionステートへ
-	if (mouse.GetButtonUp() & mouse.BTN_RIGHT)
+	owner->MoveToTarget(elapsedTime, 30.0f);
+
+	if (Extract::Instance().GetExtract(ExtractColor::White) > 0.0f)
+	{
+		animationEndTime = 0.9f;
+	}
+	else
+	{
+		animationEndTime = 1.2f;
+	}
+
+	if (stateTimer > animationEndTime)
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
+
+	stateTimer += elapsedTime;
 }
 
 void PlayerState::AvoiDanceState::Exit()
 {
-
+	stateTimer = 0.0f;
+	owner->SetInvincibleTimer(0.0f);
+	owner->SetMovingFlag(true);
+	owner->SetVerocity({ 0.0f, 0.0f, 0.0f });
 }
 
 void PlayerState::DamagesState::Enter()
 {
+	owner->SetMovingFlag(false);
+
 	owner->GetModel()->PlayAnimation(
-		Player::PlayerAnimation::HitSmall, false);
+		Player::PlayerAnimation::HitBig, false);
 }
 
 void PlayerState::DamagesState::Execute(float elapsedTime)
 {
+	DirectX::XMFLOAT3 shakePower = { 10.0f, 10.0f, 10.0f };
+	CameraController::Instance().SetCamerarShake(true, shakePower);
+
 	// アニメーション再生が終了時
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
@@ -550,11 +610,15 @@ void PlayerState::DamagesState::Execute(float elapsedTime)
 
 void PlayerState::DamagesState::Exit()
 {
+	CameraController::Instance().SetCamerarShake(false);
 
+	owner->SetMovingFlag(true);
 }
 
 void PlayerState::DieState::Enter()
 {
+	owner->SetMovingFlag(false);
+
 	owner->GetModel()->PlayAnimation(
 		Player::PlayerAnimation::DeathFront, false);
 }
@@ -564,13 +628,14 @@ void PlayerState::DieState::Execute(float elapsedTime)
 	// アニメーション再生が終了時
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
+		owner->SetSceneGameState(SceneGameState::GameOver);
 		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 }
 
 void PlayerState::DieState::Exit()
 {
-
+	owner->SetMovingFlag(true);
 }
 
 DirectX::XMFLOAT3 PlayerState::Versatility::Direction()
@@ -620,6 +685,9 @@ void PlayerState::Versatility::Rotate(DirectX::XMFLOAT3 vec)
 	PlayerManager& playerManager = PlayerManager::Instance();
 	Player* player = playerManager.GetPlayer(playerManager.GetplayerOneIndex());
 
+	//float speed = DirectX::XMConvertToRadians(720) * 0.0166666675;
+	float speed = DirectX::XMConvertToRadians(720) * 0.1f;
+
 	if (vec.x == 0.0f && vec.z == 0.0f)
 		return;
 
@@ -646,12 +714,12 @@ void PlayerState::Versatility::Rotate(DirectX::XMFLOAT3 vec)
 	DirectX::XMFLOAT3 angle = player->GetAngle();
 	if (cross < 0.0f)
 	{
-		angle.y -= DirectX::XMConvertToRadians(720) * rot;
+		angle.y -= speed * rot;
 		player->SetAngle(angle);
 	}
 	else
 	{
-		angle.y += DirectX::XMConvertToRadians(720) * rot;
+		angle.y += speed * rot;
 		player->SetAngle(angle);
 	}
 }
