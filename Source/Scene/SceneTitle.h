@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "RenderTarget.h"
 #include "PostprocessingRenderer.h"
+#include "Audio.h"
 
 //タイトルシーン
 class SceneTitle : public Scene
@@ -33,6 +34,8 @@ private:
 private:
     std::unique_ptr<Sprite>	sprite;
     std::unique_ptr<Sprite> title = nullptr;
+
+    std::unique_ptr<AudioSource> SE_Kettei;
 
     // 平行光源データ
     std::unique_ptr<Light> directional_light;

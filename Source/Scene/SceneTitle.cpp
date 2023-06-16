@@ -16,6 +16,9 @@ void SceneTitle::Initialize()
     //スプライト初期化
     title = std::make_unique<Sprite>("Data/Sprite/Scene/Title.png");
 
+	// 音初期化
+	SE_Kettei = Audio::Instance().LoadAudioSource("Data/Audio/SE/Scene/Decision.wav");
+
     StageManager& stageManager = StageManager::Instance();
     StageMain* stageMain = new StageMain;
     stageManager.Register(stageMain);
@@ -74,7 +77,7 @@ void SceneTitle::Update(float elapsedTime)
 {
 	DirectX::XMFLOAT3 target = { 0, 0, 0 };
 	CameraController::Instance().SetTarget(target);
-	CameraController::Instance().Update(elapsedTime);
+	//CameraController::Instance().Update(elapsedTime);
 
 	Stage* stage = StageManager::Instance().GetStage(0);
 	StageManager::Instance().Update(elapsedTime);
@@ -90,6 +93,7 @@ void SceneTitle::Update(float elapsedTime)
         ;
     if (gamePad.GetButtonDown() & anyButton)
     {
+		SE_Kettei->Play(false);
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
 }
