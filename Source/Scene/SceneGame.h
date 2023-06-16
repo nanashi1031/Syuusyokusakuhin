@@ -1,6 +1,5 @@
 #pragma once
-#include"Graphics.h"
-#include "Sprite.h"
+#include "Graphics.h"
 #include "Texture.h"
 #include "Sprite.h"
 #include "Scene.h"
@@ -8,6 +7,14 @@
 #include "Light.h"
 #include "RenderTarget.h"
 #include "PostprocessingRenderer.h"
+
+
+enum class SceneGameState
+{
+	Game,
+	Pause,
+	GameOver,
+};
 
 // ゲームシーン
 class SceneGame : public Scene
@@ -45,44 +52,61 @@ private:
 
 	// HPバー
 	void RenderHPBar(ID3D11DeviceContext* dc);
-
 	void RenderButterfly(ID3D11DeviceContext* dc);
+	void RenderPauseUI(ID3D11DeviceContext* dc);
+	void RenderGameOverUI(ID3D11DeviceContext* dc);
 
 private:
+
+
 	std::unique_ptr<Texture> texture;
 	std::unique_ptr<Sprite>	sprite;
 
-	std::unique_ptr<Sprite> gauge = nullptr;
-	std::unique_ptr<Sprite> hpFrame = nullptr;
-	std::unique_ptr<Sprite> hpBar_red = nullptr;
+	std::unique_ptr<Sprite> spr_gauge = nullptr;
+	std::unique_ptr<Sprite> spr_hpFrame = nullptr;
+	std::unique_ptr<Sprite> spr_hpBarRed = nullptr;
+	std::unique_ptr<Sprite> spr_hpBarGreen = nullptr;
 
-	std::unique_ptr<Sprite> targetRing = nullptr;
-	std::unique_ptr<Sprite> butterfly = nullptr;
+	std::unique_ptr<Sprite> spr_targetRing = nullptr;
+	std::unique_ptr<Sprite> spr_butterfly = nullptr;
+
+	std::unique_ptr<Sprite> spr_yazirushi = nullptr;
+	std::unique_ptr<Sprite> spr_pause = nullptr;
+	std::unique_ptr<Sprite> spr_modoru = nullptr;
+	std::unique_ptr<Sprite> spr_titlehe = nullptr;
+	std::unique_ptr<Sprite> spr_gameOver = nullptr;
+	std::unique_ptr<Sprite> spr_retry = nullptr;
+	std::unique_ptr<Sprite> spr_retire = nullptr;
 
 	// 平行光源データ
-	std::unique_ptr<Light> directional_light;
+	std::unique_ptr<Light> directional_light = nullptr;
 	DirectX::XMFLOAT4 ambientLightColor;
 
 	// オフスクリーンレンダリング用描画ターゲット
-	std::unique_ptr<RenderTarget> renderTarget;
+	std::unique_ptr<RenderTarget> renderTarget = nullptr;
 
 	//	シャドウマップ用情報
 	Light* mainDirectionalLight = nullptr; // シャドウマップを生成する平行光源
-	std::unique_ptr<DepthStencil> shadowmapDepthStencil; //	シャドウマップ用深度ステンシルバッファ
+	std::unique_ptr<DepthStencil> shadowmapDepthStencil = nullptr; //	シャドウマップ用深度ステンシルバッファ
 	float shadowDrawRect = 120.0f; // シャドウマップに描画する範囲
 	DirectX::XMFLOAT4X4	lightViewProjection; //	ライトビュープロジェクション行列
 	DirectX::XMFLOAT3 shadowColor = { 0.2f, 0.2f, 0.2f }; // 影の色
 	float shadowBias = 0.001f; // 深度比較用のオフセット値
 
 	// パノラマスカイボックス画像
-	std::unique_ptr<Texture> skyboxTexture;
+	std::unique_ptr<Texture> skyboxTexture = nullptr;
 
 	// ポストプロセス
-	std::unique_ptr<PostprocessingRenderer>	postprocessingRenderer;
+	std::unique_ptr<PostprocessingRenderer>	postprocessingRenderer = nullptr;
 
 	// HPバーの横幅
 	float playerHpRatio = 0.0f;
 	float enemyBossHpRatio = 0.0f;
 	float color = 0.0f;
 	float colorFlag = false;
+
+	bool sentaku = true;
+
+	// imgui調整用変数
+	float a, b, c, d, e, f, g, h = 2.0f;
 };

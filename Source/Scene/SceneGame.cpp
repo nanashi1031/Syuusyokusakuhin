@@ -4,7 +4,6 @@
 #include "Camera.h"
 #include "CameraController.h"
 #include "EnemyManager.h"
-#include "EnemyBoss.h"
 #include "EnemyPurpleDragon.h"
 #include "PlayerManager.h"
 #include "InsectManager.h"
@@ -15,43 +14,50 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneClear.h"
+#include "SceneTitle.h"
 #include "EffectManager.h"
+#include <memory>
 
 //	シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048;
+static std::shared_ptr<Player> player = nullptr;
 
 void SceneGame::Initialize()
 {
 	CameraController::Instance().SetCameraMouseOperationFlag(true);
 
 	// ステージ初期化
-	// スマートポインタのほうがいい
 	StageManager& stageManager = StageManager::Instance();
 	StageMain* stageMain = new StageMain();
 	stageManager.Register(stageMain);
 
-	// プレイヤー
+	// TODO:メモリリーク発生中！修正必須！
+	// 先生に聞いても修正不可能だったためいったん放置、ユニークポインタにするとエラー
 	{
-		PlayerManager& playerManager = PlayerManager::Instance();
-		Player* player = new Player;
-		playerManager.Register(player);
-	}
+		// プレイヤー
+		{
+			PlayerManager& playerManager = PlayerManager::Instance();
+			player = std::make_shared<Player>();
+			Player* player = new Player;
+			playerManager.Register(player);
+		}
 
-	EnemyManager& enemyManager = EnemyManager::Instance();
+		EnemyManager& enemyManager = EnemyManager::Instance();
 
-	//エネミー
-	{
-		EnemyPurpleDragon* purpleDragon = new EnemyPurpleDragon();
-		purpleDragon->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-		enemyManager.Register(purpleDragon);
-	}
+		//エネミー
+		{
+			EnemyPurpleDragon* purpleDragon = new EnemyPurpleDragon();
+			purpleDragon->SetPosition(DirectX::XMFLOAT3(2.0f, 0.0f, 10.0f));
+			enemyManager.Register(purpleDragon);
+		}
 
-	// 虫
-	{
-		Insect* insect = new Insect;
-		insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-		insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
-		InsectManager::Instance().Register(insect);
+		// 虫
+		{
+			Insect* insect = new Insect;
+			insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+			insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
+			InsectManager::Instance().Register(insect);
+		}
 	}
 
 	// カメラ
@@ -70,35 +76,30 @@ void SceneGame::Initialize()
 		);
 	}
 
-	// スプライト
-	hpFrame = std::make_unique<Sprite>("Data/Sprite/UI/HPFrame.png");
-	hpBar_red = std::make_unique<Sprite>("Data/Sprite/UI/HPBar.png");
+	 // スプライト
+	{
+	spr_hpFrame = std::make_unique<Sprite>("Data/Sprite/UI/HPFrame.png");
+	spr_hpBarRed = std::make_unique<Sprite>("Data/Sprite/UI/HPBar.png");
+	spr_hpBarGreen = std::make_unique<Sprite>("Data/Sprite/UI/HPBarPlayer.png");
 
-	targetRing = std::make_unique<Sprite>("Data/Sprite/UI/Ring1.png");
-	butterfly = std::make_unique<Sprite>("Data/Sprite/UI/Butterfly.png");
+	spr_targetRing = std::make_unique<Sprite>("Data/Sprite/UI/Ring.png");
+	spr_butterfly = std::make_unique<Sprite>("Data/Sprite/UI/Butterfly.png");
+
+	spr_yazirushi = std::make_unique<Sprite>("Data/Sprite/UI/Yazirushi.png");
+	spr_pause = std::make_unique<Sprite>("Data/Sprite/Scene/Pause.png");
+	spr_titlehe = std::make_unique<Sprite>("Data/Sprite/Scene/Titlehe.png");
+	spr_modoru = std::make_unique<Sprite>("Data/Sprite/Scene/Modoru.png");
+	spr_gameOver = std::make_unique<Sprite>("Data/Sprite/Scene/GameOver.png");
+	spr_retry = std::make_unique<Sprite>("Data/Sprite/Scene/Retry.png");
+	spr_retire = std::make_unique<Sprite>("Data/Sprite/Scene/Retire.png");
+	}
+
 	{
 		mainDirectionalLight = new Light(LightType::Directional);
 		mainDirectionalLight->SetPosition({ 0.70f, 0.60f, 0.30f });
 		mainDirectionalLight->SetDirection({ -0.286f, -0.775f, 0.564f });
 		mainDirectionalLight->SetColor({0, 0, 0, 1});
 		LightManager::Instane().Register(mainDirectionalLight);
-	}
-	// 点光源
-	{
-		//Light* light = new Light(LightType::Point);
-		//light->SetPosition(DirectX::XMFLOAT3(4, 1, 0));
-		//light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-		//LightManager::Instane().Register(light);
-	}
-
-	// スポットライト
-	{
-		//Light* light = new Light(LightType::Spot);
-		//light->SetPosition(DirectX::XMFLOAT3(-10, 6, 0));
-		//light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
-		//light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
-		//light->SetRange(10.0f);
-		//LightManager::Instane().Register(light);
 	}
 
 	// 新しい描画ターゲットの生成
@@ -123,7 +124,6 @@ void SceneGame::Initialize()
 	Graphics& graphics = Graphics::Instance();
 	// スカイボックス
 	{
-		Graphics& graphics = Graphics::Instance();
 		skyboxTexture = std::make_unique<Texture>(
 			"Data/Sprite/SkyTexture.png");
 		sprite = std::make_unique<Sprite>();
@@ -142,6 +142,7 @@ void SceneGame::Initialize()
 
 	// ポストプロセス描画クラス生成
 	{
+		// ポストプロセス
 		postprocessingRenderer = std::make_unique<PostprocessingRenderer>();
 		// シーンテクスチャを設定しておく
 		ShaderResourceViewData srvData;
@@ -150,12 +151,14 @@ void SceneGame::Initialize()
 		srvData.height = renderTarget->GetHeight();
 		postprocessingRenderer->SetSceneData(srvData);
 	}
+
+	PlayerManager::Instance().GetPlayer(0)->SetSceneGameState(SceneGameState::Game);
+	sentaku = true;
 }
 
 void SceneGame::Finalize()
 {
 	// 終了化
-
 	StageManager::Instance().Clear();
 
 	PlayerManager::Instance().Clear();
@@ -169,52 +172,140 @@ void SceneGame::Finalize()
 
 void SceneGame::Update(float elapsedTime)
 {
-	StageManager::Instance().Update(elapsedTime);
-
-	DirectX::XMFLOAT3 target = PlayerManager::Instance().GetPlayer(PlayerManager::Instance().GetplayerOneIndex())->GetPosition();
-	// 腰当たりに設定
-	target.y += PlayerManager::Instance().GetPlayer(PlayerManager::Instance().GetplayerOneIndex())->GetHeight();
-
-	CameraController::Instance().SetTarget(target);
-	CameraController::Instance().Update(elapsedTime);
-
-	PlayerManager::Instance().Update(elapsedTime);
-
-	InsectManager::Instance().Update(elapsedTime);
-
-	EnemyManager::Instance().Update(elapsedTime);
-
-	UpdateHPBar();
-
-	Player* player = PlayerManager::Instance().GetPlayer(0);
-	if (player->GetHealthPercentage() < 0.5f)
+	Player* player =
+		PlayerManager::Instance().GetPlayer(
+			PlayerManager::Instance().GetplayerOneIndex());
+	switch (player->GetSceneGameState())
 	{
-		if (colorFlag)
+	case SceneGameState::Game:
+	{
+		StageManager::Instance().Update(elapsedTime);
+
+		DirectX::XMFLOAT3 target = player->GetPosition();
+
+		// 腰当たりに設定
+		target.y += player->GetHeight();
+
+		CameraController::Instance().SetTarget(target);
+		CameraController::Instance().Update(elapsedTime);
+
+		PlayerManager::Instance().Update(elapsedTime);
+
+		InsectManager::Instance().Update(elapsedTime);
+
+		EnemyManager::Instance().Update(elapsedTime);
+
+		UpdateHPBar();
+
+		// 画面の点滅処理関数にする
+		// プレイヤーの体力が半分以下なら
+		if (player->GetHealthPercentage() < 0.5f)
 		{
-			postprocessingRenderer->SetColorGradingData(color += 0.02f);
-			if (color > 0.6f)
-				colorFlag = false;
+			if (colorFlag)
+			{
+				postprocessingRenderer->SetColorGradingData(color += 0.02f);
+				if (color > 0.6f)
+					colorFlag = false;
+			}
+			else if (!colorFlag)
+			{
+				postprocessingRenderer->SetColorGradingData(color -= 0.02f);
+				if (color <= 0.0f)
+					colorFlag = true;
+			}
 		}
-		else if(!colorFlag)
+		else
+			postprocessingRenderer->SetColorGradingData(1.0f);
+
+		// Debug 本番では常にマウスを真ん中に固定する
+		Mouse& mouse = Input::Instance().GetMouse();
+		if (CameraController::Instance().GetCameraMouseOperationFlag())
+			mouse.SetMiddlePosition();
+
+		if (EnemyManager::Instance().GetEnemyCount() == 0)
 		{
-			postprocessingRenderer->SetColorGradingData(color -= 0.02f);
-			if (color <= 0.0f)
-				colorFlag = true;
+			SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
 		}
-		//postprocessingRenderer->SetColorGradingData(player->GetHealthPercentage() - 0.5f);
+
+		GamePad& gamePad = Input::Instance().GetGamePad();
+
+		if ((gamePad.GetButtonDown() & gamePad.BTN_PAD_MENU) ||
+			(gamePad.GetButtonDown() & gamePad.KEY_P))
+		{
+			player->SetSceneGameState(SceneGameState::Pause);
+		}
+		break;
 	}
-	else
-		postprocessingRenderer->SetColorGradingData(1.0f);
-
-	// Debug 本番では常にマウスを真ん中に固定する
-	// TODO ポーズ中はマウス操作できるようにする
-	Mouse& mouse = Input::Instance().GetMouse();
-	if (CameraController::Instance().GetCameraMouseOperationFlag())
-		mouse.SetMiddlePosition();
-
-	if (EnemyManager::Instance().GetEnemyCount() == 0)
+	case SceneGameState::Pause:
 	{
-		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
+		Mouse& mouse = Input::Instance().GetMouse();
+		GamePad& gamePad = Input::Instance().GetGamePad();
+
+		float ay = gamePad.GetAxisLY();
+		// スティックを上に倒したかWキーを押したら
+		if (ay > 0.3f || (mouse.GetButtonDown() & gamePad.BTN_UP))
+			sentaku = true;
+		// スティックを下に倒したかSキーを押したら
+		if (ay < -0.3f || (mouse.GetButtonDown() & gamePad.BTN_DOWN))
+			sentaku = false;
+
+		if ((gamePad.GetButtonDown() & gamePad.BTN_A) ||
+			(gamePad.GetButtonDown() & gamePad.KEY_Z) ||
+			(mouse.GetButtonDown() & mouse.BTN_LEFT))
+		{
+			if (sentaku)
+			{
+				player->SetSceneGameState(SceneGameState::Game);
+			}
+			else
+				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+		}
+
+		break;
+	}
+	case SceneGameState::GameOver:
+	{
+		// スポットライト
+		{
+			// 後から使う予定のため残す
+#if 0
+			Light* light = new Light(LightType::Spot);
+			light->SetPosition(DirectX::XMFLOAT3(-10, 6, 0));
+			light->SetColor(DirectX::XMFLOAT4(1, 1, 1, 1));
+			light->SetDirection(DirectX::XMFLOAT3(+1, -1, 0));
+			light->SetRange(10.0f);
+			LightManager::Instane().Register(light);
+#endif
+		}
+
+		Mouse& mouse = Input::Instance().GetMouse();
+		GamePad& gamePad = Input::Instance().GetGamePad();
+
+		float ay = gamePad.GetAxisLY();
+		// スティックを上に倒したかWキーを押したら
+		if (ay > 0.3f || (mouse.GetButtonDown() & gamePad.BTN_UP))
+			sentaku = true;
+		// スティックを下に倒したかSキーを押したら
+		if (ay < -0.3f || (mouse.GetButtonDown() & gamePad.BTN_DOWN))
+			sentaku = false;
+
+		if ((gamePad.GetButtonDown() & gamePad.BTN_A) ||
+			(gamePad.GetButtonDown() & gamePad.KEY_Z) ||
+			(mouse.GetButtonDown() & mouse.BTN_LEFT))
+		{
+			if (sentaku)
+			{
+				// 体力Max、無敵時間付与して復活
+				player->SetHealth(player->GetMaxHealth());
+				player->SetInvincibleTimer(5.0f);
+				player->SetSceneGameState(SceneGameState::Game);
+			}
+			else
+				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+		}
+
+		break;
+	}
 	}
 }
 
@@ -230,7 +321,7 @@ void SceneGame::Render()
 	Render3DScene();
 
 	// 画面クリア＆レンダーターゲット設定
-	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	dc->OMSetRenderTargets(1, &rtv, dsv);
@@ -245,9 +336,10 @@ void SceneGame::Render()
 	// 書き込み先をバックバッファに変えてオフスクリーンレンダリングの結果を描画する
 	{
 		// 画面クリア＆レンダーターゲット設定
-		FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };	// RGBA(0.0～1.0)
+		FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };
 		dc->ClearRenderTargetView(rtv, color);
-		dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		dc->ClearDepthStencilView(
+			dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		dc->OMSetRenderTargets(1, &rtv, dsv);
 
 		// ビューポートの設定
@@ -271,6 +363,20 @@ void SceneGame::Render()
 
 		RenderButterfly(dc);
 
+		Player* player =
+			PlayerManager::Instance().GetPlayer(
+				PlayerManager::Instance().GetplayerOneIndex());
+
+		if (player->GetSceneGameState() == SceneGameState::Pause)
+		{
+			RenderPauseUI(dc);
+		}
+
+		if (player->GetSceneGameState() == SceneGameState::GameOver)
+		{
+			RenderGameOverUI(dc);
+		}
+
 		if (CameraController::Instance().GetLockOnFlag())
 			RenderLockOn(dc, rc.view, rc.projection);
 
@@ -292,6 +398,15 @@ void SceneGame::Render()
 		ImGui::SetNextWindowBgAlpha(alpha);
 		if (ImGui::TreeNode("Shadowmap"))
 		{
+			ImGui::DragFloat("a", &a, 0.01f);
+			ImGui::DragFloat("b", &b, 0.01f);
+			ImGui::DragFloat("c", &c, 0.01f);
+			ImGui::DragFloat("d", &d, 0.01f);
+			ImGui::DragFloat("e", &e, 0.01f);
+			ImGui::DragFloat("f", &f, 0.01f);
+			ImGui::DragFloat("g", &g, 0.01f);
+			ImGui::DragFloat("h", &h, 0.01f);
+
 			ImGui::SliderFloat("DrawRect", &shadowDrawRect, 1.0f, 2048.0f);
 			ImGui::ColorEdit3("Color", &shadowColor.x);
 			ImGui::SliderFloat("Bias", &shadowBias, 0.0f, 0.1f);
@@ -320,8 +435,11 @@ void SceneGame::UpdateHPBar()
 	for (int i = 0; i < enemyManager.GetEnemyCount(); i++)
 	{
 		Enemy* enemy = enemyManager.GetEnemy(i);
-		if (enemy->GetCharacterType() == 1)
-			enemyBossHpRatio = Mathf::Percentage(enemy->GetHealth(), enemy->GetMaxHealth());
+		if (enemy->GetCharacterType() == Character::Type::Boss)
+		{
+			enemyBossHpRatio =
+				Mathf::Percentage(enemy->GetHealth(), enemy->GetMaxHealth());
+		}
 	}
 }
 
@@ -495,15 +613,6 @@ void SceneGame::RenderLockOn(
 {
 	Enemy* enemy = EnemyManager::Instance().GetEnemy(0);
 
-	//ビューポート
-	D3D11_VIEWPORT viewport;
-	UINT numVieports = 1;
-	dc->RSGetViewports(&numVieports, &viewport);
-	//変換行列
-	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&view);
-	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&projection);
-	DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
-
 	// エネミーのターゲット位置のワールド座標
 	CameraController& cameraController = CameraController::Instance();
 	int targetIndex =
@@ -512,37 +621,13 @@ void SceneGame::RenderLockOn(
 		enemy->GetModel()->FindNode(enemy->GetParts()[targetIndex].name);
 	DirectX::XMFLOAT3 worldPosition =
 		enemy->GetNodePosition(node);
-	DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
-	// ワールド座標からスクリーン座標へ変換
-	DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
-		WorldPosition,			//ワールド座標
-		viewport.TopLeftX,		//ビューポート左上X位置
-		viewport.TopLeftY,		//ビューポート左上Y位置
-		viewport.Width,			//ビューポート幅
-		viewport.Height,		//ビューポート高さ
-		viewport.MinDepth,		//深度幅の範囲を表す最小値
-		viewport.MaxDepth,		//深度幅の範囲を表す最大値
-		Projection,				//プロジェクション行列
-		View,					//ビュー行列
-		World					//ワールド行列
-	);
 
 	// スクリーン座標
-	DirectX::XMFLOAT2 screenPosition;
-	DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+	DirectX::XMFLOAT2 screenPosition = Mathf::ConvertWorldToScreen(worldPosition, dc, view, projection);
 
-	float textureWidth = static_cast<float>(targetRing->GetTextureWidth());
-	float textureHeight = static_cast<float>(targetRing->GetTextureHeight());
-	targetRing->Render(
-		dc,
-		screenPosition.x - (textureWidth / 3 / 2), screenPosition.y - (textureHeight / 3 / 2),
-		textureWidth / 3, textureHeight / 3,
-		0, 0, textureWidth, textureHeight,
-		0,
-		1, 1, 1, 1);
-	float o = screenPosition.x - (textureWidth / 3 / 2);
-	float oo = screenPosition.y - (textureHeight / 3 / 2);
-	targetRing->Render(
+	float textureWidth = static_cast<float>(spr_targetRing->GetTextureWidth());
+	float textureHeight = static_cast<float>(spr_targetRing->GetTextureHeight());
+	spr_targetRing->Render(
 		dc,
 		screenPosition.x - (textureWidth / 3 / 2), screenPosition.y - (textureHeight / 3 / 2),
 		textureWidth / 3, textureHeight / 3,
@@ -556,13 +641,14 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 	Graphics& graphics = Graphics::Instance();
 	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 	float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-	float textureWidth = static_cast<float>(hpFrame->GetTextureWidth());
-	float textureHeight = static_cast<float>(hpFrame->GetTextureHeight());
+	float textureWidth = static_cast<float>(spr_hpFrame->GetTextureWidth());
+	float textureHeight = static_cast<float>(spr_hpFrame->GetTextureHeight());
 	// プレイヤーHPのフレーム
-	hpFrame->Render(
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_hpFrame->Render(
 		dc,
-		screenWidth / -55, screenHeight / -20,
-		textureWidth / 1.5f, textureHeight / 2.5f,
+		screenWidth / 40.0f, screenHeight / 17.0f,
+		textureWidth, textureHeight,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
@@ -570,35 +656,39 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 	);
 
 	// エネミーHPのフレーム
-	hpFrame->Render(
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_hpFrame->Render(
 		dc,
-		screenWidth / 10, screenHeight / 1.3f,
-		(textureWidth * 3) / 2, textureHeight / 1.6f,
+		screenWidth / 6.0f, screenHeight / 1.2f,
+		(textureWidth * 3) / 1.16f, textureHeight / 0.8f,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
 		1, 1, 1, 1
 	);
 
-	textureWidth = static_cast<float>(hpBar_red->GetTextureWidth());
-	textureHeight = static_cast<float>(hpBar_red->GetTextureHeight());
+	textureWidth = static_cast<float>(spr_hpBarGreen->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_hpBarGreen->GetTextureHeight());
 	// プレイヤーのHP
-	hpBar_red->Render(
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_hpBarGreen->Render(
 		dc,
-		screenWidth / -55, screenHeight / -20,
-		playerHpRatio * (textureWidth / 1.5f), textureHeight / 2.5f,
+		screenWidth / 31.0f, screenHeight / 15.4f,
+		playerHpRatio * textureWidth, textureHeight / 0.69f,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
 		1, 1, 1, 1
 	);
 
+	textureWidth = static_cast<float>(spr_hpBarRed->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_hpBarRed->GetTextureHeight());
 	// ボスのHP
-	hpBar_red->Render(
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_hpBarRed->Render(
 		dc,
-		screenWidth / 10, screenHeight / 1.3f,
-	    //150, 650,
-		enemyBossHpRatio * (textureWidth * 3) / 2, textureHeight / 1.6f,
+		screenWidth / 5.52f, screenHeight / 1.193f,
+		enemyBossHpRatio * textureWidth / 0.38f, textureHeight / 0.5f,
 		0, 0,
 		textureWidth, textureHeight,
 		0,
@@ -611,13 +701,15 @@ void SceneGame::RenderButterfly(ID3D11DeviceContext* dc)
 	Graphics& graphics = Graphics::Instance();
 	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 	float screenHeight = static_cast<float>(graphics.GetScreenWidth());
-	float textureWidth = static_cast<float>(butterfly->GetTextureWidth());
-	float textureHeight = static_cast<float>(butterfly->GetTextureHeight());
+	float textureWidth = static_cast<float>(spr_butterfly->GetTextureWidth());
+	float textureHeight = static_cast<float>(spr_butterfly->GetTextureHeight());
 
-	DirectX::XMFLOAT4 color = Extract::Instance().ColorConversion(
+	DirectX::XMFLOAT4 color =
+		Extract::Instance().ColorConversion(
 		InsectManager::Instance().GetInsect(0)->GetExtractColor());
 
-	butterfly->Render(
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_butterfly->Render(
 		dc,
 		screenWidth / 40, screenHeight / 18,
 		textureWidth / 4, textureHeight / 4,
@@ -625,5 +717,161 @@ void SceneGame::RenderButterfly(ID3D11DeviceContext* dc)
 		textureWidth, textureHeight,
 		0,
 		color.x, color.y, color.z, color.w
+	);
+}
+
+void SceneGame::RenderPauseUI(ID3D11DeviceContext* dc)
+{
+	Graphics& graphics = Graphics::Instance();
+	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+	float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+	float textureWidth = static_cast<float>(spr_pause->GetTextureWidth());
+	float textureHeight = static_cast<float>(spr_pause->GetTextureHeight());
+
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_pause->Render(
+		dc,
+		screenWidth / 3.0f, screenHeight / 12.0f,
+		textureWidth / 0.6f, textureHeight / 0.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
+	);
+
+	textureWidth = static_cast<float>(spr_yazirushi->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_yazirushi->GetTextureHeight());
+
+	if (sentaku)
+	{
+		// UIの位置調整、数値どう綺麗にしよ
+		spr_yazirushi->Render(
+			dc,
+			screenWidth / 3.5f, screenHeight / 3.2f,
+			textureWidth / 2.5f, textureHeight / 2.5f,
+			0, 0,
+			textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1
+		);
+	}
+	else
+	{
+		// UIの位置調整、数値どう綺麗にしよ
+		spr_yazirushi->Render(
+			dc,
+			screenWidth / 3.5f, screenHeight / 2.6f,
+			textureWidth / 2.5f, textureHeight / 2.5f,
+			0, 0,
+			textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1
+		);
+	}
+
+	textureWidth = static_cast<float>(spr_modoru->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_modoru->GetTextureHeight());
+
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_modoru->Render(
+		dc,
+		screenWidth / 2.5f, screenHeight / 3.0f,
+		textureWidth / 0.6f, textureHeight / 0.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
+	);
+
+	textureWidth = static_cast<float>(spr_titlehe->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_titlehe->GetTextureHeight());
+
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_titlehe->Render(
+		dc,
+		screenWidth / 2.5f, screenHeight / 2.45f,
+		textureWidth / 0.6f, textureHeight / 0.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
+	);
+}
+
+void SceneGame::RenderGameOverUI(ID3D11DeviceContext* dc)
+{
+	Graphics& graphics = Graphics::Instance();
+	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+	float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+	float textureWidth = static_cast<float>(spr_gameOver->GetTextureWidth());
+	float textureHeight = static_cast<float>(spr_gameOver->GetTextureHeight());
+
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_gameOver->Render(
+		dc,
+		screenWidth / 3.0f, screenHeight / 12.0f,
+		textureWidth / 0.6f, textureHeight / 0.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
+	);
+
+	textureWidth = static_cast<float>(spr_yazirushi->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_yazirushi->GetTextureHeight());
+
+	if (sentaku)
+	{
+		// UIの位置調整、数値どう綺麗にしよ
+		spr_yazirushi->Render(
+			dc,
+			screenWidth / 3.5f, screenHeight / 3.2f,
+			textureWidth / 2.5f, textureHeight / 2.5f,
+			0, 0,
+			textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1
+		);
+	}
+	else
+	{
+		// UIの位置調整、数値どう綺麗にしよ
+		spr_yazirushi->Render(
+			dc,
+			screenWidth / 3.5f, screenHeight / 2.6f,
+			textureWidth / 2.5f, textureHeight / 2.5f,
+			0, 0,
+			textureWidth, textureHeight,
+			0,
+			1, 1, 1, 1
+		);
+	}
+
+	textureWidth = static_cast<float>(spr_retry->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_retry->GetTextureHeight());
+
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_retry->Render(
+		dc,
+		screenWidth / 2.5f, screenHeight / 3.0f,
+		textureWidth / 0.6f, textureHeight / 0.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
+	);
+
+	textureWidth = static_cast<float>(spr_retire->GetTextureWidth());
+	textureHeight = static_cast<float>(spr_retire->GetTextureHeight());
+
+	// UIの位置調整、数値どう綺麗にしよ
+	spr_retire->Render(
+		dc,
+		screenWidth / 2.5f, screenHeight / 2.45f,
+		textureWidth / 0.6f, textureHeight / 0.6f,
+		0, 0,
+		textureWidth, textureHeight,
+		0,
+		1, 1, 1, 1
 	);
 }
