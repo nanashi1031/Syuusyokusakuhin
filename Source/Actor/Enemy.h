@@ -49,4 +49,6 @@ protected:
     float searchRange = 5.0f;
     float attackRange = 1.5f;
     float runTimer = 0.0f;
+    // true‚È‚ç“®‚«‚ð••‚¶‚é
+    bool moveStop = false;
 };
