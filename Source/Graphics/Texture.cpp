@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "Graphics/Graphics.h"
-#include "Graphics/Texture.h"
+#include "Graphics.h"
+#include "Texture.h"
 #include <WICTextureLoader.h>
 
 //#define STB_IMAGE_IMPLEMENTATION
