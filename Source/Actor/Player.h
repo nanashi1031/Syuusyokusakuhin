@@ -3,7 +3,6 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Character.h"
-#include "Audio.h"
 
 // プレイヤー
 class Player : public Character
@@ -76,17 +75,7 @@ public:
         TurnRight,
         WalkBack,
         WalkFront,
-    };
-
-    enum class SE
-    {
-        Walk,
-        Run,
-        Attack1,
-        Attack2,
-        Attack3,
-        DashAttack,
-        Die,
+        Avoidance,
     };
 
 public:
@@ -99,8 +88,7 @@ public:
     void DrawDebugGUI();
 
     // ゲッター　セッター
-    // 前方向を取得
-    DirectX::XMFLOAT3 GetFront() const;
+    float GetDefensePower() { return defensePower; }
 
 protected:
      // ダメージを受けたときに呼ばれる
@@ -112,11 +100,7 @@ protected:
 private:
     void InputMove(float elapsedTime);
 
-    void InputAttack(float elapedTime);
-
     void CollisionPlayerVsEnemies();
-
-    void CollisionNodeVsEnemies(const char* nodeName, float nodeRadius);
 
     DirectX::XMFLOAT3 GetMoveVec();
 
@@ -126,21 +110,11 @@ private:
             health = maxHealth;
     }
 
-public:
-    // プレイヤーのノードの名前定数
-    const char* swordName = "mixamorig:Sword_joint";
-
-    std::unique_ptr<AudioSource> SE_Walk;
-    std::unique_ptr<AudioSource> SE_Run;
-    std::unique_ptr<AudioSource> SE_Attack1;
-    std::unique_ptr<AudioSource> SE_Attack2;
-    std::unique_ptr<AudioSource> SE_Attack3;
-    std::unique_ptr<AudioSource> SE_DashAttack;
-    std::unique_ptr<AudioSource> SE_Die;
 private:
     const float size = 0.015f;
     const float moveSpeed = 5.0f;
 
     float turnSpeed = DirectX::XMConvertToRadians(720);
 
+    float defensePower = 1.0f;
 };

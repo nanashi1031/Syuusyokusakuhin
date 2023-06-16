@@ -1,7 +1,8 @@
 #include <imgui.h>
-#include "Input\Input.h"
-#include "Graphics/Graphics.h"
+#include "Input.h"
+#include "Graphics.h"
 #include "Camera.h"
+#include "CameraController.h"
 #include "Collision.h"
 #include "Player.h"
 #include "EnemyManager.h"
@@ -17,7 +18,7 @@ Player::Player()
     radius = 0.5f;
     height = 2.0f;
 
-    maxHealth = 100.f;
+    maxHealth = 100.0f;
     health = maxHealth;
 
     stateMachine = new StateMachine();
@@ -34,16 +35,8 @@ Player::Player()
     stateMachine->RegisterState(new PlayerState::AttackCombo3State(this));
     stateMachine->RegisterState(new PlayerState::AttackDashuState(this));
     stateMachine->RegisterState(new PlayerState::AvoiDanceState(this));
-#pragma endregion
-
-#pragma region 音登録
-    SE_Attack1 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
-    //audios.emplace_back(&SE_Attack1);
-    SE_Attack2 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
-    SE_Attack3 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
-    SE_Walk = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Walk.wav");
-    SE_Run = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Run.wav");
-    SE_Die = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Die.wav");
+    stateMachine->RegisterState(new PlayerState::DamagesState(this));
+    stateMachine->RegisterState(new PlayerState::DieState(this));
 #pragma endregion
 
     stateMachine->SetState(State::Idle);
@@ -70,14 +63,12 @@ void Player::Update(float elapsedTime)
     }
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & gamePad.KEY_Z)
+    if ((gamePad.GetButtonDown() & gamePad.KEY_Z) || position.y <= -10)
         position = { 0, 10, 0 };
 
     HealthMax();
 
     Extract::Instance().Update(elapsedTime);
-
-    InputAttack(elapsedTime);
 
     CollisionPlayerVsEnemies();
 
@@ -92,8 +83,6 @@ void Player::Update(float elapsedTime)
 
     model->UpdateAnimation(elapsedTime);
 
-    //model->SetupRootMotion("mixamorig:Hips");
-
     model->RootMotion("mixamorig:Hips");
 
     model->UpdateTransform(transform);
@@ -105,7 +94,6 @@ void Player::InputMove(float elapsedTime)
     DirectX::XMFLOAT3 moveVec = GetMoveVec();
 
     Move(moveVec.x, moveVec.z, moveSpeed);
-
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 
     float moveVecLength = DirectX::XMVectorGetX(
@@ -114,12 +102,13 @@ void Player::InputMove(float elapsedTime)
     moveFlag = moveVecLength;
 }
 
-// スティック入力値から移動ベクトルを取得
 DirectX::XMFLOAT3 Player::GetMoveVec()
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
+
+    DirectX::XMFLOAT3 vec;
 
     // カメラ方向とスティックの入力値によって進行方向を計算する
     Camera& camera = Camera::Instance();
@@ -149,28 +138,11 @@ DirectX::XMFLOAT3 Player::GetMoveVec()
     // スティックの水平入力値をカメラ右方向に反映し、
     // スティックの垂直入力値をカメラ前方向に反映し、
     // 進行ベクトルを計算する
-    DirectX::XMFLOAT3 vec;
     vec.x = (cameraRightX * ax) + (cameraFrontX * ay);
     vec.z = (cameraRightZ * ax) + (cameraFrontZ * ay);
 
     vec.y = 0.0f;
     return vec;
-}
-
-DirectX::XMFLOAT3 Player::GetFront() const
-{
-    DirectX::XMFLOAT3 front;
-    front.x = sinf(angle.y);
-    front.y = 0.0f;
-    front.z = cosf(angle.y);
-
-    return front;
-}
-
-
-void Player::InputAttack(float elapsedTime)
-{
-    float SwordRadius = 0.3f;
 }
 
 void Player::CollisionPlayerVsEnemies()
@@ -184,15 +156,9 @@ void Player::CollisionPlayerVsEnemies()
             Enemy* enemy = enemyManager.GetEnemy(i);
 
             DirectX::XMFLOAT3 outPosition;
-            /*if (Collision::IntersectSphereVsNode(
-                position, radius,
-                enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-                outPosition))
-            {
-                position = outPosition;
-            }*/
             DirectX::XMFLOAT3 enemyPosition =
                 enemy->GetNodePosition(enemy->GetNode(enemy->GetParts()[j].name));
+            // そのままでは大きかったため半分に
             enemyPosition.y = enemyPosition.y - (enemy->GetParts()[j].radius / 2);
             if (Collision::IntersectCylinderVsNodeCylinder(
                 position, radius, height,
@@ -201,27 +167,6 @@ void Player::CollisionPlayerVsEnemies()
             {
                 position = outPosition;
             }
-        }
-    }
-}
-
-void Player::CollisionNodeVsEnemies(const char* nodeName, float nodeRadius)
-{
-    DirectX::XMFLOAT3 nodePosition = GetNodePosition(model->FindNode(nodeName));
-
-    EnemyManager& enemyManager = EnemyManager::Instance();
-
-    int enemyCount = enemyManager.GetEnemyCount();
-    for (int i = 0; i < enemyCount; i++)
-    {
-        Enemy* enemy = enemyManager.GetEnemy(i);
-        DirectX::XMFLOAT3 outPosition;
-        if (Collision::IntersectSphereVsSpherer(
-            nodePosition, nodeRadius, enemy->GetPosition(),
-            enemy->GetRadius(),
-            outPosition))
-        {
-            enemy->SetPosition({ outPosition.x, 0, outPosition.z });
         }
     }
 }
@@ -252,6 +197,48 @@ void Player::DrawDebugGUI()
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
     {
        // ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(250, 120), ImGuiWindowFlags_NoTitleBar);
+
+        if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            char* str = {};
+            switch (GetStateMachine()->GetStateIndex())
+            {
+            case static_cast<int>(State::Idle):
+                str = "Idle";
+                break;
+            case static_cast<int>(State::Neglect):
+                str = "Neglect";
+                break;
+            case static_cast<int>(State::Walk):
+                str = "Walk";
+                break;
+            case static_cast<int>(State::Run):
+                str = "Run";
+                break;
+            case static_cast<int>(State::AttackCombo1):
+                str = "AttackCombo1";
+                break;
+            case static_cast<int>(State::AttackCombo2):
+                str = "AttackCombo2";
+                break;
+            case static_cast<int>(State::AttackCombo3):
+                str = "AttackCombo3";
+                break;
+            case static_cast<int>(State::AttackDashu):
+                str = "AttackDashu";
+                break;
+            case static_cast<int>(State::Avoidance):
+                str = "Avoidance";
+                break;
+            case static_cast<int>(State::Damages):
+                str = "Damages";
+                break;
+            case static_cast<int>(State::Die):
+                str = "Die";
+                break;
+            }
+            ImGui::Text("NowState %s", str);
+        }
 
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -294,10 +281,10 @@ void Player::DrawDebugGUI()
 
 void Player::OnDamaged()
 {
-
+    stateMachine->ChangeState(State::Damages);
 }
 
 void Player::OnDead()
 {
-
+    stateMachine->ChangeState(State::Die);
 }
