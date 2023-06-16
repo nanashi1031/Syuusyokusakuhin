@@ -2,14 +2,19 @@
 
 void Extract::Initialize()
 {
-    extractUI1 = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUI1.png");
-    extractUI2 = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUI2.png");
-    extractUI3 = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUI3.png");
+    extractUIRed = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUISword.png");
+    extractUIWhite   = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShoes.png");
+    extractUIOrange = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShield.png");
 
     for (int i = 0; i < extractMax; i++)
     {
-        extract.emplace_back(-0.01f);
+        extract.emplace_back();
     }
+}
+
+void Extract::Finalize()
+{
+
 }
 
 void Extract::Update(float elapsedTime)
@@ -21,137 +26,124 @@ void Extract::Update(float elapsedTime)
             extract[i] -= 1.0f * elapsedTime;
         }
     }
+
+    ExtractUISlowFlashing(0.01f);
+    ExtractUIFastFlashing(0.03f);
 }
+
 
 void Extract::Render2D(ID3D11DeviceContext* dc)
 {
-    float textureWidth = static_cast<float>(extractUI1->GetTextureWidth());
-    float textureHeight = static_cast<float>(extractUI1->GetTextureHeight());
+    RenderRedUI(dc);
+    RenderWhiteUI(dc);
+    RenderOrangeUI(dc);
+}
 
-    DirectX::XMFLOAT4 color;
-    if (extract[0] > 0.00f)
-        color = Extract::Instance().ColorConversion(ExtractColor::Red);
+void Extract::RenderRedUI(ID3D11DeviceContext* dc)
+{
+    Graphics& graphics = Graphics::Instance();
+
+    DirectX::XMFLOAT4 redUIColor;
+    if (extract[static_cast<int>(ExtractColor::Red)] > 0.00f)
+        redUIColor = Extract::Instance().ColorConversion(ExtractColor::Red);
     else
-        color = Extract::Instance().ColorConversion(ExtractColor::None);
+        redUIColor = Extract::Instance().ColorConversion(ExtractColor::None);
 
-    if (extract[0] < 5.0f)
+    if (extract[static_cast<int>(ExtractColor::Red)] > limitTime)
     {
-        if (colorFlag)
-        {
-            color.x += 0.02f;
-            if (color.x > 1.0f)
-                colorFlag = false;
-        }
-        else if (!colorFlag)
-        {
-            color.x -= 0.02f;
-            if (color.x < 0.0f)
-                colorFlag = true;
-        }
+        redUIColor.x = colorAccumulationSlow;
+    }
+    else if (extract[static_cast<int>(ExtractColor::Red)] > 0.0f)
+    {
+        redUIColor.x = colorAccumulationFast;
     }
 
-    extractUI1->Render(
+    float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+    float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+    float textureWidth = static_cast<float>(extractUIRed->GetTextureWidth());
+    float textureHeight = static_cast<float>(extractUIRed->GetTextureHeight());
+    extractUIRed->Render(
         dc,
-        100, 0,
-        textureWidth / 2, textureHeight / 2,
+        screenWidth / 9.0f, screenWidth / 15.0f,
+        textureWidth / 1.5f, textureHeight / 1.5f,
         0, 0,
         textureWidth, textureHeight,
         0,
-        color.x, color.y, color.z, color.w
+        redUIColor.x, redUIColor.y, redUIColor.z, redUIColor.w
     );
+}
 
-    textureWidth = static_cast<float>(extractUI2->GetTextureWidth());
-    textureHeight = static_cast<float>(extractUI3->GetTextureHeight());
+void Extract::RenderWhiteUI(ID3D11DeviceContext* dc)
+{
+    Graphics& graphics = Graphics::Instance();
 
-    if (extract[1] > 0.00f)
-        color = Extract::Instance().ColorConversion(ExtractColor::White);
+    DirectX::XMFLOAT4 whiteUIColor;
+    if (extract[static_cast<int>(ExtractColor::White)] > 0.00f)
+        whiteUIColor = Extract::Instance().ColorConversion(ExtractColor::White);
     else
-        color = Extract::Instance().ColorConversion(ExtractColor::None);
+        whiteUIColor = Extract::Instance().ColorConversion(ExtractColor::None);
 
-    if (extract[1] < 5.0f)
+    if (extract[static_cast<int>(ExtractColor::White)] > limitTime)
     {
-        if (colorFlag)
-        {
-            color.x += 0.02f;
-            color.y += 0.02f;
-            color.z += 0.02f;
-            if (color.x > 1.0f)
-                colorFlag = false;
-        }
-        else if (!colorFlag)
-        {
-            color.x -= 0.02f;
-            color.y -= 0.02f;
-            color.z -= 0.02f;
-            if (color.x <= 0.0f)
-                colorFlag = true;
-        }
+        whiteUIColor.x = colorAccumulationSlow;
+        whiteUIColor.y = colorAccumulationSlow;
+        whiteUIColor.z = colorAccumulationSlow;
+    }
+    else if (extract[static_cast<int>(ExtractColor::White)] > 0.0f)
+    {
+        whiteUIColor.x = colorAccumulationFast;
+        whiteUIColor.y = colorAccumulationFast;
+        whiteUIColor.z = colorAccumulationFast;
     }
 
-    extractUI2->Render(
+    float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+    float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+    float textureWidth = static_cast<float>(extractUIWhite->GetTextureWidth());
+    float textureHeight = static_cast<float>(extractUIWhite->GetTextureHeight());
+    extractUIWhite->Render(
         dc,
-        170, 0,
-        textureWidth / 2, textureHeight / 2,
+        screenWidth / 6.5f, screenWidth / 17.0f,
+        textureWidth / 1.1f, textureHeight / 0.8f,
         0, 0,
         textureWidth, textureHeight,
         0,
-        color.x, color.y, color.z, color.w
+        whiteUIColor.x, whiteUIColor.y, whiteUIColor.z, whiteUIColor.w
     );
+}
 
-    textureWidth = static_cast<float>(extractUI3->GetTextureWidth());
-    textureHeight = static_cast<float>(extractUI3->GetTextureHeight());
+void Extract::RenderOrangeUI(ID3D11DeviceContext* dc)
+{
+    Graphics& graphics = Graphics::Instance();
 
-    if (extract[2] > 0.00f)
-        color = Extract::Instance().ColorConversion(ExtractColor::Orange);
+    DirectX::XMFLOAT4 orangeUIColor;
+    if (extract[static_cast<int>(ExtractColor::Orange)] > 0.00f)
+        orangeUIColor = Extract::Instance().ColorConversion(ExtractColor::Orange);
     else
-        color = Extract::Instance().ColorConversion(ExtractColor::None);
+        orangeUIColor = Extract::Instance().ColorConversion(ExtractColor::None);
 
-    if (extract[2] < 5.0f)
+    if (extract[static_cast<int>(ExtractColor::Orange)] > limitTime)
     {
-        if (colorFlag)
-        {
-            color.x += 0.02f;
-            color.y += 0.01f;
-            if (color.x > 1.0f)
-                colorFlag = false;
-        }
-        else if (!colorFlag)
-        {
-            color.x -= 0.02f;
-            color.y -= 0.01f;
-            if (color.x <= 0.0f)
-                colorFlag = true;
-        }
+        orangeUIColor.x = colorAccumulationSlow;
+        orangeUIColor.y = colorAccumulationSlow / 2;
+    }
+    else if (extract[static_cast<int>(ExtractColor::Orange)] > 0.0f)
+    {
+        orangeUIColor.x = colorAccumulationFast;
+        orangeUIColor.y = colorAccumulationFast / 2;
     }
 
-    if (extract[2] < 5.0f)
-    {
-        if (colorFlag)
-        {
-            color.x += 0.02f;
-            color.y += 0.02f;
-            color.z += 0.02f;
-            if (color.x > 1.0f)
-                colorFlag = false;
-        }
-        else if (!colorFlag)
-        {
-            color.x -= 0.02f;
-            color.y -= 0.02f;
-            color.z -= 0.02f;
-            if (color.x <= 0.0f)
-                colorFlag = true;
-        }
-    }
-
-    extractUI3->Render(
+    float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+    float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+    float textureWidth = static_cast<float>(extractUIOrange->GetTextureWidth());
+    float textureHeight = static_cast<float>(extractUIOrange->GetTextureHeight());
+    extractUIOrange->Render(
         dc,
-        240, 0,
-        textureWidth / 2, textureHeight / 2,
+        screenWidth / 4.4f, screenWidth / 15.0f,
+        textureWidth / 1.8f, textureHeight / 1.5f,
         0, 0,
         textureWidth, textureHeight,
         0,
-        color.x, color.y, color.z, color.w
+        orangeUIColor.x, orangeUIColor.y, orangeUIColor.z, orangeUIColor.w
     );
 }
 
@@ -181,4 +173,48 @@ void Extract::DrawDebugGUI()
         }
     }
     ImGui::End();
+}
+
+void Extract::ExtractUISlowFlashing(float colorPower)
+{
+    if (colorFlagSlow)
+    {
+        colorAccumulationSlow += colorPower;
+        if (colorAccumulationSlow > 1.0f)
+        {
+            colorAccumulationSlow = 1.0f;
+            colorFlagSlow = false;
+        }
+    }
+    else if (!colorFlagSlow)
+    {
+        colorAccumulationSlow -= colorPower;
+        if (colorAccumulationSlow < 0.5f)
+        {
+            colorAccumulationSlow = 0.5f;
+            colorFlagSlow = true;
+        }
+    }
+}
+
+void Extract::ExtractUIFastFlashing(float colorPower)
+{
+    if (colorFlagFast)
+    {
+        colorAccumulationFast += colorPower;
+        if (colorAccumulationFast > 0.7f)
+        {
+            colorAccumulationFast = 0.7f;
+            colorFlagFast = false;
+        }
+    }
+    else if (!colorFlagFast)
+    {
+        colorAccumulationFast -= colorPower;
+        if (colorAccumulationFast < 0.0f)
+        {
+            colorAccumulationFast = 0.0f;
+            colorFlagFast = true;
+        }
+    }
 }

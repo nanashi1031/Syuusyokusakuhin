@@ -16,7 +16,6 @@ class Extract
 private:
     struct ExtractInfo
     {
-        int extractColor;
         float timer;
     };
 
@@ -31,6 +30,9 @@ public:
     void Finalize();
     void Update(float elapsedTime);
     void Render2D(ID3D11DeviceContext* dc);
+    void RenderRedUI(ID3D11DeviceContext* dc);
+    void RenderWhiteUI(ID3D11DeviceContext* dc);
+    void RenderOrangeUI(ID3D11DeviceContext* dc);
     void DrawDebugGUI();
 
     template<typename T>
@@ -76,16 +78,37 @@ public:
         }
     }
 
+    // エキスを所持しているかどうか判定
+    bool HaveExtract()
+    {
+        for (int i = 0; i < extractMax; i++)
+        {
+            if (extract[i] > 0.0f)
+                return true;
+        }
+        return false;
+    }
+
+private:
+    // エキスの点滅処理
+    void ExtractUISlowFlashing(float colorPower);
+    // エキスが切れそうになったら点滅処理
+    void ExtractUIFastFlashing(float colorPower);
+
 private:
     std::vector<float> extract;
 
     const float extractTime = 30.0f;
     const int extractMax = 3;
-    float colors = 0.0f;
-    float colorFlag = false;
+    bool colorFlagSlow = false;
+    bool colorFlagFast = false;
+    float colorAccumulationSlow = 0.0f;
+    float colorAccumulationFast = 0.0f;
+    const float maxTime = 30.0f;
+    const float limitTime = 10.0f;
     float a, b, c, d = 1;
 
-    std::unique_ptr<Sprite> extractUI1 = nullptr;
-    std::unique_ptr<Sprite> extractUI2 = nullptr;
-    std::unique_ptr<Sprite> extractUI3 = nullptr;
+    std::unique_ptr<Sprite> extractUIRed = nullptr;
+    std::unique_ptr<Sprite> extractUIWhite = nullptr;
+    std::unique_ptr<Sprite> extractUIOrange = nullptr;
 };
