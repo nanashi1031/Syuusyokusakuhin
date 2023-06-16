@@ -124,10 +124,8 @@
     <ClInclude Include="Source\Actor\Character.h" />
     <ClInclude Include="Source\Actor\Collision.h" />
     <ClInclude Include="Source\Actor\Enemy.h" />
-    <ClInclude Include="Source\Actor\EnemyBoss.h" />
     <ClInclude Include="Source\Actor\EnemyManager.h" />
     <ClInclude Include="Source\Actor\EnemyPurpleDragon.h" />
-    <ClInclude Include="Source\Actor\EnemyPurpleDragonActionDerived.h" />
     <ClInclude Include="Source\Actor\EnemyPurpleDragonDerived.h" />
     <ClInclude Include="Source\Actor\Insect.h" />
     <ClInclude Include="Source\Actor\InsectManager.h" />
@@ -145,7 +143,6 @@
     <ClInclude Include="Source\Camera\CameraController.h" />
     <ClInclude Include="Source\Effect\Effect.h" />
     <ClInclude Include="Source\Effect\EffectManager.h" />
-    <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\Graphics\DebugRenderer.h" />
     <ClInclude Include="Source\Graphics\Depthstencil.h" />
     <ClInclude Include="Source\Graphics\GaussianBlurShader.h" />
@@ -167,14 +164,11 @@
     <ClInclude Include="Source\Graphics\SkyboxShader.h" />
     <ClInclude Include="Source\Graphics\Sprite.h" />
     <ClInclude Include="Source\Graphics\Texture.h" />
-    <ClInclude Include="Source\HighResolutionTimer.h" />
     <ClInclude Include="Source\Input\GamePad.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Input\Mouse.h" />
     <ClInclude Include="Source\Light\Light.h" />
     <ClInclude Include="Source\Light\LightManager.h" />
-    <ClInclude Include="Source\Logger.h" />
-    <ClInclude Include="Source\Misc.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Scene\SceneClear.h" />
     <ClInclude Include="Source\Scene\SceneGame.h" />
@@ -185,7 +179,11 @@
     <ClInclude Include="Source\Stage\StageMain.h" />
     <ClInclude Include="Source\Stage\StageManager.h" />
     <ClInclude Include="Source\System\Extract\Extract.h" />
+    <ClInclude Include="Source\System\Framework.h" />
+    <ClInclude Include="Source\System\HighResolutionTimer.h" />
+    <ClInclude Include="Source\System\Logger.h" />
     <ClInclude Include="Source\System\Mathf.h" />
+    <ClInclude Include="Source\System\Misc.h" />
     <ClInclude Include="Source\System\UI.h" />
   </ItemGroup>
   <ItemGroup>
@@ -202,10 +200,8 @@
     <ClCompile Include="Source\Actor\Character.cpp" />
     <ClCompile Include="Source\Actor\Collision.cpp" />
     <ClCompile Include="Source\Actor\Enemy.cpp" />
-    <ClCompile Include="Source\Actor\EnemyBoss.cpp" />
     <ClCompile Include="Source\Actor\EnemyManager.cpp" />
     <ClCompile Include="Source\Actor\EnemyPurpleDragon.cpp" />
-    <ClCompile Include="Source\Actor\EnemyPurpleDragonActionDerived.cpp" />
     <ClCompile Include="Source\Actor\EnemyPurpleDragonDerived.cpp" />
     <ClCompile Include="Source\Actor\Insect.cpp" />
     <ClCompile Include="Source\Actor\InsectManager.cpp" />
@@ -222,7 +218,6 @@
     <ClCompile Include="Source\Camera\CameraController.cpp" />
     <ClCompile Include="Source\Effect\Effect.cpp" />
     <ClCompile Include="Source\Effect\EffectManager.cpp" />
-    <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\Graphics\DebugRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Depthstencil.cpp" />
     <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp" />
@@ -247,8 +242,6 @@
     <ClCompile Include="Source\Input\Mouse.cpp" />
     <ClCompile Include="Source\Light\Light.cpp" />
     <ClCompile Include="Source\Light\LightManager.cpp" />
-    <ClCompile Include="Source\Logger.cpp" />
-    <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Scene\SceneClear.cpp" />
     <ClCompile Include="Source\Scene\SceneGame.cpp" />
     <ClCompile Include="Source\Scene\SceneLoading.cpp" />
@@ -257,6 +250,9 @@
     <ClCompile Include="Source\Stage\StageMain.cpp" />
     <ClCompile Include="Source\Stage\StageManager.cpp" />
     <ClCompile Include="Source\System\Extract\Extract.cpp" />
+    <ClCompile Include="Source\System\Framework.cpp" />
+    <ClCompile Include="Source\System\Logger.cpp" />
+    <ClCompile Include="Source\System\Main.cpp" />
     <ClCompile Include="Source\System\Mathf.cpp" />
     <ClCompile Include="Source\System\UI.cpp" />
   </ItemGroup>

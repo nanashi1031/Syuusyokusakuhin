@@ -99,18 +99,6 @@
     <ClInclude Include="Source\Input\GamePad.h">
       <Filter>Source\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Framework.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\HighResolutionTimer.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Logger.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Misc.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Graphics\Graphics.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
@@ -186,9 +174,6 @@
     <ClInclude Include="Source\Actor\Enemy.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyBoss.h">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\EnemyManager.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
@@ -214,9 +199,6 @@
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\Actor\EnemyPurpleDragon.h">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyPurpleDragonActionDerived.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\SceneLoading.h">
@@ -315,6 +297,18 @@
     <ClInclude Include="Source\Effect\Effect.h">
       <Filter>Source\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Source\System\Framework.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\HighResolutionTimer.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\Logger.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\Misc.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\imgui\imgui.cpp">
@@ -334,15 +328,6 @@
     </ClCompile>
     <ClCompile Include="Source\Input\GamePad.cpp">
       <Filter>Source\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Framework.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Logger.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Main.cpp">
-      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Graphics.cpp">
       <Filter>Source\Graphics</Filter>
@@ -410,9 +395,6 @@
     <ClCompile Include="Source\Actor\Enemy.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyBoss.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\EnemyManager.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
@@ -432,9 +414,6 @@
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\EnemyPurpleDragon.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyPurpleDragonActionDerived.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneLoading.cpp">
@@ -526,6 +505,15 @@
     </ClCompile>
     <ClCompile Include="Source\Effect\Effect.cpp">
       <Filter>Source\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Framework.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Logger.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Main.cpp">
+      <Filter>Source\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
