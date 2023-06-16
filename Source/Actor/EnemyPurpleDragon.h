@@ -1,5 +1,5 @@
 #pragma once
-#include "Graphics/Model.h"
+#include "Model.h"
 #include "Enemy.h"
 #include "Audio.h"
 
@@ -13,23 +13,30 @@ public:
 	enum class State
 	{
 		Idle,
+		BattleIdle,
 		Neglect,
+		Howl,
 		Pursuit,
 		Walk,
 		Run,
-		AttackCombo,
+		TakeOff,
+		Fly,
+		Landing,
+		Sleep,
+		BiteAttack,
+		ClawAttack,
 		Damages,
 		Die,
 	};
 
-	enum class EnemyPurpleDragonAnimation
+	enum class Animation
 	{
 		IdleNormal,
 		FryFound,
 		AttackBiting,
-		FryTakeOf,
+		FryTakeOff,
 		FryLanding,
-		Scream,
+		Howl,
 		WingStrike,
 		Flame,
 		Defend,
@@ -39,9 +46,18 @@ public:
 		RunFound,
 		FryFrameAttack,
 		FryGlide,
-		IdelBattle,
+		BattleIdle,
 		Die,
 		FryFloat,
+	};
+
+	enum class PartGroup
+	{
+		Head,
+		Body,
+		Legs,
+		Wings,
+		Tail,
 	};
 
 public:
@@ -59,8 +75,7 @@ public:
 
 	void DrawDebugGUI() override;
 
-	void OnDamaged() override;
-
+	// 部位の情報設定
 	void PartsRegister();
 
 	// セッターゲッター
@@ -69,6 +84,16 @@ public:
 
 	// ターゲットポジション設定
 	void SetTargetPosition(DirectX::XMFLOAT3 position) { targetPosition = position; }
+
+protected:
+	// ダメージを受けたときに呼ばれる
+	void OnDamaged() override;
+
+	// 死亡したときに呼ばれる
+	void OnDead() override;
+
+	// ダウン時に呼ばれる
+	void OnDown() override;
 
 private:
 	DirectX::XMFLOAT3	targetPosition = { 0.0f,0.0f,0.0f };

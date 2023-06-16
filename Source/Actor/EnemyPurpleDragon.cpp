@@ -1,9 +1,9 @@
-#include "Graphics/Graphics.h"
+#include "Graphics.h"
 #include "Mathf.h"
 #include "EnemyPurpleDragon.h"
 #include "JudgmentDerived.h"
-#include "EnemyPurpleDragonActionDerived.h"
 #include "EnemyPurpleDragonDerived.h"
+#include "Input.h"
 
 EnemyPurpleDragon::EnemyPurpleDragon()
 {
@@ -17,46 +17,31 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	maxHealth = 15000.0f;
 	health = maxHealth;
 
-	CharacterType = 1;
+	CharacterType = Type::Boss;
 
 	PartsRegister();
 
-	// ビヘイビアツリー設定
-	behaviorData = new BehaviorData();
-	aiTree = new BehaviorTree(this);
-
-#pragma region ビヘイビアツリー登録
-	aiTree->AddNode("", "Root", 0, BehaviorTree::SelectRule::Priority, nullptr, nullptr);
-	aiTree->AddNode("Root", "Escape", 3, BehaviorTree::SelectRule::Sequence, new EscapeJudgment(this), nullptr);
-	aiTree->AddNode("Root", "Battle", 4, BehaviorTree::SelectRule::Priority, new BattleJudgment(this), nullptr);
-	aiTree->AddNode("Root", "Scout", 5, BehaviorTree::SelectRule::Priority, nullptr, nullptr);
-
-
-	aiTree->AddNode("Scout", "Wander", 1, BehaviorTree::SelectRule::Non, new WanderJudgment(this), new WanderAction(this));
-	aiTree->AddNode("Scout", "Idle", 2, BehaviorTree::SelectRule::Non, nullptr, new IdleAction(this));
-
-	aiTree->AddNode("Escape", "Leave", 6, BehaviorTree::SelectRule::Non, nullptr, new LeaveAction(this));
-	aiTree->AddNode("Escape", "Recover", 7, BehaviorTree::SelectRule::Non, nullptr, new RecoverAction(this));
-
-	aiTree->AddNode("Battle", "Attack", 8, BehaviorTree::SelectRule::Random, new AttackJudgment(this), nullptr);
-	aiTree->AddNode("Attack", "Normal", 9, BehaviorTree::SelectRule::Non, nullptr, new AttackAction(this));
-	aiTree->AddNode("Attack", "Skill", 8, BehaviorTree::SelectRule::Non, new SkillShotJudgment(this), new SkillAction(this));
-	aiTree->AddNode("Battle", "Pursuit", 10, BehaviorTree::SelectRule::Non, nullptr, new PursuitAction(this));
-
-	aiTree->AddNode("Battle", "Death", 11, BehaviorTree::SelectRule::Non, nullptr, new DeathAction(this));
-#pragma endregion
+	stateMachine = new StateMachine();
 
 #pragma region ステート登録
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::IdleState(this));
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::NeglectState(this));
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::PursuitState(this));
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::WalkState(this));
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::RunState(this));
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::AttackCombo1State(this));
-	//stateMachine->RegisterState(new EnemyPurpleDragonState::DieState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::IdleState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::BattleIdleState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::NeglectState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::HowlState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::PursuitState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::WalkState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::RunState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::TakeOffState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::FlyState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::LandingState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::SleepState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::BiteAttackState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::ClawAttackState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::DamagesState(this));
+	stateMachine->RegisterState(new EnemyPurpleDragonState::DieState(this));
 #pragma endregion
 
-	model->PlayAnimation(EnemyPurpleDragonAnimation::Sleep, true);
+	stateMachine->SetState(State::Landing);
 
 	SE_Attack = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
 }
@@ -68,30 +53,22 @@ EnemyPurpleDragon::~EnemyPurpleDragon()
 
 void EnemyPurpleDragon::Update(float elapsedTime)
 {
-	// 現在実行されているノードが無ければ
-	if (activeNode == nullptr)
+	if (!moveStop)
 	{
-		// 次に実行するノードを推論する。
-		activeNode = aiTree->ActiveNodeInference(behaviorData);
-	}
-	// 現在実行するノードがあれば
-	if (activeNode != nullptr)
-	{
-		// ビヘイビアツリーからノードを実行。
-		activeNode = aiTree->Run(activeNode, behaviorData, elapsedTime);
-	}
+		stateMachine->Update(elapsedTime);
 
-	// 速力処理更新
-	UpdateVelocity(elapsedTime);
+		// 速力処理更新
+		UpdateVelocity(elapsedTime);
+
+		// オブジェクト行列更新
+		UpdateTransform();
+
+		model->UpdateAnimation(elapsedTime);
+
+		model->RootMotion("Root");
+	}
 
 	UpdateInvincibleTime(elapsedTime);
-
-	// オブジェクト行列更新
-	UpdateTransform();
-
-	model->UpdateAnimation(elapsedTime);
-
-	model->RootMotion("Root");
 
 	// モデル行列更新
 	model->UpdateTransform(transform);
@@ -149,6 +126,49 @@ void EnemyPurpleDragon::DrawDebugGUI()
 
 	if (ImGui::Begin("EnemyPurpleDragon", nullptr, ImGuiWindowFlags_None))
 	{
+		if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+				char* str = {};
+				switch (GetStateMachine()->GetStateIndex())
+				{
+				case static_cast<int>(State::Idle):
+					str = "Idle";
+					break;
+				case static_cast<int>(State::Neglect):
+					str = "Neglect";
+					break;
+				case static_cast<int>(State::Pursuit):
+					str = "Pursuit";
+					break;
+				case static_cast<int>(State::Walk):
+					str = "Walk";
+					break;
+				case static_cast<int>(State::Run):
+					str = "Run";
+					break;
+				case static_cast<int>(State::Fly):
+					str = "Fly";
+					break;
+				case static_cast<int>(State::BiteAttack):
+					str = "BiteAttack";
+					break;
+				case static_cast<int>(State::ClawAttack):
+					str = "ClawAttack";
+					break;
+				case static_cast<int>(State::Damages):
+					str = "Damages";
+					break;
+				case static_cast<int>(State::Die):
+					str = "Die";
+					break;
+				}
+				ImGui::Text("NowState %s", str);
+				if (ImGui::Button("Stop"))
+				{
+					moveStop = !moveStop;
+				}
+		}
+
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::DragFloat3("Postion", &position.x, 0.1f);
@@ -164,10 +184,12 @@ void EnemyPurpleDragon::DrawDebugGUI()
 			ImGui::DragFloat3("Scale", &scale.x, 0.0005f, 0, 1000);
 		}
 		ImGui::SliderFloat("Health", &health, 0.0f, maxHealth);
+		ImGui::SliderFloat("invincibleTimer", &invincibleTimer, 0.0f, 1.0f);
 		//ImGui::EndChild();
+
 		if (ImGui::CollapsingHeader("parts", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			char* listbox_items[41];
+			char* listbox_items[43];
 			listbox_items[0] = "None";
 			for (int i = 0; i < GetParts().size(); i++)
 			{
@@ -204,21 +226,31 @@ void EnemyPurpleDragon::SetTerritory(const DirectX::XMFLOAT3& origin, float rang
 
 void EnemyPurpleDragon::OnDamaged()
 {
-	//SE_Attack->Play(false);
+
+}
+
+void EnemyPurpleDragon::OnDead()
+{
+	stateMachine->ChangeState(State::Die);
+}
+
+void EnemyPurpleDragon::OnDown()
+{
+
 }
 
 void EnemyPurpleDragon::PartsRegister()
 {
-	SetParts("Jaw1", 1.0f, ExtractColor::Red, true);
+	SetParts("Jaw1", 1.0f, ExtractColor::Red, 0.0f, true);
 	SetParts("Neck3", 1.0f, ExtractColor::Red);
 	SetParts("Neck1", 1.0f, ExtractColor::Red);
-	SetParts("Hand_L", 1.0f, ExtractColor::White, true);
+	SetParts("Hand_L", 1.0f, ExtractColor::White, 3.0f, true);
 	SetParts("LowerArm_L", 1.0f, ExtractColor::White);
-	SetParts("Hand_L_1", 1.0f, ExtractColor::White, true);
+	SetParts("Hand_L_1", 1.0f, ExtractColor::White, 3.0f, true);
 	SetParts("LowerArm_L_1", 1.0f, ExtractColor::White);
-	SetParts("Feet_L", 1.0f, ExtractColor::Orange, true);
+	SetParts("Feet_L", 1.0f, ExtractColor::Orange, 4.0f, true);
 	SetParts("LowerLeg_L", 1.0f, ExtractColor::Orange);
-	SetParts("Feet_L_1", 1.0f, ExtractColor::Orange, true);
+	SetParts("Feet_L_1", 1.0f, ExtractColor::Orange, 4.0f, true);
 	SetParts("LowerLeg_L_1", 1.0f, ExtractColor::Orange);
 	SetParts("Wing1_L", 1.0f, ExtractColor::Orange);
 	SetParts("Wing2_L", 1.0f, ExtractColor::Orange);
@@ -235,6 +267,8 @@ void EnemyPurpleDragon::PartsRegister()
 	SetParts("Wing1_L1", 1.0f, ExtractColor::Orange);
 	SetParts("Wing2_L_1", 1.0f, ExtractColor::Orange);
 	SetParts("Wing3_L_1", 1.0f, ExtractColor::Orange);
+	SetParts("WingClaw4_L", 1.0f, ExtractColor::Orange);
+	SetParts("WingClaw4_L_1", 1.0f, ExtractColor::Orange);
 	SetParts("WingDetail12_L_1", 1.0f, ExtractColor::Orange);
 	SetParts("WingDetail2_L_1", 1.0f, ExtractColor::Orange);
 	SetParts("WingDetail3_L_1", 1.0f, ExtractColor::Orange);
@@ -247,6 +281,6 @@ void EnemyPurpleDragon::PartsRegister()
 	SetParts("Tail1", 1.0f, ExtractColor::Heal);
 	SetParts("Tail2", 1.0f, ExtractColor::Heal);
 	SetParts("Tail3", 1.0f, ExtractColor::Heal);
-	SetParts("Tail4", 1.0f, ExtractColor::Heal, true);
+	SetParts("Tail4", 1.0f, ExtractColor::Heal, 2.0f, true);
 	SetParts("Tail5", 1.0f, ExtractColor::Heal);
 }
