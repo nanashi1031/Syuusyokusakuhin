@@ -75,7 +75,7 @@ void SceneClear::Update(float elapsedTime)
 {
 	DirectX::XMFLOAT3 target = { 0, 0, 0 };
 	CameraController::Instance().SetTarget(target);
-	CameraController::Instance().Update(elapsedTime);
+	//CameraController::Instance().Update(elapsedTime);
 
 
 
@@ -93,8 +93,7 @@ void SceneClear::Update(float elapsedTime)
 		;
 	if (gamePad.GetButtonDown() & anyButton)
 	{
-		//SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
-		PostQuitMessage(0);
+		SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
 	}
 }
 #if defined(_DEBUG)
@@ -151,8 +150,10 @@ void SceneClear::Render()
 		float textureHeight = static_cast<float>(title->GetTextureHeight());
 		//タイトルスプライト描画
 		title->Render(dc,
-			-100, -100, screenWidth * 1.2f, screenHeight * 1.2f,
-			0, 0, textureWidth, textureHeight,
+			screenWidth / 3.0f, screenHeight / 3.0f,
+			textureWidth / 0.6f, textureHeight / 0.6f,
+			0, 0,
+			textureWidth, textureHeight,
 			0,
 			1, 1, 1, 1);
 	}
