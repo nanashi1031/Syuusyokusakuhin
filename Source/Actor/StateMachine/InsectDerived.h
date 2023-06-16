@@ -33,6 +33,9 @@ namespace InsectState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
+	private:
+		std::unique_ptr<AudioSource> SE_Heal;
+		std::unique_ptr<AudioSource> SE_ExtractGet;
 	};
 
 	// 飛翔ステート
@@ -50,6 +53,8 @@ namespace InsectState
 		void Exit()override;
 	private:
 		float timer = 0.0f;
+		std::unique_ptr<AudioSource> SE_Whistle;
+		std::unique_ptr<AudioSource> SE_Hit;
 	};
 
 	// 帰還ステート
