@@ -23,9 +23,9 @@ Graphics::Graphics(HWND hWnd)
 	RECT rc;
 	GetClientRect(hWnd, &rc);
 	UINT screenWidth = rc.right - rc.left;
-	//screenWidth = 1920;
+	screenWidth = 1920;
 	UINT screenHeight = rc.bottom - rc.top;
-	//screenHeight = 1080;
+	screenHeight = 1080;
 
 	this->screenWidth = static_cast<float>(screenWidth);
 	this->screenHeight = static_cast<float>(screenHeight);
@@ -66,7 +66,7 @@ Graphics::Graphics(HWND hWnd)
 			swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			swapchainDesc.BufferCount = 1;		// バックバッファの数
 			swapchainDesc.OutputWindow = hWnd;	// DirectXで描いた画を表示するウインドウ
-			swapchainDesc.Windowed = TRUE;		// ウインドウモードか、フルスクリーンにするか。
+			swapchainDesc.Windowed = FALSE;		// ウインドウモードか、フルスクリーンにするか。
 			swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			swapchainDesc.Flags = 0; // DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH
 		}
