@@ -22,25 +22,23 @@ public:
 	static const GamePadButton BTN_RIGHT_SHOULDER	= (1 << 13);
 	static const GamePadButton BTN_LEFT_TRIGGER		= (1 << 14);
 	static const GamePadButton BTN_RIGHT_TRIGGER	= (1 << 15);
-	static const GamePadButton KEY_C				= (1 << 15);
-	static const GamePadButton KEY_I				= (1 << 16);
-	static const GamePadButton KEY_J				= (1 << 17);
-	static const GamePadButton KEY_K				= (1 << 18);
-	static const GamePadButton KEY_L				= (1 << 19);
-	static const GamePadButton KEY_E				= (1 << 20);
-	static const GamePadButton KEY_R				= (1 << 21);
-	static const GamePadButton KEY_Z				= (1 << 22);
+	static const GamePadButton KEY_C				= (1 << 16);
+	static const GamePadButton KEY_E				= (1 << 17);
+	static const GamePadButton KEY_R				= (1 << 18);
+	static const GamePadButton KEY_Z				= (1 << 19);
+	static const GamePadButton KEY_P				= (1 << 20);
+	static const GamePadButton BTN_SPACE			= (1 << 21);
 
 	//Xboxキー配置
-	static const GamePadButton BTN_PAD_A = (1 << 23);
-	static const GamePadButton BTN_PAD_B = (1 << 24);
-	static const GamePadButton BTN_PAD_X = (1 << 25);
-	static const GamePadButton BTN_PAD_Y = (1 << 26);
-	static const GamePadButton BTN_PAD_LB = (1 << 27);
-	static const GamePadButton BTN_PAD_RB = (1 << 28);
-	static const GamePadButton BTN_PAD_LT = (1 << 29);
-	static const GamePadButton BTN_PAD_RT = (1 << 30);
-	static const GamePadButton BTN_PAD_MENU = (1 << 31);
+	static const GamePadButton BTN_PAD_A = (1 << 22);
+	static const GamePadButton BTN_PAD_B = (1 << 23);
+	static const GamePadButton BTN_PAD_X = (1 << 24);
+	static const GamePadButton BTN_PAD_Y = (1 << 25);
+	static const GamePadButton BTN_PAD_LB = (1 << 26);
+	static const GamePadButton BTN_PAD_RB = (1 << 27);
+	static const GamePadButton BTN_PAD_LT = (1 << 28);
+	static const GamePadButton BTN_PAD_RT = (1 << 29);
+	static const GamePadButton BTN_PAD_MENU = (1 << 30);
 
 public:
 	GamePad() {}
