@@ -59,8 +59,8 @@ public:
 	// ノードの番号を探す
 	int FindNodeIndex(const char* name);
 
-	// ルートモーション
-	DirectX::XMFLOAT3 RootMotion(const char* nodeName);
+	// ルートモーションxz軸のみ trueならy軸移動にもかける
+	DirectX::XMFLOAT3 RootMotion(const char* nodeName, bool upDownFlag = false);
 
 	// ゲッター　セッター
 	// ノードリスト取得

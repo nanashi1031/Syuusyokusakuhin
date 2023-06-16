@@ -86,7 +86,7 @@ void Model::UpdateAnimation(float elapsedTime)
 			currentAnimationSeconds < keyframe1.seconds)
 		{
 			// 再生時間とキーフレームの時間から補間率を算出する
-			float rate = (currentAnimationSeconds - keyframe0.seconds) / (keyframe0.seconds - keyframe1.seconds);
+			float rate = (currentAnimationSeconds - keyframe0.seconds) / (keyframe1.seconds - keyframe0.seconds);
 
 			int nodeCount = static_cast<int>(nodes.size());
 			for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
@@ -214,7 +214,7 @@ void Model::SetupRootMotion(const char* rootMotionNodeName)
 	rootMotionNodeIndex = FindNodeIndex(rootMotionNodeName);
 }
 
-DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
+DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName, bool upDownFlag)
 {
 	if (!IsPlayAnimation()) return {0, 0, 0};
 
@@ -246,7 +246,14 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName)
 	//		return movement;
 	//	}
 	//}
-	node->translate = {0, node->translate.y, 0};
+	if (!upDownFlag)
+	{
+		node->translate = { 0, node->translate.y, 0 };
+	}
+	else
+	{
+		node->translate = { 0, 0, 0 };
+	}
 
 	return { 0, node->translate.y, 0 };
 }
