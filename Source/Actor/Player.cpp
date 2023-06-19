@@ -16,7 +16,7 @@ Player::Player()
     scale.x = scale.y = scale.z = size;
 
     radius = 0.5f;
-    height = 2.0f;
+    height = 2.2f;
 
     maxHealth = 100.0f;
     health = maxHealth;
