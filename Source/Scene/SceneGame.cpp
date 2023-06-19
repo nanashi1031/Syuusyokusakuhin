@@ -622,6 +622,8 @@ void SceneGame::RenderLockOn(
 	DirectX::XMFLOAT3 worldPosition =
 		enemy->GetNodePosition(node);
 
+	targetRingAngle += 1.0f;
+
 	// スクリーン座標
 	DirectX::XMFLOAT2 screenPosition = Mathf::ConvertWorldToScreen(worldPosition, dc, view, projection);
 
@@ -631,8 +633,8 @@ void SceneGame::RenderLockOn(
 		dc,
 		screenPosition.x - (textureWidth / 3 / 2), screenPosition.y - (textureHeight / 3 / 2),
 		textureWidth / 3, textureHeight / 3,
-		0, 0, textureWidth, textureHeight,
-		0,
+		0, 0, textureWidth , textureHeight,
+		targetRingAngle,
 		1, 1, 1, 1);
 }
 

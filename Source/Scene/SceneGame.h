@@ -106,6 +106,7 @@ private:
 	float colorFlag = false;
 
 	bool sentaku = true;
+	float targetRingAngle = 0.0f;
 
 	// imgui’²®—p•Ï”
 	float a, b, c, d, e, f, g, h = 2.0f;
