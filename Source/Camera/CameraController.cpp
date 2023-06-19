@@ -177,11 +177,13 @@ void CameraController::UpdateMouse(float elapsedTime)
 
     // マウスカーソル非表示
     // TODO 今はカーソルの動きを見るため実行しない、本番ではコメントを外す
-    ShowCursor(false);
+#if _DEBUG
+    ShowCursor(true);
 
     float speed = mouseRollSpeed * elapsedTime;
     angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() / 2.0f) * speed;
     angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() / 2.0f) * speed;
+#endif
 }
 
 void CameraController::UpdatePad(float elapsedTime)
@@ -226,13 +228,6 @@ void CameraController::UpdateNormalCamera(float elapsedTime)
     {
         UpdateMouse(elapsedTime);
     }
-#if _DEBUG
-    // TODO 本番ではマウス操作のため開発中のみ実行する
-    // カメラのキーボードIJKL操作
-    else if (!cameraMouseOperationFlag)
-    {
-    }
-#endif
 
     // カメラの右スティック操作
     UpdatePad(elapsedTime);
@@ -263,12 +258,8 @@ void CameraController::UpdateLockOnCamera(float elapsedTime)
     //DirectX::XMFLOAT3 targetposition = enemyManager.GetEnemy(0)->GetNodePosition(node);
 
     /// 顎は頭を振り回すからぐわんぐわんして酔いやすいかも
-    //char* targetName = "Neck1";
-    //char* targetName = "Chest";
-    //char* targetName = "Spine1";
-    char* targetName = "Root";
     // 腰のあたりにロックオンしておいて酔い防止
-    //char* targetName = "Tail1";
+    char* targetName = "Root";
     Model::Node* node =
         enemyManager.GetEnemy(0)->GetModel()->FindNode(targetName);
     DirectX::XMFLOAT3 targetposition = enemyManager.GetEnemy(0)->GetNodePosition(node);
