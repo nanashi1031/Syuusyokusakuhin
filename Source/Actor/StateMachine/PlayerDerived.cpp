@@ -40,9 +40,6 @@ void PlayerState::IdleState::Execute(float elapsedTime)
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::AttackCombo1);
 	}
-
-	if(mouse.GetButtonDown() & mouse.BTN_RIGHT)
-		owner->GetStateMachine()->ChangeState(Player::State::Avoidance);
 }
 
 void PlayerState::IdleState::Exit()
