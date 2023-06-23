@@ -30,6 +30,9 @@ Insect::Insect()
     stateMachine->RegisterState(new InsectState::ReturnState(this));
 #pragma endregion
     stateMachine->SetState(State::Pursuit);
+
+	ParticleRed = std::make_unique<Effect>("Data/Effect/InsectParticleRed.efk");
+	ParticleWhite = std::make_unique<Effect>("Data/Effect/InsectParticleWhite.efk");
 }
 
 Insect::~Insect()
@@ -64,6 +67,9 @@ void Insect::Update(float elapsedTime)
     stateMachine->Update(elapsedTime);
 
 	UpdateLight();
+
+	// エフェクトが完成したら解除
+	// UpdateExtractEffect();
 }
 
 void Insect::Render(RenderContext rc, ModelShader* shader)
@@ -107,7 +113,6 @@ void Insect::DrawDebugGUI()
 			int color = extractColor;
 			ImGui::InputInt("extractColor", &color);
 			extractColor = color;
-            ImGui::DragFloat3("SwordPostion", &weaponPosition.x, 0.1f);
         }
         if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
         {
@@ -427,5 +432,29 @@ void Insect::UpdateLight()
 		DirectX::XMFLOAT3 lightPosition =
 		{ position.x + length.x, position.y + length.y, position.z + length.z };
 		LightManager::Instane().GetLight(lightIndex - 1)->SetPosition(lightPosition);
+	}
+}
+
+void Insect::UpdateExtractEffect()
+{
+	int effectIndex = 0;
+
+	switch (this->GetExtractColor())
+	{
+	case ExtractColor::Red:
+		ParticleRed->Play(this->GetPosition(), 0.2f);
+		break;
+	case ExtractColor::White:
+		ParticleWhite->Play(this->GetPosition(), 0.2f);
+		break;
+	case ExtractColor::Orange:
+		ParticleRed->Play(this->GetPosition(), 0.2f);
+		break;
+	case ExtractColor::Heal:
+		ParticleRed->Play(this->GetPosition(), 0.2f);
+		break;
+	case ExtractColor::None:
+
+		break;
 	}
 }

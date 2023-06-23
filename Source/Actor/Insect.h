@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "Effect.h"
 
 class Insect : public Character
 {
@@ -32,13 +33,13 @@ private:
     // 水平移動更新処理
     void UpdateHorizontalMove(float elapsedTime);
 
+    // 点光源を虫とカメラとの間へ移動する
     void UpdateLight();
 
-    // プレイヤーの剣に追尾
-    void PlayerWeaponTracking(float elapsedTime);
+    // 所持しているエキスの色によって出すエフェクトを管理する
+    void UpdateExtractEffect();
 
 private:
-    DirectX::XMFLOAT3 weaponPosition;
-
-    std::unique_ptr<AudioSource> SE_Attack;
+    std::unique_ptr<Effect> ParticleRed = nullptr;
+    std::unique_ptr<Effect> ParticleWhite = nullptr;
 };
