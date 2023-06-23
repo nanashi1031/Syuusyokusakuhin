@@ -220,14 +220,14 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 						DirectX::XMFLOAT4 color =
 							Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
 						Light* light = new Light(LightType::Point);
-						DirectX::XMFLOAT3 LightPosition =
+						DirectX::XMFLOAT3 lightPosition =
 							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-						light->SetPosition(LightPosition);
+						light->SetPosition(lightPosition);
 						light->SetColor(DirectX::XMFLOAT4({ color }));
 						light->SetRange(2.0f);
 						LightManager::Instane().Register(light);
 						owner->SetLightIndex(LightManager::Instane().GetLightCount());
-						hitEffect1->Play(LightPosition);
+						hitEffect1->Play(lightPosition);
 					}
 					SE_Attack1->Play(false);
 				}
@@ -320,22 +320,22 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 								Extract::Instance().ColorConversion(
 									enemy->GetParts()[j].extractColor);
 							Light* light = new Light(LightType::Point);
-							DirectX::XMFLOAT3 LightPosition =
+							DirectX::XMFLOAT3 lightPosition =
 								owner->GetNodePosition(
 									owner->GetNode("mixamorig:Sword_joint"));
-							light->SetPosition(LightPosition);
+							light->SetPosition(lightPosition);
 							light->SetColor(DirectX::XMFLOAT4({ color }));
 							light->SetRange(2.0f);
 							LightManager::Instane().Register(light);
 							owner->SetLightIndex(
 								LightManager::Instane().GetLightCount());
-							hitEffect2->Play(LightPosition);
+							hitEffect2->Play(lightPosition);
 							owner->SetLightIndex(
 								LightManager::Instane().GetLightCount());
 							DirectX::XMFLOAT3 rotation =
 							{ 0, 0, DirectX::XMConvertToRadians(180) };
-							int ii = hitEffect2->Play(LightPosition);
-							hitEffect2->SetRotation(ii, rotation);
+							int effectIndex = hitEffect2->Play(lightPosition);
+							hitEffect2->SetRotation(effectIndex, rotation);
 						}
 						SE_Attack2->Play(false);
 					}
@@ -409,16 +409,16 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 						DirectX::XMFLOAT4 color =
 							Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
 						Light* light = new Light(LightType::Point);
-						DirectX::XMFLOAT3 LightPosition =
+						DirectX::XMFLOAT3 lightPosition =
 							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-						light->SetPosition(LightPosition);
+						light->SetPosition(lightPosition);
 						light->SetColor(DirectX::XMFLOAT4({ color }));
 						light->SetRange(2.0f);
 						LightManager::Instane().Register(light);
 						owner->SetLightIndex(LightManager::Instane().GetLightCount());
 						DirectX::XMFLOAT3 rotation = {0, 0, DirectX::XMConvertToRadians(45) };
-						int ii = hitEffect3->Play(LightPosition);
-						hitEffect3->SetRotation(ii, rotation);
+						int effectIndex = hitEffect3->Play(lightPosition);
+						hitEffect3->SetRotation(effectIndex, rotation);
 					}
 					SE_Attack3->Play(false);
 				}
@@ -478,9 +478,9 @@ void PlayerState::AttackDashuState::Execute(float elapsedTime)
 					DirectX::XMFLOAT4 color =
 						Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
 					Light* light = new Light(LightType::Point);
-					DirectX::XMFLOAT3 LightPosition =
+					DirectX::XMFLOAT3 lightPosition =
 						owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-					light->SetPosition(LightPosition);
+					light->SetPosition(lightPosition);
 					light->SetColor(DirectX::XMFLOAT4({ color }));
 					light->SetRange(2.0f);
 					LightManager::Instane().Register(light);
