@@ -278,7 +278,7 @@ void EnemyPurpleDragon::PartsRegister()
 	SetParts("WingDetail9_L_1", 1.8f, ExtractColor::Orange, 2.0f);
 	SetParts("WingDetail10_L_1", 1.8f, ExtractColor::Orange, 2.0f);
 	SetParts("WingDetail11_L_1", 1.8f, ExtractColor::Orange, 2.0f);
-	SetParts("Root", 1.5f, ExtractColor::Heal, 0.0f);
+	SetParts("Spine2", 3.1f, ExtractColor::Heal, 0.0f);
 	SetParts("Tail1", 1.0f, ExtractColor::Heal, 1.0f);
 	SetParts("Tail2", 1.0f, ExtractColor::Heal, 1.0f);
 	SetParts("Tail3", 1.0f, ExtractColor::Heal, 1.0f);
