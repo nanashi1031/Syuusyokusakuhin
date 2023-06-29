@@ -33,7 +33,7 @@ private:
 
 private:
     std::unique_ptr<Sprite>	sprite;
-    std::unique_ptr<Sprite> title = nullptr;
+    std::unique_ptr<Sprite> spr_title = nullptr;
 
     std::unique_ptr<AudioSource> SE_Kettei;
 

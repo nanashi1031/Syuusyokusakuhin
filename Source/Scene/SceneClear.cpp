@@ -15,7 +15,7 @@
 void SceneClear::Initialize()
 {
 	//スプライト初期化
-	title = std::make_unique<Sprite>("Data/Sprite/Scene/Clear.png");
+	spr_title = std::make_unique<Sprite>("Data/Sprite/Scene/Clear.png");
 
 	StageManager& stageManager = StageManager::Instance();
 	StageMain* stageMain = new StageMain;
@@ -146,10 +146,10 @@ void SceneClear::Render()
 	{
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		float textureWidth = static_cast<float>(title->GetTextureWidth());
-		float textureHeight = static_cast<float>(title->GetTextureHeight());
+		float textureWidth = static_cast<float>(spr_title->GetTextureWidth());
+		float textureHeight = static_cast<float>(spr_title->GetTextureHeight());
 		//タイトルスプライト描画
-		title->Render(dc,
+		spr_title->Render(dc,
 			screenWidth / 3.0f, screenHeight / 3.0f,
 			textureWidth / 0.6f, textureHeight / 0.6f,
 			0, 0,

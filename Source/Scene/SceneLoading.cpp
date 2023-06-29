@@ -8,7 +8,7 @@
 void SceneLoading::Initialize()
 {
     //スプライト初期化
-    sprite = new Sprite("Data/Sprite/Scene/LoadingIcon.png");
+    spr_loading = std::make_unique<Sprite>("Data/Sprite/Scene/LoadingIcon.png");
 
     //スレッド開始
     std::thread thread(LoadingThread, this);
@@ -20,12 +20,7 @@ void SceneLoading::Initialize()
 //終了化
 void SceneLoading::Finalize()
 {
-    //スプライト終了化
-    if (sprite != nullptr)
-    {
-        delete sprite;
-        sprite = nullptr;
-    }
+
 }
 
 //更新処理
@@ -60,13 +55,13 @@ void SceneLoading::Render()
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-        float textureWidth = static_cast<float>(sprite->GetTextureWidth());
-        float textureHeight = static_cast<float>(sprite->GetTextureHeight());
+        float textureWidth = static_cast<float>(spr_loading->GetTextureWidth());
+        float textureHeight = static_cast<float>(spr_loading->GetTextureHeight());
         float positionX = screenWidth - textureWidth;
         float positionY = screenHeight - textureHeight;
 
         //タイトルスプライト描画
-        sprite->Render(dc,
+        spr_loading->Render(dc,
             positionX, positionY, textureWidth, textureHeight,
             0, 0, textureWidth, textureHeight,
             angle,

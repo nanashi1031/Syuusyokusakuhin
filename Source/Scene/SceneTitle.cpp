@@ -14,7 +14,7 @@
 void SceneTitle::Initialize()
 {
     //スプライト初期化
-    title = std::make_unique<Sprite>("Data/Sprite/Scene/Title.png");
+	spr_title = std::make_unique<Sprite>("Data/Sprite/Scene/Title.png");
 
 	// 音初期化
 	SE_Kettei = Audio::Instance().LoadAudioSource("Data/Audio/SE/Scene/Decision.wav");
@@ -147,10 +147,10 @@ void SceneTitle::Render()
     {
         float screenWidth = static_cast<float>(graphics.GetScreenWidth());
         float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-        float textureWidth = static_cast<float>(title->GetTextureWidth());
-        float textureHeight = static_cast<float>(title->GetTextureHeight());
+        float textureWidth = static_cast<float>(spr_title->GetTextureWidth());
+        float textureHeight = static_cast<float>(spr_title->GetTextureHeight());
         //タイトルスプライト描画
-        title->Render(dc,
+		spr_title->Render(dc,
             -100, -100, screenWidth * 1.2f, screenHeight * 1.2f,
             0, 0, textureWidth, textureHeight,
             0,
