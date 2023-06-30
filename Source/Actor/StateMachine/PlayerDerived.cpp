@@ -7,6 +7,7 @@
 #include "LightManager.h"
 #include "Camera.h"
 #include "CameraController.h"
+#include "SceneManager.h"
 #include "SceneGame.h"
 
 void PlayerState::IdleState::Enter()
@@ -625,7 +626,7 @@ void PlayerState::DieState::Execute(float elapsedTime)
 	// アニメーション再生が終了時
 	if (!owner->GetModel()->IsPlayAnimation())
 	{
-		owner->SetSceneGameState(SceneGameState::GameOver);
+		SceneManager::Instance().SetSceneGameState(SceneGameState::GameOver);
 		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
 }
