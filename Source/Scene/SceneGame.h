@@ -8,14 +8,6 @@
 #include "RenderTarget.h"
 #include "PostprocessingRenderer.h"
 
-
-enum class SceneGameState
-{
-	Game,
-	Pause,
-	GameOver,
-};
-
 // ÉQÅ[ÉÄÉVÅ[Éì
 class SceneGame : public Scene
 {
@@ -57,8 +49,6 @@ private:
 	void RenderGameOverUI(ID3D11DeviceContext* dc);
 
 private:
-
-
 	std::unique_ptr<Texture> texture;
 	std::unique_ptr<Sprite>	sprite;
 

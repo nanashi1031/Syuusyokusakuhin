@@ -20,7 +20,7 @@
 
 //	シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048;
-static std::shared_ptr<Player> player = nullptr;
+static std::unique_ptr<Player> player = nullptr;
 
 void SceneGame::Initialize()
 {
@@ -37,7 +37,7 @@ void SceneGame::Initialize()
 		// プレイヤー
 		{
 			PlayerManager& playerManager = PlayerManager::Instance();
-			player = std::make_shared<Player>();
+			//player = std::make_unique<Player>();
 			Player* player = new Player;
 			playerManager.Register(player);
 		}
@@ -152,7 +152,7 @@ void SceneGame::Initialize()
 		postprocessingRenderer->SetSceneData(srvData);
 	}
 
-	PlayerManager::Instance().GetPlayer(0)->SetSceneGameState(SceneGameState::Game);
+	SceneManager::Instance().SetSceneGameState(SceneGameState::Game);
 	sentaku = true;
 }
 
@@ -175,7 +175,7 @@ void SceneGame::Update(float elapsedTime)
 	Player* player =
 		PlayerManager::Instance().GetPlayer(
 			PlayerManager::Instance().GetplayerOneIndex());
-	switch (player->GetSceneGameState())
+	switch (SceneManager::Instance().GetSceneGameState())
 	{
 	case SceneGameState::Game:
 	{
@@ -232,7 +232,7 @@ void SceneGame::Update(float elapsedTime)
 		if ((gamePad.GetButtonDown() & gamePad.BTN_PAD_MENU) ||
 			(gamePad.GetButtonDown() & gamePad.KEY_P))
 		{
-			player->SetSceneGameState(SceneGameState::Pause);
+			SceneManager::Instance().SetSceneGameState(SceneGameState::Pause);
 		}
 		break;
 	}
@@ -255,7 +255,7 @@ void SceneGame::Update(float elapsedTime)
 		{
 			if (sentaku)
 			{
-				player->SetSceneGameState(SceneGameState::Game);
+				SceneManager::Instance().SetSceneGameState(SceneGameState::Game);
 			}
 			else
 				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
@@ -298,7 +298,7 @@ void SceneGame::Update(float elapsedTime)
 				// 体力Max、無敵時間付与して復活
 				player->SetHealth(player->GetMaxHealth());
 				player->SetInvincibleTimer(5.0f);
-				player->SetSceneGameState(SceneGameState::Game);
+				SceneManager::Instance().SetSceneGameState(SceneGameState::Game);
 			}
 			else
 				SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
@@ -367,12 +367,12 @@ void SceneGame::Render()
 			PlayerManager::Instance().GetPlayer(
 				PlayerManager::Instance().GetplayerOneIndex());
 
-		if (player->GetSceneGameState() == SceneGameState::Pause)
+		if (SceneManager::Instance().GetSceneGameState() == SceneGameState::Pause)
 		{
 			RenderPauseUI(dc);
 		}
 
-		if (player->GetSceneGameState() == SceneGameState::GameOver)
+		if (SceneManager::Instance().GetSceneGameState() == SceneGameState::GameOver)
 		{
 			RenderGameOverUI(dc);
 		}
