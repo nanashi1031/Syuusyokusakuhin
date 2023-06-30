@@ -6,8 +6,6 @@
 #include "StateMachine.h"
 #include "Extract.h"
 #include "Audio.h"
-// TODO:本来はこんなとこでSceneGame呼ぶな
-#include "SceneGame.h"
 
 // キャラクター
 class Character : public Object
@@ -103,9 +101,6 @@ public:
     void SetLightIndex(int index) { this->lightIndex = index; }
 
     Type GetCharacterType() const { return this->CharacterType; }
-
-    SceneGameState GetSceneGameState() const  { return this->sceneGameState; }
-    void SetSceneGameState(SceneGameState state) { this->sceneGameState = state; }
 
     float GetRecoveryAmount() const { return this->recoveryAmount; }
     void SetRecoveryAmount(float f) { this->recoveryAmount = f; }
@@ -283,7 +278,6 @@ protected:
     int lightIndex = -1;
 
     Type CharacterType = Type::Non;
-    SceneGameState sceneGameState = SceneGameState::Game;
 
     BehaviorTree* aiTree = nullptr;
     BehaviorData* behaviorData = nullptr;
