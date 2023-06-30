@@ -24,8 +24,9 @@ public:
 
     void Render2D(ID3D11DeviceContext* dc);
 
-    //void Register(std::shared_ptr<Player> player);
-    void Register(Player* player);
+
+    //void Register(std::unique_ptr<Player> player) { players.emplace_back(player); };
+    void Register(Player* player) { players.emplace_back(player); };
 
     void DrawDebugPrimitive();
 
