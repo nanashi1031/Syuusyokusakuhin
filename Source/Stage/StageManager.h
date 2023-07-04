@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "Stage.h"
+#include <iostream>
+#include <memory>
+#include "StageMain.h"
 #include "Collision.h"
 
 // ステージマネージャー
@@ -29,7 +31,10 @@ public:
 
     void DrawDebugGUI();
 
-    void Register(Stage* stage);
+    void Register(std::unique_ptr<StageMain> stage)
+    {
+        stages.emplace_back(stage.get());
+    }
 
     void Clear();
 

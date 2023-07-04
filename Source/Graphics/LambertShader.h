@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <wrl.h>
-#include "Graphics/Shader.h"
+#include "Shader.h"
 
 class LambertShader : public Shader
 {
@@ -11,7 +11,7 @@ public:
 	~LambertShader() override {}
 
 	void Begin(ID3D11DeviceContext* dc, const RenderContext& rc) override;
-	void Draw(ID3D11DeviceContext* dc, const Model* model) override;
+	void Draw(ID3D11DeviceContext* dc, const std::shared_ptr<Model> model) override;
 	void End(ID3D11DeviceContext* dc) override;
 
 private:

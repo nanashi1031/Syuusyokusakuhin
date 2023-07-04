@@ -12,7 +12,7 @@
 
 Player::Player()
 {
-    model = new Model("Data/Model/Player/Player.mdl");
+    model = std::make_shared<Model>("Data/Model/Player/Player.mdl");
     scale.x = scale.y = scale.z = size;
 
     radius = 0.5f;
@@ -44,7 +44,7 @@ Player::Player()
 
 Player::~Player()
 {
-    delete model;
+
 }
 
 void Player::Update(float elapsedTime)

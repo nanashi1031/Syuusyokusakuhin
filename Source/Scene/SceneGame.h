@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "RenderTarget.h"
 #include "PostprocessingRenderer.h"
+#include "StageMain.h"
 
 // ゲームシーン
 class SceneGame : public Scene
@@ -67,6 +68,8 @@ private:
 	std::unique_ptr<Sprite> spr_gameOver = nullptr;
 	std::unique_ptr<Sprite> spr_retry = nullptr;
 	std::unique_ptr<Sprite> spr_retire = nullptr;
+
+	std::unique_ptr<StageMain> stageMain = nullptr;
 
 	// 平行光源データ
 	std::unique_ptr<Light> directional_light = nullptr;

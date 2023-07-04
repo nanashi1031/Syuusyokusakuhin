@@ -33,12 +33,6 @@ void StageManager::DrawDebugGUI()
     }
 }
 
-
-void StageManager::Register(Stage* stage)
-{
-    stages.emplace_back(stage);
-}
-
 void StageManager::Clear()
 {
     for (Stage* stage : stages)

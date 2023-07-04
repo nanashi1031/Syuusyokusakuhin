@@ -11,7 +11,7 @@ public:
 	~PhongShader() override {}
 
 	void Begin(const RenderContext& rc) override;
-	void Draw(const RenderContext& rc, const Model* model) override;
+	void Draw(const RenderContext& rc, const std::shared_ptr<Model> model) override;
 	void End(const RenderContext& rc) override;
 
 private:

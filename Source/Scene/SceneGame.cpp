@@ -16,7 +16,6 @@
 #include "SceneClear.h"
 #include "SceneTitle.h"
 #include "EffectManager.h"
-#include <memory>
 
 //	シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048;
@@ -27,9 +26,11 @@ void SceneGame::Initialize()
 	CameraController::Instance().SetCameraMouseOperationFlag(true);
 
 	// ステージ初期化
+	// ユニークポインタにしたらエラー
+	// 中身が消えている？
 	StageManager& stageManager = StageManager::Instance();
-	StageMain* stageMain = new StageMain();
-	stageManager.Register(stageMain);
+	stageMain = std::make_unique<StageMain>();
+	stageManager.Register(std::move(stageMain));
 
 	// TODO:メモリリーク発生中！修正必須！
 	// 先生に聞いても修正不可能だったためいったん放置、ユニークポインタにするとエラー

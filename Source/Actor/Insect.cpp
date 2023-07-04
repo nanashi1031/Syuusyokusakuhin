@@ -10,7 +10,7 @@
 
 Insect::Insect()
 {
-    model = new Model("Data/Model/Insect/Butterfly.mdl");
+    model = std::make_shared<Model>("Data/Model/Insect/Butterfly.mdl");
     scale.x = scale.y = scale.z = 0.05f;
 
     radius = 0.5f;

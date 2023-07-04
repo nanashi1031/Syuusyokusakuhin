@@ -22,7 +22,7 @@ public:
     void SetScale(const DirectX::XMFLOAT3& scale) { this->scale; }
 
 protected:
-    Model* model = nullptr;
+    std::shared_ptr<Model> model = nullptr;
 
     DirectX::XMFLOAT3 position = { 0, 0, 0 };
     DirectX::XMFLOAT3 angle = { 0, 0, 0 };

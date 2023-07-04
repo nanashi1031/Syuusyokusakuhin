@@ -46,12 +46,6 @@ void PlayerManager::Render(RenderContext rc, ModelShader* shader)
 ////    players.push_back(player.get());
 //}
 
-void PlayerManager::Register(Player* player)
-{
-    players.emplace_back(player);
-    //    players.push_back(player.get());
-}
-
 void PlayerManager::DrawDebugPrimitive()
 {
     for (Player* player : players)

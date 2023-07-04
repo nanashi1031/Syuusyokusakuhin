@@ -228,7 +228,7 @@ void PhongShader::Begin(const RenderContext& rc)
 }
 
 // •`‰æ
-void PhongShader::Draw(const RenderContext& rc, const Model* model)
+void PhongShader::Draw(const RenderContext& rc, const std::shared_ptr<Model> model)
 {
 	const ModelResource* resource = model->GetResource();
 	const std::vector<Model::Node>& nodes = model->GetNodes();

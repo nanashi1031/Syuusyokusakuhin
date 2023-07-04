@@ -196,7 +196,7 @@ void LambertShader::Begin(ID3D11DeviceContext* dc, const RenderContext& rc)
 }
 
 // •`‰æ
-void LambertShader::Draw(ID3D11DeviceContext* dc, const Model* model)
+void LambertShader::Draw(ID3D11DeviceContext* dc, const std::shared_ptr<Model> model)
 {
 	const ModelResource* resource = model->GetResource();
 	const std::vector<Model::Node>& nodes = model->GetNodes();

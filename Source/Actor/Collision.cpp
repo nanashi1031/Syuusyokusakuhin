@@ -312,7 +312,7 @@ bool Collision::AttackNodeVsNode(
 bool Collision::IntersectRayVsModel(
     const DirectX::XMFLOAT3& start,
     const DirectX::XMFLOAT3& end,
-    const Model* model,
+    const std::shared_ptr<Model> model,
     HitResult& result)
 {
 	DirectX::XMVECTOR WorldStart = DirectX::XMLoadFloat3(&start);

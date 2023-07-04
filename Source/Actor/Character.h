@@ -177,7 +177,7 @@ public:
     StateMachine* GetStateMachine() const { return stateMachine; }
 
     // ƒ‚ƒfƒ‹æ“¾
-    Model* GetModel() const { return this->model; }
+    std::shared_ptr<Model> GetModel() const { return this->model; }
 
     // ƒm[ƒhî•ñæ“¾
     Model::Node* GetNode(const char* nodeName) const

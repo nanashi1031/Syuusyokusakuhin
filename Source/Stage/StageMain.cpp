@@ -2,14 +2,14 @@
 
 StageMain::StageMain()
 {
-    model = new Model("Data/Model/Stage/Untitled.mdl");
+    model = std::make_shared<Model>("Data/Model/Stage/Untitled.mdl");
 
     scale.x = scale.y = scale.z = 0.001f;
 }
 
 StageMain::~StageMain()
 {
-    delete model;
+
 }
 
 void StageMain::Update(float elapsedTime)

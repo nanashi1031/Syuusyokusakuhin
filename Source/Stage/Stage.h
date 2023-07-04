@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics\Shader.h"
-#include "Graphics\Model.h"
+#include "Shader.h"
+#include "Model.h"
 #include "Object.h"
 #include "Collision.h"
 
@@ -24,5 +24,5 @@ public:
     }
 
     // ゲッター　セッター
-    Model* GetModel() const { return model; }
+    std::shared_ptr<Model> GetModel() const { return model; }
 };

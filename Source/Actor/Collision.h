@@ -88,7 +88,7 @@ public:
     static bool IntersectRayVsModel(
         const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end,
-        const Model* model,
+        const std::shared_ptr<Model> model,
         HitResult& result
     );
 };

@@ -7,7 +7,7 @@
 
 EnemyPurpleDragon::EnemyPurpleDragon()
 {
-	model = new Model("Data/Model/Enemy/PurpleDragon/PurpleDragon.mdl");
+	model = std::make_shared<Model>("Data/Model/Enemy/PurpleDragon/PurpleDragon.mdl");
 
 	scale.x = scale.y = scale.z = 0.02f;
 
@@ -48,7 +48,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 
 EnemyPurpleDragon::~EnemyPurpleDragon()
 {
-	delete model;
+
 }
 
 void EnemyPurpleDragon::Update(float elapsedTime)
