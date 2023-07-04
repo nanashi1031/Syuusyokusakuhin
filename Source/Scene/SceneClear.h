@@ -32,7 +32,7 @@ private:
 
 private:
     std::unique_ptr<Sprite>	sprite;
-    std::unique_ptr<Sprite> spr_title = nullptr;
+    std::unique_ptr<Sprite> spr_clear = nullptr;
 
     // 平行光源データ
     std::unique_ptr<Light> directional_light;

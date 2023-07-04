@@ -15,11 +15,7 @@
 void SceneClear::Initialize()
 {
 	//スプライト初期化
-	spr_title = std::make_unique<Sprite>("Data/Sprite/Scene/Clear.png");
-
-	StageManager& stageManager = StageManager::Instance();
-	StageMain* stageMain = new StageMain;
-	stageManager.Register(stageMain);
+	spr_clear = std::make_unique<Sprite>("Data/Sprite/Scene/Clear.png");
 
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
@@ -66,7 +62,6 @@ void SceneClear::Initialize()
 //終了化
 void SceneClear::Finalize()
 {
-	StageManager::Instance().Clear();
 	LightManager::Instane().Clear();
 }
 
@@ -75,12 +70,6 @@ void SceneClear::Update(float elapsedTime)
 {
 	DirectX::XMFLOAT3 target = { 0, 0, 0 };
 	CameraController::Instance().SetTarget(target);
-	//CameraController::Instance().Update(elapsedTime);
-
-
-
-	Stage* stage = StageManager::Instance().GetStage(0);
-	StageManager::Instance().Update(elapsedTime);
 
 	GamePad& gamePad = Input::Instance().GetGamePad();
 
@@ -105,8 +94,6 @@ void SceneClear::Render()
 	ID3D11DeviceContext* dc = graphics.GetDeviceContext();
 	ID3D11RenderTargetView* rtv = graphics.GetRenderTargetView();
 	ID3D11DepthStencilView* dsv = graphics.GetDepthStencilView();
-
-	//Render3DScene();
 
 	//画面クリア&レンダーターゲット設定
 	FLOAT color[] = { 0.0f, 0.0f, 0.5f, 1.0f };     //RGBA(0.0~1.0)
@@ -135,21 +122,15 @@ void SceneClear::Render()
 		shader->Draw(rc, sprite.get());
 
 		shader->End(rc);
-		ModelShader* modelShader = graphics.GetShader(ModelShaderId::Phong);
-		//modelShader->Begin(rc);
-
-		//StageManager::Instance().Render(rc, modelShader);
-
-		//modelShader->End(rc);
 	}
 	//2Dスプライト描画
 	{
 		float screenWidth = static_cast<float>(graphics.GetScreenWidth());
 		float screenHeight = static_cast<float>(graphics.GetScreenHeight());
-		float textureWidth = static_cast<float>(spr_title->GetTextureWidth());
-		float textureHeight = static_cast<float>(spr_title->GetTextureHeight());
+		float textureWidth = static_cast<float>(spr_clear->GetTextureWidth());
+		float textureHeight = static_cast<float>(spr_clear->GetTextureHeight());
 		//タイトルスプライト描画
-		spr_title->Render(dc,
+		spr_clear->Render(dc,
 			screenWidth / 3.0f, screenHeight / 3.0f,
 			textureWidth / 0.6f, textureHeight / 0.6f,
 			0, 0,
@@ -187,12 +168,6 @@ void SceneClear::Render3DScene()
 
 	// ライトの情報を詰め込む
 	LightManager::Instane().PushRenderContext(rc);
-
-	//// シャドウマップの設定
-	//rc.shadowMapData.shadowMap = shadowmapDepthStencil->GetShaderResourceView().Get();
-	//rc.shadowMapData.lightViewProjection = lightViewProjection;
-	//rc.shadowMapData.shadowColor = shadowColor;
-	//rc.shadowMapData.shadowBias = shadowBias;
 
 	// カメラ
 	Camera& camera = Camera::Instance();

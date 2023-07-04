@@ -19,10 +19,6 @@ void SceneTitle::Initialize()
 	// 音初期化
 	SE_Kettei = Audio::Instance().LoadAudioSource("Data/Audio/SE/Scene/Decision.wav");
 
-    StageManager& stageManager = StageManager::Instance();
-    StageMain* stageMain = new StageMain;
-    stageManager.Register(stageMain);
-
 	Graphics& graphics = Graphics::Instance();
 	Camera& camera = Camera::Instance();
 	camera.SetLookAt(
@@ -68,7 +64,6 @@ void SceneTitle::Initialize()
 //終了化
 void SceneTitle::Finalize()
 {
-    StageManager::Instance().Clear();
 	LightManager::Instane().Clear();
 }
 
@@ -77,10 +72,6 @@ void SceneTitle::Update(float elapsedTime)
 {
 	DirectX::XMFLOAT3 target = { 0, 0, 0 };
 	CameraController::Instance().SetTarget(target);
-	//CameraController::Instance().Update(elapsedTime);
-
-	Stage* stage = StageManager::Instance().GetStage(0);
-	StageManager::Instance().Update(elapsedTime);
 
     GamePad& gamePad = Input::Instance().GetGamePad();
 
@@ -97,8 +88,7 @@ void SceneTitle::Update(float elapsedTime)
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
 }
-#if defined(_DEBUG)
-#endif
+
 //描画処理
 void SceneTitle::Render()
 {
@@ -136,12 +126,6 @@ void SceneTitle::Render()
 		shader->Draw(rc, sprite.get());
 
 		shader->End(rc);
-		ModelShader* modelShader = graphics.GetShader(ModelShaderId::Phong);
-		//modelShader->Begin(rc);
-
-		//StageManager::Instance().Render(rc, modelShader);
-
-		//modelShader->End(rc);
 	}
     //2Dスプライト描画
     {
@@ -186,12 +170,6 @@ void SceneTitle::Render3DScene()
 
 	// ライトの情報を詰め込む
 	LightManager::Instane().PushRenderContext(rc);
-
-	//// シャドウマップの設定
-	//rc.shadowMapData.shadowMap = shadowmapDepthStencil->GetShaderResourceView().Get();
-	//rc.shadowMapData.lightViewProjection = lightViewProjection;
-	//rc.shadowMapData.shadowColor = shadowColor;
-	//rc.shadowMapData.shadowBias = shadowBias;
 
 	// カメラ
 	Camera& camera = Camera::Instance();
