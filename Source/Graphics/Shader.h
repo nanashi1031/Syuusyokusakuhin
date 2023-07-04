@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <memory>
 #include "RenderContext.h"
 #include "Model.h"
 #include "Sprite.h"
@@ -16,7 +17,7 @@ public:
 	virtual void Begin(ID3D11DeviceContext* dc, const RenderContext& rc) = 0;
 
 	// ï`âÊ
-	virtual void Draw(ID3D11DeviceContext* dc, const Model* model) = 0;
+	virtual void Draw(ID3D11DeviceContext* dc, const std::shared_ptr<Model> model) = 0;
 
 	// ï`âÊèIóπ
 	virtual void End(ID3D11DeviceContext* context) = 0;
@@ -32,7 +33,7 @@ public:
 	virtual void Begin(const RenderContext& rc) = 0;
 
 	// ï`âÊ
-	virtual void Draw(const RenderContext& rc, const Model* model) = 0;
+	virtual void Draw(const RenderContext& rc, const std::shared_ptr<Model> model) = 0;
 
 	// ï`âÊèIóπ
 	virtual void End(const RenderContext& rc) = 0;
