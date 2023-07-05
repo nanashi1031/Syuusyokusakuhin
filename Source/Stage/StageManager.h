@@ -31,9 +31,9 @@ public:
 
     void DrawDebugGUI();
 
-    void Register(std::unique_ptr<StageMain> stage)
+    void Register(Stage* stage)
     {
-        stages.emplace_back(stage.get());
+        stages.emplace_back(stage);
     }
 
     void Clear();

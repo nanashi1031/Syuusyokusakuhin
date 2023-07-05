@@ -30,7 +30,7 @@ void SceneGame::Initialize()
 	// 中身が消えている？
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageMain>();
-	stageManager.Register(std::move(stageMain));
+	stageManager.Register(stageMain.get());
 
 	// TODO:メモリリーク発生中！修正必須！
 	// 先生に聞いても修正不可能だったためいったん放置、ユニークポインタにするとエラー
