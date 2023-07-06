@@ -19,15 +19,15 @@
 
 //	シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048;
-static std::unique_ptr<Player> player = nullptr;
+static 	std::unique_ptr<Player> player = nullptr;
+static std::unique_ptr<EnemyPurpleDragon> purpleDragon = nullptr;
+static std::unique_ptr<Insect> insect = nullptr;
 
 void SceneGame::Initialize()
 {
 	CameraController::Instance().SetCameraMouseOperationFlag(true);
 
 	// ステージ初期化
-	// ユニークポインタにしたらエラー
-	// 中身が消えている？
 	StageManager& stageManager = StageManager::Instance();
 	stageMain = std::make_unique<StageMain>();
 	stageManager.Register(stageMain.get());
@@ -38,26 +38,25 @@ void SceneGame::Initialize()
 		// プレイヤー
 		{
 			PlayerManager& playerManager = PlayerManager::Instance();
-			//player = std::make_unique<Player>();
-			Player* player = new Player;
-			playerManager.Register(player);
+			player = std::make_unique<Player>();
+			playerManager.Register(player.get());
 		}
 
 		EnemyManager& enemyManager = EnemyManager::Instance();
 
 		//エネミー
 		{
-			EnemyPurpleDragon* purpleDragon = new EnemyPurpleDragon();
+			purpleDragon = std::make_unique<EnemyPurpleDragon>();
 			purpleDragon->SetPosition(DirectX::XMFLOAT3(2.0f, 0.0f, 10.0f));
-			enemyManager.Register(purpleDragon);
+			enemyManager.Register(purpleDragon.get());
 		}
 
 		// 虫
 		{
-			Insect* insect = new Insect;
+			insect = std::make_unique<Insect>();
 			insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
 			insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
-			InsectManager::Instance().Register(insect);
+			InsectManager::Instance().Register(insect.get());
 		}
 	}
 
@@ -96,11 +95,11 @@ void SceneGame::Initialize()
 	}
 
 	{
-		mainDirectionalLight = new Light(LightType::Directional);
+		mainDirectionalLight = std::make_unique<Light>(LightType::Directional);
 		mainDirectionalLight->SetPosition({ 0.70f, 0.60f, 0.30f });
 		mainDirectionalLight->SetDirection({ -0.286f, -0.775f, 0.564f });
 		mainDirectionalLight->SetColor({0, 0, 0, 1});
-		LightManager::Instane().Register(mainDirectionalLight);
+		LightManager::Instane().Register(mainDirectionalLight.get());
 	}
 
 	// 新しい描画ターゲットの生成
