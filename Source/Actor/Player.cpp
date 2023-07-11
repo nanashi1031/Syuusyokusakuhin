@@ -201,7 +201,7 @@ void Player::DrawDebugGUI()
         if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
         {
             char* str = {};
-            switch (GetStateMachine()->GetStateIndex())
+            switch (stateMachine->GetStateIndex())
             {
             case static_cast<int>(State::Idle):
                 str = "Idle";
