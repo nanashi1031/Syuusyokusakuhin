@@ -82,7 +82,6 @@ void SceneGame::Initialize()
 	spr_hpBarGreen = std::make_unique<Sprite>("Data/Sprite/UI/HPBarPlayer.png");
 
 	spr_targetRing = std::make_unique<Sprite>("Data/Sprite/UI/Ring.png");
-	spr_butterfly = std::make_unique<Sprite>("Data/Sprite/UI/Butterfly.png");
 
 	spr_yazirushi = std::make_unique<Sprite>("Data/Sprite/UI/Yazirushi.png");
 	spr_pause = std::make_unique<Sprite>("Data/Sprite/Scene/Pause.png");
@@ -359,8 +358,6 @@ void SceneGame::Render()
 		rc.view = camera.GetView();
 		rc.projection = camera.GetProjection();
 		RenderHPBar(dc);
-
-		RenderButterfly(dc);
 
 		Player* player =
 			PlayerManager::Instance().GetPlayer(
@@ -697,29 +694,7 @@ void SceneGame::RenderHPBar(ID3D11DeviceContext* dc)
 	);
 }
 
-void SceneGame::RenderButterfly(ID3D11DeviceContext* dc)
-{
-	Graphics& graphics = Graphics::Instance();
-	float screenWidth = static_cast<float>(graphics.GetScreenWidth());
-	float screenHeight = static_cast<float>(graphics.GetScreenWidth());
-	float textureWidth = static_cast<float>(spr_butterfly->GetTextureWidth());
-	float textureHeight = static_cast<float>(spr_butterfly->GetTextureHeight());
 
-	DirectX::XMFLOAT4 color =
-		Extract::Instance().ColorConversion(
-		InsectManager::Instance().GetInsect(0)->GetExtractColor());
-
-	// UI‚ÌˆÊ’u’²®A”’l‚Ç‚¤ãY—í‚É‚µ‚æ
-	spr_butterfly->Render(
-		dc,
-		screenWidth / 40, screenHeight / 18,
-		textureWidth / 4, textureHeight / 4,
-		0, 0,
-		textureWidth, textureHeight,
-		0,
-		color.x, color.y, color.z, color.w
-	);
-}
 
 void SceneGame::RenderPauseUI(ID3D11DeviceContext* dc)
 {

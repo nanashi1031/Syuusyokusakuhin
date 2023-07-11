@@ -45,7 +45,6 @@ private:
 
 	// HPÉoÅ[
 	void RenderHPBar(ID3D11DeviceContext* dc);
-	void RenderButterfly(ID3D11DeviceContext* dc);
 	void RenderPauseUI(ID3D11DeviceContext* dc);
 	void RenderGameOverUI(ID3D11DeviceContext* dc);
 
@@ -59,7 +58,6 @@ private:
 	std::unique_ptr<Sprite> spr_hpBarGreen = nullptr;
 
 	std::unique_ptr<Sprite> spr_targetRing = nullptr;
-	std::unique_ptr<Sprite> spr_butterfly = nullptr;
 
 	std::unique_ptr<Sprite> spr_yazirushi = nullptr;
 	std::unique_ptr<Sprite> spr_pause = nullptr;
