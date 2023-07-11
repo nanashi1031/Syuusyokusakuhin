@@ -34,11 +34,11 @@ void SceneTitle::Initialize()
 	);
 
 	{
-		mainDirectionalLight = new Light(LightType::Directional);
+		mainDirectionalLight = std::make_unique<Light>(LightType::Directional);
 		mainDirectionalLight->SetPosition({ 0.70f, 0.60f, 0.30f });
 		mainDirectionalLight->SetDirection({ 1, -1, -1 });
 		mainDirectionalLight->SetColor({ 0, 0, 0, 1 });
-		LightManager::Instane().Register(mainDirectionalLight);
+		LightManager::Instane().Register(mainDirectionalLight.get());
 	}
 
 	// スカイボックス
