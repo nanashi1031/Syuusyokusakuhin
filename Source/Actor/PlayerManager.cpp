@@ -2,10 +2,6 @@
 
 void PlayerManager::Clear()
 {
-    for (Player* player : players)
-    {
-        delete player;
-    }
     players.clear();
 }
 

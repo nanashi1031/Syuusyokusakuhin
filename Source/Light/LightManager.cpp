@@ -28,10 +28,6 @@ void LightManager::RemoveIndex(int index)
 
 void LightManager::Clear()
 {
-	for (Light* light : lights)
-	{
-		delete	light;
-	}
 	lights.clear();
 }
 

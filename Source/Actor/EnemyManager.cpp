@@ -4,12 +4,7 @@
 //エネミー全削除
 void EnemyManager::Clear()
 {
-    for (Enemy* enemy : enemies)
-    {
-        delete enemy;
-    }
     enemies.clear();
-
 }
 
 //更新処理

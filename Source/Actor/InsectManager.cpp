@@ -10,12 +10,7 @@ void InsectManager::Initialize()
 
 void InsectManager::Clear()
 {
-    for (Insect* insect : insects)
-    {
-        delete insect;
-    }
     insects.clear();
-
 }
 
 void InsectManager::Update(float elapsedTime)

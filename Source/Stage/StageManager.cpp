@@ -35,9 +35,5 @@ void StageManager::DrawDebugGUI()
 
 void StageManager::Clear()
 {
-    for (Stage* stage : stages)
-    {
-        delete stage;
-    }
     stages.clear();
 }
