@@ -30,6 +30,7 @@ public:
     void Finalize();
     void Update(float elapsedTime);
     void Render2D(ID3D11DeviceContext* dc);
+    void RenderButterfly(ID3D11DeviceContext* dc);
     void RenderRedUI(ID3D11DeviceContext* dc);
     void RenderWhiteUI(ID3D11DeviceContext* dc);
     void RenderOrangeUI(ID3D11DeviceContext* dc);
@@ -107,6 +108,8 @@ private:
     const float maxTime = 30.0f;
     const float limitTime = 10.0f;
     float a, b, c, d = 1;
+
+    std::unique_ptr<Sprite> spr_butterfly = nullptr;
 
     std::unique_ptr<Sprite> extractUIRed = nullptr;
     std::unique_ptr<Sprite> extractUIWhite = nullptr;

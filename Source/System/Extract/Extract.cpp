@@ -1,7 +1,10 @@
 #include "Extract.h"
+#include "InsectManager.h"
 
 void Extract::Initialize()
 {
+    spr_butterfly = std::make_unique<Sprite>("Data/Sprite/UI/Butterfly.png");
+
     extractUIRed = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUISword.png");
     extractUIWhite = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShoes.png");
     extractUIOrange = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShield.png");
@@ -33,9 +36,57 @@ void Extract::Update(float elapsedTime)
 
 void Extract::Render2D(ID3D11DeviceContext* dc)
 {
+    RenderButterfly(dc);
     RenderRedUI(dc);
     RenderWhiteUI(dc);
     RenderOrangeUI(dc);
+}
+
+void Extract::RenderButterfly(ID3D11DeviceContext* dc)
+{
+    Graphics& graphics = Graphics::Instance();
+    float screenWidth = static_cast<float>(graphics.GetScreenWidth());
+    float screenHeight = static_cast<float>(graphics.GetScreenWidth());
+    float textureWidth = static_cast<float>(spr_butterfly->GetTextureWidth());
+    float textureHeight = static_cast<float>(spr_butterfly->GetTextureHeight());
+
+    DirectX::XMFLOAT4 color =
+        Extract::Instance().ColorConversion(
+            InsectManager::Instance().GetInsect(0)->GetExtractColor());
+
+    ExtractColor extractColor = InsectManager::Instance().GetInsect(0)->GetExtractColor();
+    switch (extractColor)
+    {
+    case ExtractColor::Red:
+        color.x = colorAccumulationSlow;
+        break;
+    case ExtractColor::White:
+        color.x = colorAccumulationSlow;
+        color.y = colorAccumulationSlow;
+        color.z = colorAccumulationSlow;
+        break;
+    case ExtractColor::Orange:
+        color.x = colorAccumulationSlow;
+        color.y = colorAccumulationSlow / 2;
+        break;
+    case ExtractColor::Heal:
+        color.y = colorAccumulationSlow;
+        break;
+    case ExtractColor::None:
+        color = { 0.0f, 0.0f, 0.0f, 0.0f };
+        break;
+    }
+
+    // UI‚ÌˆÊ’u’²®A”’l‚Ç‚¤ãY—í‚É‚µ‚æ
+    spr_butterfly->Render(
+        dc,
+        screenWidth / 40, screenHeight / 18,
+        textureWidth / 4, textureHeight / 4,
+        0, 0,
+        textureWidth, textureHeight,
+        0,
+        color.x, color.y, color.z, color.w
+    );
 }
 
 void Extract::RenderRedUI(ID3D11DeviceContext* dc)
