@@ -3,7 +3,7 @@
 void Extract::Initialize()
 {
     extractUIRed = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUISword.png");
-    extractUIWhite   = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShoes.png");
+    extractUIWhite = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShoes.png");
     extractUIOrange = std::make_unique<Sprite>("Data/Sprite/UI/ExtractUIShield.png");
 
     for (int i = 0; i < extractMax; i++)
@@ -14,7 +14,6 @@ void Extract::Initialize()
 
 void Extract::Finalize()
 {
-
 }
 
 void Extract::Update(float elapsedTime)
