@@ -22,7 +22,7 @@ Insect::Insect()
 
 	model->PlayAnimation(0, true);
 
-    stateMachine = new StateMachine();
+	stateMachine = new StateMachine();
 #pragma region ステート登録
     stateMachine->RegisterState(new InsectState::IdleState(this));
     stateMachine->RegisterState(new InsectState::PursuitState(this));
@@ -145,92 +145,6 @@ void Insect::DrawDebugGUI()
     ImGui::End();
 }
 
-
-// 予備
-#if 0
-void Insect::PlayerWeaponTracking(float elapsedTime)
-{
-    PlayerManager& playerManager = PlayerManager::Instance();
-
-    Model::Node* playerWeponFront = playerManager.GetPlayer(playerManager.GetplayerOneIndex())->GetNode("mixamorig:RightHandIndex1");
-    Model::Node* playerWeponBack = playerManager.GetPlayer(playerManager.GetplayerOneIndex())->GetNode("mixamorig:RightHandMiddle1");
-
-    DirectX::XMFLOAT3 playerWeponFrontPosition;
-    playerWeponFrontPosition.x = playerWeponFront->worldTransform._41;
-    playerWeponFrontPosition.y = playerWeponFront->worldTransform._42;
-    playerWeponFrontPosition.z = playerWeponFront->worldTransform._43;
-
-    DirectX::XMFLOAT3 playerWeponBackPosition;
-    playerWeponBackPosition.x = playerWeponBack->worldTransform._41;
-    playerWeponBackPosition.y = playerWeponBack->worldTransform._42;
-    playerWeponBackPosition.z = playerWeponBack->worldTransform._43;
-
-    DirectX::XMFLOAT3 weaponVector = {};
-    weaponVector = Mathf::SubtractFloat3(playerWeponFrontPosition, playerWeponBackPosition);
-
-    DirectX::XMVECTOR playerV;
-    playerV = DirectX::XMLoadFloat3(&weaponVector);
-    playerV = DirectX::XMVector3Normalize(playerV);
-    DirectX::XMFLOAT3 insectPosition = {};
-    DirectX::XMStoreFloat3(&weaponVector, playerV);
-
-    insectPosition = Mathf::MultiplyFloat3(weaponVector, DirectX::XMFLOAT3(1, 1, 1));
-
-    insectPosition = Mathf::MultiplyFloat3(insectPosition, position);
-
-    weaponPosition = playerWeponFrontPosition;
-    position = insectPosition;
-    position = playerWeponFrontPosition;
-}
-#endif
-
-// 予備
-#if 0
-void Insect::UpdateVerticalVelocity(float elapsedFrame)
-{
-	float length = sqrtf(velocity.y * velocity.y);
-	if (length != 0.0f)
-	{
-		float friction = this->friction * elapsedFrame;
-
-		if (length > friction)
-		{
-			float vy = velocity.y / length;
-
-			velocity.y -= vy * friction;
-		}
-		else
-		{
-			velocity.y = 0.0f;
-		}
-	}
-	if (length <= maxMoveSpeed)
-	{
-		float moveVecLength = sqrtf(moveVecY * moveVecY);
-		if (moveVecLength > 0.0f)
-		{
-			float acceleration = this->acceleration * elapsedFrame;
-
-			velocity.y += moveVecY * acceleration;
-
-			// 最大速度制限
-			float length = sqrtf(velocity.y * velocity.y);
-			if (length > maxMoveSpeed)
-			{
-				float vy = velocity.y / length;
-
-				velocity.y = vy * maxMoveSpeed;
-			}
-			if (isGround && slopeRate > 0.0f)
-			{
-				velocity.y -= length * slopeRate * elapsedFrame;
-			}
-		}
-	}
-	moveVecY = 0.0f;
-}
-#endif
-
 void Insect::UpdateVerticalMove(float elapsedTime)
 {
 	float my = velocity.y * elapsedTime;
@@ -264,75 +178,6 @@ void Insect::UpdateVerticalMove(float elapsedTime)
 		position.y += my;
 	}
 }
-
-// 予備
-#if 0
-void Insect::UpdateHorizontalVelocity(float elapsedFrame)
-{
-	// XZ平面の速力を減速する
-	float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-	if (length > 0.0f)
-	{
-		// 摩擦力
-		float friction = this->friction * elapsedFrame;
-
-		// 空中にいるときは摩擦力を減らす
-		if (!isGround) friction *= airControl;
-
-		// 摩擦による横方向の減速処理
-		if (length > friction)
-		{
-			// 単位ベクトル化
-			float vx = velocity.x / length;
-			float vz = velocity.z / length;
-
-			velocity.x -= vx * friction;
-			velocity.z -= vz * friction;
-		}
-		// 横方向の速度が摩擦力以下になったので速力を無効化
-		else
-		{
-			velocity.x = 0.0f;
-			velocity.z = 0.0f;
-		}
-	}
-	// XZ平面の速力を加速する
-	if (length <= maxMoveSpeed)
-	{
-		// 移動ベクトルがゼロベクトルでないなら加速する
-		float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-		if (moveVecLength > 0.0f)
-		{
-			// 加速力
-			float acceleration = this->acceleration * elapsedFrame;
-			// 空中にいるときは加速力を減らす
-			if (!isGround)acceleration *= airControl;
-
-			// 移動ベクトルによる加速処理
-			velocity.x += moveVecX * acceleration;
-			velocity.z += moveVecZ * acceleration;
-
-			// 最大速度制限
-			float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-			if (length > maxMoveSpeed)
-			{
-				float vx = velocity.x / length;
-				float vz = velocity.z / length;
-
-				velocity.x = vx * maxMoveSpeed;
-				velocity.z = vz * maxMoveSpeed;
-			}
-			if (isGround && slopeRate > 0.0f)
-			{
-				velocity.y -= length * slopeRate * elapsedFrame;
-			}
-		}
-	}
-	// 移動ベクトルをリセット
-	moveVecX = 0.0f;
-	moveVecZ = 0.0f;
-}
-#endif
 
 void Insect::UpdateHorizontalMove(float elapsedTime)
 {
