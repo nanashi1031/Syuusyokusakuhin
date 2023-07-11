@@ -36,6 +36,10 @@ namespace PlayerState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
+	private:
+		std::unique_ptr<AudioSource> NeglectVoice0;
+		std::unique_ptr<AudioSource> NeglectVoice1;
+		std::unique_ptr<AudioSource> NeglectVoice2;
 	};
 
 	// 歩きステート
@@ -175,6 +179,8 @@ namespace PlayerState
 		void Execute(float elapsedTime)override;
 		// ステートから出ていくときのメソッド
 		void Exit()override;
+	private:
+		std::unique_ptr<AudioSource> DamageVoice;
 	};
 
 	//死亡ステート

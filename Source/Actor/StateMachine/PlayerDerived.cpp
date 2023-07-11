@@ -26,8 +26,8 @@ void PlayerState::IdleState::Execute(float elapsedTime)
 	// スティックorキーボードでの移動が10秒以上無い場合放置ステートへ移動
 	else if(owner->GetMoveFlag() == 0.0f)
 	{
-		float animationEndTime = 10;
-		if (stateTimer > 10)
+		float animationEndTime = 10.0f;
+		if (stateTimer > 5.0f)
 		{
 			owner->GetStateMachine()->ChangeState(Player::State::Neglect);
 		}
@@ -50,18 +50,26 @@ void PlayerState::IdleState::Exit()
 
 void PlayerState::NeglectState::Enter()
 {
+	NeglectVoice0 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/NeglectVoice0.wav");
+	NeglectVoice1 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/NeglectVoice1.wav");
+	NeglectVoice2 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/NeglectVoice2.wav");
+	float volume = 0.4f;
+
 	// ランダムで放置アニメーションを再生
-	int neglectIndex = static_cast<int>(Mathf::RandomRange(0, 2));
+	int neglectIndex = static_cast<int>(Mathf::RandomRange(0, 3));
 	switch (neglectIndex)
 	{
 	case 0:
 		owner->GetModel()->PlayAnimation(Player::PlayerAnimation::Neglect1, false);
+		NeglectVoice0->Play(false, volume);
 		break;
 	case 1:
 		owner->GetModel()->PlayAnimation(Player::PlayerAnimation::Neglect2, false);
+		NeglectVoice1->Play(false, volume);
 		break;
 	case 2:
 		owner->GetModel()->PlayAnimation(Player::PlayerAnimation::Neglect3, false);
+		NeglectVoice2->Play(false, volume);
 		break;
 	}
 }
@@ -230,7 +238,8 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 						owner->SetLightIndex(LightManager::Instane().GetLightCount());
 						hitEffect1->Play(lightPosition);
 					}
-					SE_Attack1->Play(false);
+					float volume = 0.5f;
+					SE_Attack1->Play(false, volume);
 				}
 			}
 		}
@@ -260,7 +269,7 @@ void PlayerState::AttackCombo1State::Exit()
 
 void PlayerState::AttackCombo2State::Enter()
 {
-	SE_Attack2 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack1.wav");
+	SE_Attack2 = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/Attack.wav");
 	hitEffect2 = new Effect("Data/Effect/Hit.efk");
 
 	float animeSpeed = 2.0f;
@@ -338,7 +347,8 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 							int effectIndex = hitEffect2->Play(lightPosition);
 							hitEffect2->SetRotation(effectIndex, rotation);
 						}
-						SE_Attack2->Play(false);
+						float volume = 0.5f;
+						SE_Attack2->Play(false, volume);
 					}
 				}
 			}
@@ -421,7 +431,8 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 						int effectIndex = hitEffect3->Play(lightPosition);
 						hitEffect3->SetRotation(effectIndex, rotation);
 					}
-					SE_Attack3->Play(false);
+					float volume = 0.5f;
+					SE_Attack3->Play(false, volume);
 				}
 			}
 		}
@@ -588,6 +599,10 @@ void PlayerState::AvoiDanceState::Exit()
 
 void PlayerState::DamagesState::Enter()
 {
+	DamageVoice = Audio::Instance().LoadAudioSource("Data/Audio/SE/Player/DamageVoice.wav");
+	float volume = 0.7f;
+	DamageVoice->Play(false, volume);
+
 	owner->SetMovingFlag(false);
 
 	owner->GetModel()->PlayAnimation(
