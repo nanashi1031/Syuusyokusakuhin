@@ -58,20 +58,6 @@ void EnemyPurpleDragonState::BattleIdleState::Enter()
 
 void EnemyPurpleDragonState::BattleIdleState::Execute(float elapsedTime)
 {
-	// 目標地点をプレイヤー位置に設定
-	DirectX::XMFLOAT3 target = PlayerManager::Instance().GetPlayer(0)->GetPosition();
-	owner->SetTargetPosition(target);
-
-	// ターゲット方向への進行ベクトルを算出
-	float vx = owner->GetTargetPosition().x - owner->GetPosition().x;
-	float vz = owner->GetTargetPosition().z - owner->GetPosition().z;
-	float dist = sqrtf(vx * vx + vz * vz);
-	vx /= dist;
-	vz /= dist;
-
-	// プレイヤーの方向を向く
-	owner->Turn(elapsedTime, vx, vz, DirectX::XMConvertToRadians(360));
-
 	// タイマー処理
 	stateTimer -= elapsedTime;
 	if (stateTimer < 0.0f)
