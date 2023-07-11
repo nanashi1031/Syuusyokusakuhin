@@ -19,6 +19,7 @@
 
 //	シャドウマップのサイズ
 static const UINT SHADOWMAP_SIZE = 2048;
+// シングルトンやクラス変数にする
 static 	std::unique_ptr<Player> player = nullptr;
 static std::unique_ptr<EnemyPurpleDragon> purpleDragon = nullptr;
 static std::unique_ptr<Insect> insect = nullptr;
@@ -27,37 +28,35 @@ void SceneGame::Initialize()
 {
 	CameraController::Instance().SetCameraMouseOperationFlag(true);
 
-	// ステージ初期化
-	StageManager& stageManager = StageManager::Instance();
-	stageMain = std::make_unique<StageMain>();
-	stageManager.Register(stageMain.get());
-
-	// TODO:メモリリーク発生中！修正必須！
-	// 先生に聞いても修正不可能だったためいったん放置、ユニークポインタにするとエラー
+	// ステージ
 	{
-		// プレイヤー
-		{
-			PlayerManager& playerManager = PlayerManager::Instance();
-			player = std::make_unique<Player>();
-			playerManager.Register(player.get());
-		}
+		StageManager& stageManager = StageManager::Instance();
+		stageMain = std::make_unique<StageMain>();
+		stageManager.Register(stageMain.get());
+	}
 
-		EnemyManager& enemyManager = EnemyManager::Instance();
+		// プレイヤー
+	{
+		PlayerManager& playerManager = PlayerManager::Instance();
+		player = std::make_unique<Player>();
+		playerManager.Register(player.get());
+	}
 
 		//エネミー
-		{
-			purpleDragon = std::make_unique<EnemyPurpleDragon>();
-			purpleDragon->SetPosition(DirectX::XMFLOAT3(2.0f, 0.0f, 10.0f));
-			enemyManager.Register(purpleDragon.get());
-		}
+	{
+		EnemyManager& enemyManager = EnemyManager::Instance();
+		purpleDragon = std::make_unique<EnemyPurpleDragon>();
+		purpleDragon->SetPosition(DirectX::XMFLOAT3(10.0f, 0.0f, 30.0f));
+		purpleDragon->SetAngle(DirectX::XMFLOAT3(0.0f, DirectX::XMConvertToRadians(220.0f), 0.0f));
+		enemyManager.Register(purpleDragon.get());
+	}
 
 		// 虫
-		{
-			insect = std::make_unique<Insect>();
-			insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
-			insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
-			InsectManager::Instance().Register(insect.get());
-		}
+	{
+		insect = std::make_unique<Insect>();
+		insect->SetPosition(DirectX::XMFLOAT3(2.0f, 0, 10.0f));
+		insect->SetScale(DirectX::XMFLOAT3(100, 100, 100));
+		InsectManager::Instance().Register(insect.get());
 	}
 
 	// カメラ
@@ -229,7 +228,7 @@ void SceneGame::Update(float elapsedTime)
 
 		GamePad& gamePad = Input::Instance().GetGamePad();
 
-		if ((gamePad.GetButtonDown() & gamePad.BTN_PAD_MENU) ||
+		if ((gamePad.GetButtonDown() & gamePad.BTN_Y) ||
 			(gamePad.GetButtonDown() & gamePad.KEY_P))
 		{
 			SceneManager::Instance().SetSceneGameState(SceneGameState::Pause);
