@@ -1,6 +1,5 @@
 #pragma once
 #include "EnemyPurpleDragon.h"
-#include "StateMachine.h"
 
 namespace EnemyPurpleDragonState
 {

@@ -4,6 +4,7 @@
 #include "JudgmentDerived.h"
 #include "EnemyPurpleDragonDerived.h"
 #include "Input.h"
+#include "StateMachine.h"
 
 EnemyPurpleDragon::EnemyPurpleDragon()
 {
