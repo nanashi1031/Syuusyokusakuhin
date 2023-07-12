@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <memory>
 #include "Misc.h"
-#include "Graphics/DebugRenderer.h"
+#include "DebugRenderer.h"
 
 DebugRenderer::DebugRenderer(ID3D11Device* device)
 {

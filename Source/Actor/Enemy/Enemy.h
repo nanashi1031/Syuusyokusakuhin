@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Graphics/Shader.h"
-#include "Graphics/Graphics.h"
+#include "Shader.h"
+#include "Graphics.h"
 #include "Character.h"
 #include "PlayerManager.h"
 
