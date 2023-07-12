@@ -60,7 +60,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>.\Source;.\External\DirectXTex;.\External\imgui;.\External\cereal-1.3.0\include;.\External\stb;.\Source\Actor;.\Source\Stage;.\Source\Scene;.\Source\Graphics;.\Source\Camera;.\Source\System;.\Source\Actor\BehaviorTree;.\Source\Actor\StateMachine;.\Source\Graphics\Shader;.\Source\Light;.\Source\Graphics\Renderer;.\Source\System\Extract;.\Source\Audio;.\Source\Input;.\External\Effekseer153a\include\Effekseer;.\External\Effekseer153a\include\EffekseerRendererDX11;.\Source\Effect;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Source;.\External\DirectXTex;.\External\imgui;.\External\cereal-1.3.0\include;.\External\stb;.\Source\Actor;.\Source\Stage;.\Source\Scene;.\Source\Graphics;.\Source\Camera;.\Source\System;.\Source\Actor\BehaviorTree;.\Source\Actor\StateMachine;.\Source\Graphics\Shader;.\Source\Light;.\Source\Graphics\Renderer;.\Source\System\Extract;.\Source\Audio;.\Source\Input;.\External\Effekseer153a\include\Effekseer;.\External\Effekseer153a\include\EffekseerRendererDX11;.\Source\Effect;.\Source\Actor\Character;.\Source\Actor\Enemy;.\Source\Actor\Enemy\EnemyPurpleDragon;.\Source\Actor\Insect;.\Source\Actor\Player;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -121,17 +121,17 @@
     <ClInclude Include="Source\Actor\BehaviorTree\JudgmentBase.h" />
     <ClInclude Include="Source\Actor\BehaviorTree\JudgmentDerived.h" />
     <ClInclude Include="Source\Actor\BehaviorTree\NodeBase.h" />
-    <ClInclude Include="Source\Actor\Character.h" />
+    <ClInclude Include="Source\Actor\Character\Character.h" />
     <ClInclude Include="Source\Actor\Collision.h" />
-    <ClInclude Include="Source\Actor\Enemy.h" />
-    <ClInclude Include="Source\Actor\EnemyManager.h" />
-    <ClInclude Include="Source\Actor\EnemyPurpleDragon.h" />
-    <ClInclude Include="Source\Actor\EnemyPurpleDragonDerived.h" />
-    <ClInclude Include="Source\Actor\Insect.h" />
-    <ClInclude Include="Source\Actor\InsectManager.h" />
+    <ClInclude Include="Source\Actor\Enemy\Enemy.h" />
+    <ClInclude Include="Source\Actor\Enemy\EnemyManager.h" />
+    <ClInclude Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.h" />
+    <ClInclude Include="Source\Actor\Insect\Insect.h" />
+    <ClInclude Include="Source\Actor\Insect\InsectManager.h" />
     <ClInclude Include="Source\Actor\Object.h" />
-    <ClInclude Include="Source\Actor\Player.h" />
-    <ClInclude Include="Source\Actor\PlayerManager.h" />
+    <ClInclude Include="Source\Actor\Player\Player.h" />
+    <ClInclude Include="Source\Actor\Player\PlayerManager.h" />
+    <ClInclude Include="Source\Actor\StateMachine\EnemyPurpleDragonDerived.h" />
     <ClInclude Include="Source\Actor\StateMachine\InsectDerived.h" />
     <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h" />
     <ClInclude Include="Source\Actor\StateMachine\StateBase.h" />
@@ -143,25 +143,25 @@
     <ClInclude Include="Source\Camera\CameraController.h" />
     <ClInclude Include="Source\Effect\Effect.h" />
     <ClInclude Include="Source\Effect\EffectManager.h" />
-    <ClInclude Include="Source\Graphics\DebugRenderer.h" />
     <ClInclude Include="Source\Graphics\Depthstencil.h" />
-    <ClInclude Include="Source\Graphics\GaussianBlurShader.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
-    <ClInclude Include="Source\Graphics\ImGuiRenderer.h" />
-    <ClInclude Include="Source\Graphics\LambertShader.h" />
-    <ClInclude Include="Source\Graphics\LineRenderer.h" />
-    <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h" />
     <ClInclude Include="Source\Graphics\Model.h" />
     <ClInclude Include="Source\Graphics\ModelResource.h" />
-    <ClInclude Include="Source\Graphics\PhongShader.h" />
     <ClInclude Include="Source\Graphics\RenderContext.h" />
+    <ClInclude Include="Source\Graphics\Renderer\DebugRenderer.h" />
+    <ClInclude Include="Source\Graphics\Renderer\ImGuiRenderer.h" />
+    <ClInclude Include="Source\Graphics\Renderer\LineRenderer.h" />
     <ClInclude Include="Source\Graphics\Renderer\PostprocessingRenderer.h" />
     <ClInclude Include="Source\Graphics\RenderTarget.h" />
-    <ClInclude Include="Source\Graphics\Shader.h" />
     <ClInclude Include="Source\Graphics\Shader\ColorGradingShader.h" />
     <ClInclude Include="Source\Graphics\Shader\FinalpassShader.h" />
-    <ClInclude Include="Source\Graphics\ShadowmapCasterShader.h" />
-    <ClInclude Include="Source\Graphics\SkyboxShader.h" />
+    <ClInclude Include="Source\Graphics\Shader\GaussianBlurShader.h" />
+    <ClInclude Include="Source\Graphics\Shader\LambertShader.h" />
+    <ClInclude Include="Source\Graphics\Shader\LuminanceExtractionShader.h" />
+    <ClInclude Include="Source\Graphics\Shader\PhongShader.h" />
+    <ClInclude Include="Source\Graphics\Shader\Shader.h" />
+    <ClInclude Include="Source\Graphics\Shader\ShadowmapCasterShader.h" />
+    <ClInclude Include="Source\Graphics\Shader\SkyBoxShader.h" />
     <ClInclude Include="Source\Graphics\Sprite.h" />
     <ClInclude Include="Source\Graphics\Texture.h" />
     <ClInclude Include="Source\Input\GamePad.h" />
@@ -197,17 +197,17 @@
     <ClCompile Include="Source\Actor\BehaviorTree\BehaviorTree.cpp" />
     <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp" />
     <ClCompile Include="Source\Actor\BehaviorTree\NodeBase.cpp" />
-    <ClCompile Include="Source\Actor\Character.cpp" />
+    <ClCompile Include="Source\Actor\Character\Character.cpp" />
     <ClCompile Include="Source\Actor\Collision.cpp" />
-    <ClCompile Include="Source\Actor\Enemy.cpp" />
-    <ClCompile Include="Source\Actor\EnemyManager.cpp" />
-    <ClCompile Include="Source\Actor\EnemyPurpleDragon.cpp" />
-    <ClCompile Include="Source\Actor\EnemyPurpleDragonDerived.cpp" />
-    <ClCompile Include="Source\Actor\Insect.cpp" />
-    <ClCompile Include="Source\Actor\InsectManager.cpp" />
+    <ClCompile Include="Source\Actor\Enemy\Enemy.cpp" />
+    <ClCompile Include="Source\Actor\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.cpp" />
+    <ClCompile Include="Source\Actor\Insect\Insect.cpp" />
+    <ClCompile Include="Source\Actor\Insect\InsectManager.cpp" />
     <ClCompile Include="Source\Actor\Object.cpp" />
-    <ClCompile Include="Source\Actor\Player.cpp" />
-    <ClCompile Include="Source\Actor\PlayerManager.cpp" />
+    <ClCompile Include="Source\Actor\Player\Player.cpp" />
+    <ClCompile Include="Source\Actor\Player\PlayerManager.cpp" />
+    <ClCompile Include="Source\Actor\StateMachine\EnemyPurpleDragonDerived.cpp" />
     <ClCompile Include="Source\Actor\StateMachine\InsectDerived.cpp" />
     <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp" />
     <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp" />
@@ -218,23 +218,23 @@
     <ClCompile Include="Source\Camera\CameraController.cpp" />
     <ClCompile Include="Source\Effect\Effect.cpp" />
     <ClCompile Include="Source\Effect\EffectManager.cpp" />
-    <ClCompile Include="Source\Graphics\DebugRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Depthstencil.cpp" />
-    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
-    <ClCompile Include="Source\Graphics\ImGuiRenderer.cpp" />
-    <ClCompile Include="Source\Graphics\LambertShader.cpp" />
-    <ClCompile Include="Source\Graphics\LineRenderer.cpp" />
-    <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp" />
     <ClCompile Include="Source\Graphics\Model.cpp" />
     <ClCompile Include="Source\Graphics\ModelResource.cpp" />
-    <ClCompile Include="Source\Graphics\PhongShader.cpp" />
+    <ClCompile Include="Source\Graphics\Renderer\DebugRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\Renderer\ImGuiRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\Renderer\LineRenderer.cpp" />
     <ClCompile Include="Source\Graphics\Renderer\PostprocessingRenderer.cpp" />
     <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\Shader\ColorGradingShader.cpp" />
     <ClCompile Include="Source\Graphics\Shader\FinalpassShader.cpp" />
-    <ClCompile Include="Source\Graphics\ShadowmapCasterShader.cpp" />
-    <ClCompile Include="Source\Graphics\SkyboxShader.cpp" />
+    <ClCompile Include="Source\Graphics\Shader\GaussianBlurShader.cpp" />
+    <ClCompile Include="Source\Graphics\Shader\LambertShader.cpp" />
+    <ClCompile Include="Source\Graphics\Shader\LuminanceExtractionShader.cpp" />
+    <ClCompile Include="Source\Graphics\Shader\PhongShader.cpp" />
+    <ClCompile Include="Source\Graphics\Shader\ShadowmapCasterShader.cpp" />
+    <ClCompile Include="Source\Graphics\Shader\SkyBoxShader.cpp" />
     <ClCompile Include="Source\Graphics\Sprite.cpp" />
     <ClCompile Include="Source\Graphics\Texture.cpp" />
     <ClCompile Include="Source\Input\GamePad.cpp" />

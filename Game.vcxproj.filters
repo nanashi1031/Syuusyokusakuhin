@@ -73,6 +73,9 @@
     <Filter Include="Source\Effect">
       <UniqueIdentifier>{246406db-8613-4b7c-9747-29de804442b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Actor\Enemy\EnemyPurpleDragon">
+      <UniqueIdentifier>{ff8c210a-e6fa-42a9-b8c1-1a660ed0e4d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\imgui\imconfig.h">
@@ -108,9 +111,6 @@
     <ClInclude Include="Source\Graphics\ModelResource.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Shader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Input\Input.h">
       <Filter>Source\Input</Filter>
     </ClInclude>
@@ -134,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="Source\Stage\Stage.h">
       <Filter>Source\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\Character.h">
-      <Filter>Source\Actor</Filter>
     </ClInclude>
     <ClInclude Include="Source\Actor\Object.h">
       <Filter>Source\Actor</Filter>
@@ -165,18 +162,6 @@
     <ClInclude Include="Source\Scene\SceneGame.h">
       <Filter>Source\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\Player.h">
-      <Filter>Source\Actor\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\PlayerManager.h">
-      <Filter>Source\Actor\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\Enemy.h">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyManager.h">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\BehaviorTree\ActionBase.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClInclude>
@@ -197,9 +182,6 @@
     </ClInclude>
     <ClInclude Include="Source\Actor\BehaviorTree\JudgmentDerived.h">
       <Filter>Source\Actor\BihaviiorTree</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyPurpleDragon.h">
-      <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\SceneLoading.h">
       <Filter>Source\Scene</Filter>
@@ -225,12 +207,6 @@
     <ClInclude Include="Source\Actor\StateMachine\StateMachine.h">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\Insect.h">
-      <Filter>Source\Actor\Insect</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\InsectManager.h">
-      <Filter>Source\Actor\Insect</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\StateMachine\PlayerDerived.h">
       <Filter>Source\Actor\Player</Filter>
     </ClInclude>
@@ -249,47 +225,11 @@
     <ClInclude Include="Source\Graphics\RenderTarget.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Shader\FinalpassShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\LambertShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\GaussianBlurShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\DebugRenderer.h">
-      <Filter>Source\Graphics\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\ImGuiRenderer.h">
-      <Filter>Source\Graphics\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\LineRenderer.h">
-      <Filter>Source\Graphics\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\ShadowmapCasterShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\SkyboxShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\PhongShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Shader\ColorGradingShader.h">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClInclude>
     <ClInclude Include="Source\System\Extract\Extract.h">
       <Filter>Source\System\Extract</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\SceneClear.h">
       <Filter>Source\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Actor\EnemyPurpleDragonDerived.h">
-      <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Effect\EffectManager.h">
       <Filter>Source\Effect</Filter>
@@ -308,6 +248,69 @@
     </ClInclude>
     <ClInclude Include="Source\System\Misc.h">
       <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Enemy\Enemy.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Enemy\EnemyManager.h">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.h">
+      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Player\Player.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Player\PlayerManager.h">
+      <Filter>Source\Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Character\Character.h">
+      <Filter>Source\Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\ColorGradingShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\FinalpassShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\GaussianBlurShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\LambertShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\LuminanceExtractionShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\PhongShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\Shader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\ShadowmapCasterShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Shader\SkyBoxShader.h">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Renderer\DebugRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Renderer\ImGuiRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Renderer\LineRenderer.h">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Insect\Insect.h">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Insect\InsectManager.h">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\StateMachine\EnemyPurpleDragonDerived.h">
+      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -356,9 +359,6 @@
     <ClCompile Include="Source\Input\Mouse.cpp">
       <Filter>Source\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Character.cpp">
-      <Filter>Source\Actor</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\Object.cpp">
       <Filter>Source\Actor</Filter>
     </ClCompile>
@@ -386,18 +386,6 @@
     <ClCompile Include="Source\System\UI.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Player.cpp">
-      <Filter>Source\Actor\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\PlayerManager.cpp">
-      <Filter>Source\Actor\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\Enemy.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyManager.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\BehaviorTree\ActionDerived.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
     </ClCompile>
@@ -412,9 +400,6 @@
     </ClCompile>
     <ClCompile Include="Source\Actor\BehaviorTree\JudgmentDerived.cpp">
       <Filter>Source\Actor\BihaviiorTree</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyPurpleDragon.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneLoading.cpp">
       <Filter>Source\Scene</Filter>
@@ -434,12 +419,6 @@
     <ClCompile Include="Source\Actor\StateMachine\StateMachine.cpp">
       <Filter>Source\Actor\StateMachine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Insect.cpp">
-      <Filter>Source\Actor\Insect</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\InsectManager.cpp">
-      <Filter>Source\Actor\Insect</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\StateMachine\PlayerDerived.cpp">
       <Filter>Source\Actor\Player</Filter>
     </ClCompile>
@@ -458,47 +437,11 @@
     <ClCompile Include="Source\Graphics\RenderTarget.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Shader\FinalpassShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\LambertShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\DebugRenderer.cpp">
-      <Filter>Source\Graphics\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\ImGuiRenderer.cpp">
-      <Filter>Source\Graphics\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\LineRenderer.cpp">
-      <Filter>Source\Graphics\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\ShadowmapCasterShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\SkyboxShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\PhongShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Shader\ColorGradingShader.cpp">
-      <Filter>Source\Graphics\Shader</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Extract\Extract.cpp">
       <Filter>Source\System\Extract</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\SceneClear.cpp">
       <Filter>Source\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Actor\EnemyPurpleDragonDerived.cpp">
-      <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Effect\EffectManager.cpp">
       <Filter>Source\Effect</Filter>
@@ -514,6 +457,66 @@
     </ClCompile>
     <ClCompile Include="Source\System\Main.cpp">
       <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Enemy\Enemy.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Enemy\EnemyManager.cpp">
+      <Filter>Source\Actor\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.cpp">
+      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Player\Player.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Player\PlayerManager.cpp">
+      <Filter>Source\Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Character\Character.cpp">
+      <Filter>Source\Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\ColorGradingShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\FinalpassShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\GaussianBlurShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\LambertShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\LuminanceExtractionShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\PhongShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\ShadowmapCasterShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Shader\SkyBoxShader.cpp">
+      <Filter>Source\Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Renderer\DebugRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Renderer\ImGuiRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Renderer\LineRenderer.cpp">
+      <Filter>Source\Graphics\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Insect\Insect.cpp">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Insect\InsectManager.cpp">
+      <Filter>Source\Actor\Insect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\StateMachine\EnemyPurpleDragonDerived.cpp">
+      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
