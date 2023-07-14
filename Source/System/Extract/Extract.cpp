@@ -73,7 +73,7 @@ void Extract::RenderButterfly(ID3D11DeviceContext* dc)
         color.y = colorAccumulationSlow;
         break;
     case ExtractColor::None:
-        color = { 0.0f, 0.0f, 0.0f, 0.0f };
+        color = { 0.0f, 0.0f, 0.0f, 1.0f };
         break;
     }
 
