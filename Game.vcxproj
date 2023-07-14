@@ -68,7 +68,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>EffekseerRendererDX11d.lib;Effekseerd.lib;d3d11.lib;dxgi.lib;xinput.lib;xaudio2.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\2200131\Desktop\Syuusyokusakuhin\External\Effekseer153a\lib\vs2019\MT\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\External\Effekseer153a\lib\vs2019\MT\x64</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
