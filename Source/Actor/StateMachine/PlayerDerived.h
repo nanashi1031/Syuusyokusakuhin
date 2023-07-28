@@ -87,6 +87,7 @@ namespace PlayerState
 		void Exit()override;
 	private:
 		float stateTimer = 0.0f;
+		float hitStopTimer = 0.0f;
 		bool nextAttackFlag = false;
 		std::unique_ptr<AudioSource> SE_Attack1;
 		Effect* hitEffect1 = nullptr;
@@ -107,6 +108,7 @@ namespace PlayerState
 
 	private:
 		float stateTimer = 0.0f;
+		float hitStopTimer = 0.0f;
 		bool nextAttackFlag = false;
 		std::unique_ptr<AudioSource> SE_Attack2;
 		Effect* hitEffect2 = nullptr;
@@ -125,6 +127,7 @@ namespace PlayerState
 		// ステートから出ていくときのメソッド
 		void Exit()override;
 	private:
+		float hitStopTimer = 0.0f;
 		std::unique_ptr<AudioSource> SE_Attack3;
 		Effect* hitEffect3 = nullptr;
 	};

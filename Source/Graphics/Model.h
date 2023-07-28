@@ -32,6 +32,8 @@ public:
 
 	void UpdateRootMotion(DirectX::XMFLOAT3& transform);
 
+	void UpdateHitStop(float elapsedTime);
+
 	template<typename T>
 	void PlayAnimation(T tIndex, bool loop, float blendSeconds = 0.2f, float playSpeed = 1.0f, float seconds = 0.0f, float speed = 1.0f)
 	{
@@ -70,6 +72,9 @@ public:
 
 	float GetAnimationSeconds() { return this->currentAnimationSeconds; }
 
+	bool GetHitStopFlag() { return hitStopFlag; }
+	void SetHitStopFlag(bool b) { hitStopFlag = b; }
+
 private:
 	// ルートモーション計算
 	void ComputeRootMotion();
@@ -96,4 +101,5 @@ private:
 	DirectX::XMFLOAT3 cacheRootMotionTranslation = { 0, 0, 0 };
 	DirectX::XMFLOAT3 rootMotionTranslation = { 0, 0, 0 };
 	bool rootMotionFlag = false;
+	bool hitStopFlag = false;
 };

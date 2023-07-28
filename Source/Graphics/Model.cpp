@@ -172,6 +172,7 @@ bool Model::IsPlayAnimation()
 {
 	if (currentAnimationIndex < 0) return false;
 	if (currentAnimationIndex >= resource->GetAnimations().size()) return false;
+	if (hitStopFlag) return false;
 
 	rootMotionTranslation = { 0, 0, 0 };
 	cacheRootMotionTranslation = { 0, 0, 0 };
@@ -228,7 +229,6 @@ DirectX::XMFLOAT3 Model::RootMotion(const char* nodeName, bool upDownFlag)
 	const std::vector<ModelResource::Keyframe>& keyframes = animation.keyframes;
 	int keyCount = static_cast<int>(keyframes.size());
 
-	// TODO ルートモーション実装せず
 	// 現在は腰ノードの移動値を消している
 	//for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex)
 	//{

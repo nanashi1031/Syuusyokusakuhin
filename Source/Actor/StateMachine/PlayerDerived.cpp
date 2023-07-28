@@ -9,6 +9,8 @@
 #include "CameraController.h"
 #include "SceneManager.h"
 #include "SceneGame.h"
+#include "UI.h"
+#include "Extract.h"
 
 void PlayerState::IdleState::Enter()
 {
@@ -190,9 +192,9 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 
 	// アニメーション再生が終了時
 	float nextAnimeSeconds = 0.9f;
-	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
+	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds &&
+		owner->GetModel()->GetHitStopFlag() == false)
 	{
-		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
 		{
 			owner->GetStateMachine()->ChangeState(Player::State::AttackCombo2);
@@ -214,7 +216,7 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 			for (int j = 0; j < enemy->GetParts().size(); j++)
 			{
 				float radius = 1.0f;
-				float attackPower =
+				float damage =
 					Mathf::PlayerAttackDamageCalculation(
 						5.0f, enemy->GetParts()[j].defensePower);
 				DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
@@ -222,21 +224,23 @@ void PlayerState::AttackCombo1State::Execute(float elapsedTime)
 				if (Collision::AttackNodeVsNode(
 					owner, "mixamorig:Sword_joint", radius,
 					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-					hitPosition, attackPower, invincibleTime))
+					hitPosition, damage, invincibleTime))
 				{
 					if (owner->GetLightIndex() < 0)
 					{
 						DirectX::XMFLOAT4 color =
 							Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
 						Light* light = new Light(LightType::Point);
-						DirectX::XMFLOAT3 lightPosition =
+						DirectX::XMFLOAT3 hitPosition =
 							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-						light->SetPosition(lightPosition);
+						light->SetPosition(hitPosition);
 						light->SetColor(DirectX::XMFLOAT4({ color }));
-						light->SetRange(2.0f);
+						light->SetRange(3.0f);
 						LightManager::Instane().Register(light);
 						owner->SetLightIndex(LightManager::Instane().GetLightCount());
-						hitEffect1->Play(lightPosition);
+						hitEffect1->Play(hitPosition);
+
+						UI::Instance().SetDamegeUI(damage, hitPosition);
 					}
 					float volume = 0.5f;
 					SE_Attack1->Play(false, volume);
@@ -288,7 +292,8 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 
 	// アニメーション再生が終了時
 	float nextAnimeSeconds = 0.9f;
-	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds)
+	if (owner->GetModel()->GetAnimationSeconds() > nextAnimeSeconds &&
+		owner->GetModel()->GetHitStopFlag() == false)
 	{
 		// 攻撃フラグがtrueなら
 		if (nextAttackFlag)
@@ -315,14 +320,14 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 				for (int j = 0; j < enemy->GetParts().size(); j++)
 				{
 					float radius = 1.0f;
-					float attackPower =
+					float damage =
 						Mathf::PlayerAttackDamageCalculation(5.0f, enemy->GetParts()[j].defensePower);
 					DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
 					float invincibleTime = 0.3f;
 					if (Collision::AttackNodeVsNode(
 						owner, "mixamorig:Sword_joint", radius,
 						enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-						hitPosition, attackPower, invincibleTime))
+						hitPosition, damage, invincibleTime))
 					{
 						if (owner->GetLightIndex() < 0)
 						{
@@ -330,22 +335,24 @@ void PlayerState::AttackCombo2State::Execute(float elapsedTime)
 								Extract::Instance().ColorConversion(
 									enemy->GetParts()[j].extractColor);
 							Light* light = new Light(LightType::Point);
-							DirectX::XMFLOAT3 lightPosition =
+							DirectX::XMFLOAT3 hitPosition =
 								owner->GetNodePosition(
 									owner->GetNode("mixamorig:Sword_joint"));
-							light->SetPosition(lightPosition);
+							light->SetPosition(hitPosition);
 							light->SetColor(DirectX::XMFLOAT4({ color }));
-							light->SetRange(2.0f);
+							light->SetRange(3.0f);
 							LightManager::Instane().Register(light);
 							owner->SetLightIndex(
 								LightManager::Instane().GetLightCount());
-							hitEffect2->Play(lightPosition);
+							hitEffect2->Play(hitPosition);
 							owner->SetLightIndex(
 								LightManager::Instane().GetLightCount());
 							DirectX::XMFLOAT3 rotation =
 							{ 0, 0, DirectX::XMConvertToRadians(180) };
-							int effectIndex = hitEffect2->Play(lightPosition);
+							int effectIndex = hitEffect2->Play(hitPosition);
 							hitEffect2->SetRotation(effectIndex, rotation);
+
+							UI::Instance().SetDamegeUI(damage, hitPosition);
 						}
 						float volume = 0.5f;
 						SE_Attack2->Play(false, volume);
@@ -404,7 +411,7 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 			Enemy* enemy = enemyManager.GetEnemy(i);
 			for (int j = 0; j < enemy->GetParts().size(); j++)
 			{
-				float attackPower =
+				float damage =
 					Mathf::PlayerAttackDamageCalculation(
 						10.0f, enemy->GetParts()[j].defensePower);
 				float radius = 1.0f;
@@ -413,33 +420,46 @@ void PlayerState::AttackCombo3State::Execute(float elapsedTime)
 				if (Collision::AttackNodeVsNode(
 					owner, "mixamorig:Sword_joint", radius,
 					enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-					hitPosition, attackPower, invincibleTime))
+					hitPosition, damage, invincibleTime))
 				{
 					if (owner->GetLightIndex() < 0)
 					{
 						DirectX::XMFLOAT4 color =
 							Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
 						Light* light = new Light(LightType::Point);
-						DirectX::XMFLOAT3 lightPosition =
+						DirectX::XMFLOAT3 hitPosition =
 							owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-						light->SetPosition(lightPosition);
+						light->SetPosition(hitPosition);
 						light->SetColor(DirectX::XMFLOAT4({ color }));
-						light->SetRange(2.0f);
+						light->SetRange(3.0f);
 						LightManager::Instane().Register(light);
 						owner->SetLightIndex(LightManager::Instane().GetLightCount());
 						DirectX::XMFLOAT3 rotation = {0, 0, DirectX::XMConvertToRadians(45) };
-						int effectIndex = hitEffect3->Play(lightPosition);
+						int effectIndex = hitEffect3->Play(hitPosition);
 						hitEffect3->SetRotation(effectIndex, rotation);
+
+						UI::Instance().SetDamegeUI(damage, hitPosition);
+
+						if (Extract::Instance().GetExtract(ExtractColor::Red) > 0.0f)
+						{
+							hitStopTimer = 10.0f;
+							owner->GetModel()->SetHitStopFlag(true);
+						}
 					}
 					float volume = 0.5f;
 					SE_Attack3->Play(false, volume);
 				}
+
+				if (hitStopTimer > 0.0f)
+					hitStopTimer -= elapsedTime;
+				else
+					owner->GetModel()->SetHitStopFlag(false);
 			}
 		}
 	}
 
 	// アニメーション再生が終わったら
-	if (!owner->GetModel()->IsPlayAnimation())
+	if (!owner->GetModel()->IsPlayAnimation() && owner->GetModel()->GetHitStopFlag() == false)
 	{
 		owner->GetStateMachine()->ChangeState(Player::State::Idle);
 	}
@@ -477,26 +497,28 @@ void PlayerState::AttackDashuState::Execute(float elapsedTime)
 		for (int j = 0; j < enemy->GetParts().size(); j++)
 		{
 			float radius = 1.0f;
-			float attackPower =
+			float damage =
 				Mathf::PlayerAttackDamageCalculation(10.0f, enemy->GetParts()[j].defensePower);
 			DirectX::XMFLOAT3 hitPosition = { 0.0f, 0.0f, 0.0f };
 			if (Collision::AttackNodeVsNode(
 				owner, "mixamorig:Sword_joint", radius,
 				enemy, enemy->GetParts()[j].name, enemy->GetParts()[j].radius,
-				hitPosition, attackPower))
+				hitPosition, damage))
 			{
 				if (owner->GetLightIndex() < 0)
 				{
 					DirectX::XMFLOAT4 color =
 						Extract::Instance().ColorConversion(enemy->GetParts()[j].extractColor);
 					Light* light = new Light(LightType::Point);
-					DirectX::XMFLOAT3 lightPosition =
+					DirectX::XMFLOAT3 hitPosition =
 						owner->GetNodePosition(owner->GetNode("mixamorig:Sword_joint"));
-					light->SetPosition(lightPosition);
+					light->SetPosition(hitPosition);
 					light->SetColor(DirectX::XMFLOAT4({ color }));
-					light->SetRange(2.0f);
+					light->SetRange(3.0f);
 					LightManager::Instane().Register(light);
 					owner->SetLightIndex(LightManager::Instane().GetLightCount());
+
+					UI::Instance().SetDamegeUI(damage, hitPosition);
 				}
 			}
 		}
