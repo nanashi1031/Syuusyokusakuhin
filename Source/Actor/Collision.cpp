@@ -297,8 +297,8 @@ bool Collision::AttackNodeVsNode(
 						vec.y = 5.0f;
 						// ‚Á”ò‚Î‚·
 						characterB->AddImpulse(vec);
-						hitPosition = outPosition;
 					}
+					hitPosition = outPosition;
 					return true;
 				}
 			}
