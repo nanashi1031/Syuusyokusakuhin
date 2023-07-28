@@ -1,5 +1,4 @@
 #pragma once
-#include "Player.h"
 #include "Effect.h"
 
 class Insect : public Character

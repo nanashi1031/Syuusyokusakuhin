@@ -299,7 +299,6 @@ void Insect::UpdateExtractEffect()
 		ParticleRed->Play(this->GetPosition(), 0.2f);
 		break;
 	case ExtractColor::None:
-
 		break;
 	}
 }
