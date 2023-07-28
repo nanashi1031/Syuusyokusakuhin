@@ -1,5 +1,5 @@
 #include "Misc.h"
-#include "Audio/Audio.h"
+#include "Audio.h"
 
 Audio* Audio::instance = nullptr;
 
@@ -43,7 +43,7 @@ Audio::~Audio()
 	// XAudioI—¹‰»
 	if (xaudio != nullptr)
 	{
-		xaudio->Release();
+		//xaudio->Release();
 		xaudio = nullptr;
 	}
 
