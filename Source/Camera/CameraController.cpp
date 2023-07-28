@@ -177,7 +177,7 @@ void CameraController::UpdateMouse(float elapsedTime)
 
     // マウスカーソル非表示
     // TODO 今はカーソルの動きを見るため実行しない、本番ではコメントを外す
-    ShowCursor(false);
+    //ShowCursor(false);
     float speed = mouseRollSpeed * elapsedTime;
     angle.x += (mouse.GetPositionY() - mouse.GetScreenHeight() / 2.0f) * speed;
     angle.y += (mouse.GetPositionX() - mouse.GetScreenWidth() / 2.0f) * speed;
