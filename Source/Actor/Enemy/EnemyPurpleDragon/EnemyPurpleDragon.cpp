@@ -15,7 +15,7 @@ EnemyPurpleDragon::EnemyPurpleDragon()
 	radius = 3.0f;
 	height = 1.5f;
 
-	maxHealth = 15000.0f;
+	maxHealth = 10000.0f;
 	health = maxHealth;
 
 	CharacterType = Type::Boss;
