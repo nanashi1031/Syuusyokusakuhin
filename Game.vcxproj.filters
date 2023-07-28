@@ -255,9 +255,6 @@
     <ClInclude Include="Source\Actor\Enemy\EnemyManager.h">
       <Filter>Source\Actor\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.h">
-      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Actor\Player\Player.h">
       <Filter>Source\Actor\Player</Filter>
     </ClInclude>
@@ -310,6 +307,9 @@
       <Filter>Source\Actor\Insect</Filter>
     </ClInclude>
     <ClInclude Include="Source\Actor\StateMachine\EnemyPurpleDragonDerived.h">
+      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.h">
       <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
     </ClInclude>
   </ItemGroup>
@@ -464,9 +464,6 @@
     <ClCompile Include="Source\Actor\Enemy\EnemyManager.cpp">
       <Filter>Source\Actor\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.cpp">
-      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Actor\Player\Player.cpp">
       <Filter>Source\Actor\Player</Filter>
     </ClCompile>
@@ -516,6 +513,9 @@
       <Filter>Source\Actor\Insect</Filter>
     </ClCompile>
     <ClCompile Include="Source\Actor\StateMachine\EnemyPurpleDragonDerived.cpp">
+      <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor\Enemy\EnemyPurpleDragon\EnemyPurpleDragon.cpp">
       <Filter>Source\Actor\Enemy\EnemyPurpleDragon</Filter>
     </ClCompile>
   </ItemGroup>
