@@ -177,7 +177,7 @@ float Mathf::Percentage(float floatA, float floatB)
 
 float Mathf::PlayerAttackDamageCalculation(float attackPower, float defensePower)
 {
-	if (Extract::Instance().GetExtract(ExtractColor::Red) >= 0.00f)
+	if (Extract::Instance().GetExtract(ExtractColor::Red) > 0.00f)
 		attackPower *= 20.0f;
 	float outResult = attackPower - defensePower;
 	if (outResult < 0.0f)

@@ -16,6 +16,22 @@ public:
 	// 指定範囲のランダム値を計算する
 	static float RandomRange(float min, float max);
 
+	// 桁数を計算する
+	template<typename T>
+	static int CountDigits(T number)
+	{
+		int digit = 0;
+		int num = static_cast<int>(number);
+
+		while (num > 0)
+		{
+			num /= 10;
+			digit++;
+		}
+
+		return digit;
+	};
+
 	// FLOAT3の和
 	static DirectX::XMFLOAT3 AddFloat3(DirectX::XMFLOAT3 float3A, DirectX::XMFLOAT3 float3B);
 
